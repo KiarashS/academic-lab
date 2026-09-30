@@ -18,14 +18,25 @@ function merge(base, override) {
 const site = merge(defaults, userSite)
 export default site
 
-const enabledPages = new Set(site.nav.map((item) => item.page))
+// Every page listed in `nav`, including those inside groups and those hidden from the menu.
+export const navPages = site.nav.flatMap((item) => (item.items ? item.items : [item])).filter((item) => item.page)
+
+const enabledPages = new Set(navPages.map((item) => item.page))
 
 // Whether a page exists on the site (listed in `nav`, shown in the menu or not).
 export function pageEnabled(page) {
   return enabledPages.has(page)
 }
 
-export const menuItems = site.nav.filter((item) => item.menu !== false)
+// The menu: pages and groups ({ label, items }) minus anything with `menu: false`.
+export const menuItems = site.nav
+  .filter((item) => item.menu !== false)
+  .map((item) => (item.items ? { ...item, items: item.items.filter((i) => i.menu !== false) } : item))
+  .filter((item) => !item.items || item.items.length > 0)
+
+export function pagePath(page) {
+  return page === 'home' ? '/' : `/${page}`
+}
 
 // Whether a `sections` list includes a section. A missing list means "show everything".
 export function hasSection(sections, name) {

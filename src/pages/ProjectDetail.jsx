@@ -1,12 +1,13 @@
 import { Link, useParams } from 'react-router'
 import LinkList from '../components/LinkList.jsx'
+import Markdown from '../components/Markdown.jsx'
 import PersonCard from '../components/PersonCard.jsx'
 import PublicationItem from '../components/PublicationItem.jsx'
 import Section from '../components/Section.jsx'
 import Tag from '../components/Tag.jsx'
 import site from '../config/index.js'
 import { personById, projectById, publicationsByProject } from '../lib/data.js'
-import { asset, paragraphs } from '../lib/utils.js'
+import { asset } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
 
@@ -21,18 +22,16 @@ export default function ProjectDetail() {
   const pubs = publicationsByProject(project.id)
 
   const SECTIONS = {
-    description: () => {
-      const text = paragraphs(project.description || project.summary)
-      return (
-        text.length > 0 && (
-          <div key="description" className="mt-8 max-w-2xl space-y-4 leading-relaxed">
-            {text.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
+    description: () =>
+      project.description ? (
+        <Markdown key="description" html={project.description} className="mt-8" />
+      ) : (
+        project.summary && (
+          <p key="description" className="mt-8 max-w-2xl leading-relaxed">
+            {project.summary}
+          </p>
         )
-      )
-    },
+      ),
     funding: () =>
       project.funding && (
         <p key="funding" className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">

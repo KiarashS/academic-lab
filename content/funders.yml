@@ -1,0 +1,9 @@
+# Funders and partners, shown as a row of logos in the home page's funders section.
+# logo: path in public/ or a full URL. Without a logo the name is shown instead.
+funders:
+  - name: National Science Foundation
+    url: https://www.nsf.gov
+  - name: National Institutes of Health
+    url: https://www.nih.gov
+  - name: Example Foundation
+    url: https://example.com

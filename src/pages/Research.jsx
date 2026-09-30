@@ -2,7 +2,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import Section from '../components/Section.jsx'
 import site from '../config/index.js'
-import research from '../content/research.js'
+import { research } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
 export default function Research() {

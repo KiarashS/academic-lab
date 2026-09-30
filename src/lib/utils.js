@@ -22,6 +22,23 @@ export function formatDate(iso, style = 'medium') {
   return date.toLocaleDateString(site.locale || 'en-US', options)
 }
 
+function utcDate(iso) {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(Date.UTC(y, (m || 1) - 1, d || 1))
+}
+
+// "Jun 2 – 3, 2026" for multi-day events, a single date otherwise.
+export function formatDateRange(start, end) {
+  if (!end || end === start) return formatDate(start)
+  const fmt = new Intl.DateTimeFormat(site.locale || 'en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+  return fmt.formatRange(utcDate(start), utcDate(end))
+}
+
 export function initials(name) {
   return name
     .split(/\s+/)

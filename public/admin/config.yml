@@ -1,0 +1,289 @@
+# Settings for the content editor at /admin (Sveltia CMS, compatible with Decap CMS).
+# It edits the files in content/ and commits each change to GitHub, which rebuilds the site.
+# See "Editing in the browser" in README.md for how to sign in.
+
+backend:
+  name: github
+  repo: KiarashS/academic-lab # change this if you fork or rename the repository
+  branch: main
+  # To offer "Sign in with GitHub" instead of pasting a token, deploy the
+  # sveltia-cms-auth worker (https://github.com/sveltia/sveltia-cms-auth) and set:
+  # base_url: https://sveltia-cms-auth.<your-account>.workers.dev
+
+site_url: https://lab.kiarashs.ir
+display_url: https://lab.kiarashs.ir
+
+# Uploaded images and files go to public/uploads and are served at /uploads/...
+media_folder: public/uploads
+public_folder: /uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  maxlength: 60
+
+collections:
+  - name: news
+    label: News
+    label_singular: News item
+    folder: content/news
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: text
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{date}} · {{text}}'
+    sortable_fields: [date]
+    fields:
+      - { name: date, label: Date, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD }
+      - { name: text, label: Summary, widget: string, hint: 'One line, shown in the news list.' }
+      - { name: title, label: Title, widget: string, required: false, hint: 'Only needed if you write a full post below.' }
+      - name: link
+        label: Link
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: label, label: Label, widget: string, required: false }
+          - { name: url, label: URL, widget: string, required: false, hint: 'https://... or a page on this site, e.g. /publications#paper-id' }
+      - { name: image, label: Image, widget: image, required: false }
+      - { name: body, label: Full post, widget: markdown, required: false, hint: 'Leave empty for a one-line item. With text, the item gets its own page.' }
+
+  - name: events
+    label: Events
+    label_singular: Event
+    folder: content/events
+    create: true
+    extension: md
+    format: frontmatter
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{date}} · {{title}}'
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD }
+      - { name: endDate, label: End date, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false, hint: 'For events that last more than one day.' }
+      - { name: time, label: Start time, widget: string, required: false, pattern: ['^\d{2}:\d{2}$', 'Use 24-hour HH:MM, e.g. 15:00'], hint: 'Leave empty for an all-day event.' }
+      - { name: end, label: End time, widget: string, required: false, pattern: ['^\d{2}:\d{2}$', 'Use 24-hour HH:MM, e.g. 16:00'] }
+      - { name: speaker, label: Speaker, widget: string, required: false }
+      - { name: affiliation, label: Speaker affiliation, widget: string, required: false }
+      - { name: location, label: Location, widget: string, required: false }
+      - { name: link, label: Link, widget: string, required: false, hint: 'Registration, stream or event website.' }
+      - { name: summary, label: Summary, widget: text, required: false }
+      - { name: body, label: Details, widget: markdown, required: false, hint: 'With text, the event gets its own page.' }
+
+  - name: people
+    label: People
+    label_singular: Person
+    folder: content/people
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: name
+    slug: '{{slug}}'
+    summary: '{{name}} · {{role}}'
+    sortable_fields: [name, group]
+    view_groups:
+      - { label: Group, field: group }
+      - { label: Alumni, field: alumni }
+    fields:
+      - { name: name, label: Name, widget: string }
+      - { name: role, label: Role, widget: string, required: false, hint: 'e.g. PhD Student (2nd year)' }
+      - { name: group, label: Group, widget: string, required: false, hint: 'Must match one of people.groups in src/config/site.js, e.g. PhD Students.' }
+      - { name: management, label: Management team title, widget: string, required: false, hint: 'e.g. Lab Manager. Leave empty if not on the management team.' }
+      - { name: photo, label: Photo, widget: image, required: false }
+      - { name: email, label: Email, widget: string, required: false }
+      - { name: website, label: Website, widget: string, required: false }
+      - { name: scholar, label: Google Scholar, widget: string, required: false }
+      - { name: github, label: GitHub, widget: string, required: false }
+      - { name: orcid, label: ORCID, widget: string, required: false }
+      - { name: linkedin, label: LinkedIn, widget: string, required: false }
+      - { name: twitter, label: X / Twitter, widget: string, required: false }
+      - { name: bluesky, label: Bluesky, widget: string, required: false }
+      - { name: aliases, label: Name in author lists, widget: list, required: false, hint: 'Other spellings used on papers, e.g. A. Rivera' }
+      - { name: interests, label: Interests, widget: list, required: false }
+      - { name: education, label: Education, widget: list, required: false }
+      - { name: order, label: Order, widget: number, value_type: int, required: false, hint: 'Lower numbers come first within a group. Without it, people are sorted by name.' }
+      - { name: alumni, label: Alumni, widget: boolean, required: false, default: false }
+      - { name: now, label: Now at, widget: string, required: false, hint: 'For alumni: where they went.' }
+      - { name: body, label: Bio, widget: markdown, required: false }
+
+  - name: research
+    label: Research projects
+    label_singular: Project
+    folder: content/research
+    create: true
+    extension: md
+    format: frontmatter
+    slug: '{{slug}}'
+    summary: '{{title}} · {{status}}'
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: summary, label: Summary, widget: text, hint: 'One or two sentences for project cards.' }
+      - { name: status, label: Status, widget: select, options: [active, past], default: active }
+      - { name: image, label: Image, widget: image, required: false }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: members, label: People, widget: relation, collection: people, value_field: '{{slug}}', search_fields: [name], display_fields: [name], multiple: true, required: false }
+      - name: links
+        label: Links
+        widget: list
+        required: false
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: url, label: URL, widget: string }
+      - { name: funding, label: Funding, widget: string, required: false }
+      - { name: order, label: Order, widget: number, value_type: int, required: false, hint: 'Lower numbers come first. Without it, projects are sorted by title.' }
+      - { name: body, label: Description, widget: markdown, required: false }
+
+  - name: data
+    label: Lists
+    files:
+      - name: publications
+        label: Publications
+        file: content/publications.yml
+        fields:
+          - name: publications
+            label: Publications
+            label_singular: Publication
+            widget: list
+            summary: '{{fields.year}} · {{fields.title}}'
+            fields:
+              - { name: id, label: ID, widget: string, hint: 'Unique, no spaces. Also the BibTeX key, e.g. rivera2026prior' }
+              - { name: title, label: Title, widget: string }
+              - { name: authors, label: Authors, widget: list }
+              - { name: venue, label: Venue, widget: string }
+              - { name: year, label: Year, widget: number, value_type: int }
+              - { name: month, label: Month, widget: number, value_type: int, min: 1, max: 12, required: false }
+              - { name: type, label: Type, widget: select, options: [journal, conference, workshop, preprint, book, thesis, other] }
+              - { name: volume, label: Volume, widget: string, required: false }
+              - { name: pages, label: Pages, widget: string, required: false }
+              - { name: featured, label: Show on home page, widget: boolean, required: false, default: false }
+              - { name: award, label: Award, widget: string, required: false }
+              - { name: tags, label: Tags, widget: list, required: false }
+              - { name: projects, label: Research projects, widget: relation, collection: research, value_field: '{{slug}}', search_fields: [title], display_fields: [title], multiple: true, required: false }
+              - { name: abstract, label: Abstract, widget: text, required: false }
+              - name: links
+                label: Links
+                widget: object
+                required: false
+                collapsed: true
+                fields:
+                  - { name: pdf, label: PDF, widget: string, required: false }
+                  - { name: doi, label: DOI URL, widget: string, required: false }
+                  - { name: arxiv, label: arXiv, widget: string, required: false }
+                  - { name: code, label: Code, widget: string, required: false }
+                  - { name: data, label: Data, widget: string, required: false }
+                  - { name: project, label: Project page, widget: string, required: false }
+                  - { name: slides, label: Slides, widget: string, required: false }
+                  - { name: poster, label: Poster, widget: string, required: false }
+                  - { name: video, label: Video, widget: string, required: false }
+              - { name: bibtex, label: BibTeX (replaces the generated entry), widget: code, output_code_only: true, default_language: bibtex, required: false }
+
+      - name: slides
+        label: Home page slider
+        file: content/slides.yml
+        fields:
+          - name: slides
+            label: Slides
+            label_singular: Slide
+            widget: list
+            summary: '{{fields.type}} · {{fields.title}}'
+            fields:
+              - { name: type, label: Type, widget: select, options: [image, video, embed], default: image }
+              - { name: src, label: Image or video file (or embed URL), widget: file, hint: 'For YouTube/Vimeo, paste the embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID' }
+              - { name: poster, label: Video poster image, widget: image, required: false }
+              - { name: alt, label: Image description, widget: string, required: false }
+              - { name: title, label: Title, widget: string, required: false }
+              - { name: caption, label: Caption, widget: string, required: false }
+              - { name: link, label: Link, widget: string, required: false }
+              - { name: position, label: Crop position, widget: select, options: [center, top, bottom], required: false }
+
+      - name: gallery
+        label: Gallery
+        file: content/gallery.yml
+        fields:
+          - name: albums
+            label: Albums
+            label_singular: Album
+            widget: list
+            summary: '{{fields.date}} · {{fields.title}}'
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: date, label: Date, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false }
+              - { name: description, label: Description, widget: string, required: false }
+              - name: photos
+                label: Photos
+                label_singular: Photo
+                widget: list
+                fields:
+                  - { name: src, label: Photo, widget: image }
+                  - { name: caption, label: Caption, widget: string, required: false }
+
+      - name: resources
+        label: Software & data
+        file: content/resources.yml
+        fields:
+          - name: items
+            label: Items
+            label_singular: Item
+            widget: list
+            summary: '{{fields.type}} · {{fields.title}}'
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: type, label: Type, widget: select, options: [software, dataset, other], default: software }
+              - { name: description, label: Description, widget: text, required: false }
+              - { name: year, label: Year, widget: number, value_type: int, required: false }
+              - { name: tags, label: Tags, widget: list, required: false }
+              - name: links
+                label: Links
+                widget: list
+                required: false
+                fields:
+                  - { name: label, label: Label, widget: string }
+                  - { name: url, label: URL, widget: string }
+
+      - name: teaching
+        label: Teaching
+        file: content/teaching.yml
+        fields:
+          - name: courses
+            label: Courses
+            label_singular: Course
+            widget: list
+            summary: '{{fields.term}} · {{fields.code}} {{fields.title}}'
+            fields:
+              - { name: code, label: Code, widget: string, required: false }
+              - { name: title, label: Title, widget: string }
+              - { name: term, label: Term, widget: string, required: false }
+              - { name: instructor, label: Instructor, widget: string, required: false }
+              - { name: description, label: Description, widget: text, required: false }
+              - { name: url, label: Course website, widget: string, required: false }
+
+      - name: join
+        label: Join page
+        file: content/join.yml
+        fields:
+          - { name: intro, label: Introduction, widget: list, field: { name: paragraph, label: Paragraph, widget: text } }
+          - name: openings
+            label: Positions
+            label_singular: Position
+            widget: list
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: open, label: Open, widget: boolean, default: true }
+              - { name: text, label: Description, widget: text }
+              - { name: url, label: Details link, widget: string, required: false }
+          - { name: howToApply, label: How to apply, widget: text, required: false }
+
+      - name: funders
+        label: Funders
+        file: content/funders.yml
+        fields:
+          - name: funders
+            label: Funders
+            label_singular: Funder
+            widget: list
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: logo, label: Logo, widget: image, required: false }
+              - { name: url, label: Website, widget: string, required: false }

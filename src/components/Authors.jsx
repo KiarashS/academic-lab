@@ -15,7 +15,10 @@ export default function Authors({ authors }) {
             {id && !pageEnabled('people') ? (
               <span className="font-medium text-neutral-800 dark:text-neutral-200">{author}</span>
             ) : id ? (
-              <Link to={`/people/${id}`} className="font-medium text-neutral-800 hover:text-accent dark:text-neutral-200">
+              <Link
+                to={`/people/${id}`}
+                className="font-medium text-neutral-800 hover:text-accent dark:text-neutral-200"
+              >
                 {author}
               </Link>
             ) : (

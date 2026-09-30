@@ -15,8 +15,7 @@ const LINK_LABELS = {
   video: 'Video',
 }
 
-const buttonClass =
-  'cursor-pointer text-neutral-500 hover:text-accent dark:text-neutral-400 aria-expanded:text-accent'
+const buttonClass = 'cursor-pointer text-neutral-500 hover:text-accent dark:text-neutral-400 aria-expanded:text-accent'
 
 export default function PublicationItem({ pub, showYear = true }) {
   const [open, setOpen] = useState(null) // 'abstract' | 'bibtex' | null
@@ -62,12 +61,22 @@ export default function PublicationItem({ pub, showYear = true }) {
           </a>
         ))}
         {pub.abstract && site.publications.showAbstract && (
-          <button type="button" className={buttonClass} aria-expanded={open === 'abstract'} onClick={() => toggle('abstract')}>
+          <button
+            type="button"
+            className={buttonClass}
+            aria-expanded={open === 'abstract'}
+            onClick={() => toggle('abstract')}
+          >
             Abstract
           </button>
         )}
         {bibtex && (
-          <button type="button" className={buttonClass} aria-expanded={open === 'bibtex'} onClick={() => toggle('bibtex')}>
+          <button
+            type="button"
+            className={buttonClass}
+            aria-expanded={open === 'bibtex'}
+            onClick={() => toggle('bibtex')}
+          >
             BibTeX
           </button>
         )}

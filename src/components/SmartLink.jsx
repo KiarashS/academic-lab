@@ -6,12 +6,7 @@ export default function SmartLink({ to, children, className = 'prose-link', ...r
   if (isExternal(to)) {
     const newTab = !to.startsWith('mailto:')
     return (
-      <a
-        href={to}
-        className={className}
-        {...(newTab && { target: '_blank', rel: 'noopener noreferrer' })}
-        {...rest}
-      >
+      <a href={to} className={className} {...(newTab && { target: '_blank', rel: 'noopener noreferrer' })} {...rest}>
         {children}
       </a>
     )

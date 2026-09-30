@@ -1,4 +1,5 @@
-// Site-wide settings. Content (people, papers, news...) lives in src/content/.
+// Site-wide settings. Content (people, papers, news...) lives in the content/ folder,
+// which you can also edit in the browser at /admin (see README).
 //
 // How to turn things on and off:
 //   - Pages: remove a page from `nav` to remove it from the site, or set `menu: false`
@@ -13,8 +14,7 @@ const site = {
   name: 'Example Lab',
   shortName: 'Example Lab', // shown in the header on small screens
   tagline: 'We study how machines learn from limited data.',
-  description:
-    'The Example Lab is a research group in the Department of Computer Science at Example University.',
+  description: 'The Example Lab is a research group in the Department of Computer Science at Example University.',
   institution: {
     name: 'Department of Computer Science, Example University',
     url: 'https://example.edu',
@@ -50,27 +50,51 @@ const site = {
     showName: true,
     // Light/dark/system switch.
     showModeToggle: true,
+    // Search box (also opens with Ctrl+K / Cmd+K or "/"). Covers people, projects,
+    // publications, news, events and software.
+    showSearch: true,
+  },
+
+  // Visitor statistics. Fill in one of these to turn it on; leave them empty for none.
+  analytics: {
+    // Plausible (privacy-friendly, no cookie banner needed): the domain you registered.
+    plausible: { domain: '', src: 'https://plausible.io/js/script.js' },
+    // Umami (privacy-friendly, can be self-hosted): the website ID from your dashboard.
+    umami: { websiteId: '', src: 'https://cloud.umami.is/script.js' },
+    // Google Analytics 4 measurement ID, e.g. 'G-XXXXXXX'.
+    googleAnalytics: '',
   },
 
   // Pages, in menu order. Remove an entry to remove the page and its URL.
   // `menu: false` keeps the page reachable (e.g. from a link on the home page) but
   // hides it from the menu. The label is the menu text; the page heading is set below.
-  // Available pages: research, people, publications, news, teaching, join, contact
+  // `{ label, items: [...] }` makes a dropdown group, for pages people visit less often.
+  // Available pages: home, research, people, publications, news, events, teaching,
+  // resources (software & data), gallery, join, contact
   nav: [
+    { page: 'home', label: 'Home' },
     { page: 'research', label: 'Research' },
     { page: 'people', label: 'People' },
     { page: 'publications', label: 'Publications' },
     { page: 'news', label: 'News' },
-    { page: 'teaching', label: 'Teaching' },
-    { page: 'join', label: 'Join' },
+    { page: 'events', label: 'Events' },
+    {
+      label: 'More',
+      items: [
+        { page: 'resources', label: 'Software & Data' },
+        { page: 'teaching', label: 'Teaching' },
+        { page: 'gallery', label: 'Gallery' },
+        { page: 'join', label: 'Join' },
+      ],
+    },
     { page: 'contact', label: 'Contact' },
   ],
 
   home: {
-    // slider | intro | news | research | publications
-    sections: ['slider', 'intro', 'news', 'research', 'publications'],
+    // slider | intro | news | events | research | publications | funders
+    sections: ['slider', 'intro', 'news', 'events', 'research', 'publications', 'funders'],
 
-    // Slides are in src/content/slides.js.
+    // Slides are in content/slides.yml.
     slider: {
       autoplay: true,
       interval: 6000, // ms each image stays up; videos play to the end
@@ -91,6 +115,10 @@ const site = {
     research: { title: 'Research', count: null, moreLink: 'All projects' },
     // Publications marked `featured: true`.
     publications: { title: 'Selected publications', count: null, moreLink: 'All publications' },
+    // Events that haven't happened yet.
+    events: { title: 'Upcoming events', count: 3, moreLink: 'All events' },
+    // Logos from content/funders.yml.
+    funders: { title: 'Funding' },
   },
 
   research: {
@@ -124,7 +152,7 @@ const site = {
       'Undergraduate Researchers',
       'Staff',
     ],
-    // Optional management team. Anyone with a `management` field in src/content/people.js
+    // Optional management team. Anyone with a `management` field in content/people/
     // is listed here with that title. Set show to false to hide the section.
     management: {
       show: true,
@@ -162,6 +190,14 @@ const site = {
     showDownload: true, // "Download BibTeX" for the whole or filtered list
     showBibtex: true, // BibTeX button on each paper
     showAbstract: true, // Abstract button on each paper
+    // Papers are read from content/publications.yml, plus these sources. If the same paper
+    // appears twice (same DOI or title), publications.yml wins, then BibTeX, then ORCID.
+    import: {
+      // BibTeX file(s) in content/. null for none.
+      bibtex: 'publications.bib',
+      // ORCID iDs whose public works are pulled in at build time, e.g. ['0000-0002-1825-0097'].
+      orcid: [],
+    },
     // Labels for the `type` field of each publication.
     types: {
       journal: 'Journal',
@@ -178,6 +214,37 @@ const site = {
     title: 'News',
     intro: null,
     groupByYear: true,
+    // RSS feed at /news.xml (needs `url` above).
+    rss: true,
+    // Link text for news items that have a full post.
+    readMore: 'Read more',
+  },
+
+  events: {
+    title: 'Events',
+    intro: null,
+    // upcoming | past
+    sections: ['upcoming', 'past'],
+    upcomingTitle: 'Upcoming',
+    pastTitle: 'Past events',
+    // Time zone the event times in content/events/ are written in (IANA name, e.g.
+    // 'Asia/Tehran', 'Europe/Berlin', 'America/New_York'). Used for calendar files.
+    timezone: 'America/New_York',
+    // "Subscribe" link to the calendar feed at /events.ics.
+    showSubscribe: true,
+  },
+
+  gallery: {
+    title: 'Gallery',
+    intro: null,
+  },
+
+  resources: {
+    title: 'Software & Data',
+    intro: 'Code and datasets released by the lab.',
+    // software | dataset | other  (the `type` of each item in content/resources.yml)
+    sections: ['software', 'dataset', 'other'],
+    sectionTitles: { software: 'Software', dataset: 'Datasets', other: 'Other' },
   },
 
   teaching: {
@@ -189,7 +256,7 @@ const site = {
 
   join: {
     title: 'Join the lab',
-    // intro | positions | apply  (the text is in src/content/join.js)
+    // intro | positions | apply  (the text is in content/join.yml)
     sections: ['intro', 'positions', 'apply'],
     positionsTitle: 'Positions',
     applyTitle: 'How to apply',

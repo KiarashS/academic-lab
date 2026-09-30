@@ -1,0 +1,20 @@
+# Photo albums for the Gallery page. Put photos in public/uploads/ (or any folder in
+# public/) and reference them as /uploads/name.jpg. Full URLs also work.
+albums:
+  - title: Lab retreat 2026
+    date: 2026-08-20
+    description: Two days of planning and hiking.
+    photos:
+      - src: /slides/slide-1.svg
+        caption: Planning session
+      - src: /slides/slide-2.svg
+        caption: The view from the ridge
+      - src: /slides/slide-3.svg
+        caption: Group dinner
+  - title: ICML 2026
+    date: 2026-07-15
+    photos:
+      - src: /slides/slide-2.svg
+        caption: Priya's oral presentation
+      - src: /slides/slide-1.svg
+        caption: Poster session

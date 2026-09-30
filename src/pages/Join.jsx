@@ -2,7 +2,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import Section from '../components/Section.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
-import join from '../content/join.js'
+import { join } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
 export default function Join() {

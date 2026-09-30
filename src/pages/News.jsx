@@ -9,10 +9,25 @@ export default function News() {
   const config = site.news
   useTitle(config.title)
 
+  // RSS needs absolute links, so it's only built when site.url is set.
+  const header = (
+    <PageHeader title={config.title} intro={config.intro}>
+      {config.rss && site.url && (
+        <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Follow along with the{' '}
+          <a href={`${import.meta.env.BASE_URL}news.xml`} className="prose-link">
+            RSS feed
+          </a>
+          .
+        </p>
+      )}
+    </PageHeader>
+  )
+
   if (!config.groupByYear) {
     return (
       <>
-        <PageHeader title={config.title} intro={config.intro} />
+        {header}
         <NewsList items={sortedNews} />
       </>
     )
@@ -24,7 +39,7 @@ export default function News() {
 
   return (
     <>
-      <PageHeader title={config.title} intro={config.intro} />
+      {header}
       {years.map((y) => (
         <Section key={y} title={y}>
           <NewsList items={byYear[y]} />

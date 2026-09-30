@@ -1,7 +1,7 @@
 import PageHeader from '../components/PageHeader.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
-import teaching from '../content/teaching.js'
+import { teaching } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
 export default function Teaching() {
@@ -24,7 +24,9 @@ export default function Teaching() {
                   c.title
                 )}
               </h2>
-              <p className="mt-0.5 text-sm text-neutral-500">{[c.term, config.showInstructor && c.instructor].filter(Boolean).join(' · ')}</p>
+              <p className="mt-0.5 text-sm text-neutral-500">
+                {[c.term, config.showInstructor && c.instructor].filter(Boolean).join(' · ')}
+              </p>
               {config.showDescription && c.description && (
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
                   {c.description}

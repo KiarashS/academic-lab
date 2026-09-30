@@ -1,0 +1,32 @@
+# Software and datasets released by the lab, for the Software & Data page.
+# type: software | dataset | other. Items are grouped by type in the order set in
+# resources.sections in src/config/site.js.
+items:
+  - title: metaprot
+    type: software
+    description: Meta-learning for protein fitness prediction. PyTorch, with pretrained models for 40 assays.
+    year: 2026
+    tags: [python, pytorch]
+    links:
+      - label: GitHub
+        url: https://github.com/
+      - label: Docs
+        url: https://example.com
+  - title: calib-lite
+    type: software
+    description: Calibrated predictions without a held-out set. A small library with no dependencies beyond NumPy.
+    year: 2026
+    tags: [python]
+    links:
+      - label: GitHub
+        url: https://github.com/
+  - title: SmallMed
+    type: dataset
+    description: 12 medical image classification tasks with 20 to 200 training images each, with fixed splits.
+    year: 2025
+    tags: [benchmark, medical imaging]
+    links:
+      - label: Download
+        url: https://example.com
+      - label: Paper
+        url: /publications#okafor2025bench

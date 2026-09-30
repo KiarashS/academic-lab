@@ -1,12 +1,12 @@
+import EventList from '../components/EventList.jsx'
 import NewsList from '../components/NewsList.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationItem from '../components/PublicationItem.jsx'
 import Section from '../components/Section.jsx'
 import Slider from '../components/Slider.jsx'
+import SmartLink from '../components/SmartLink.jsx'
 import site, { pageEnabled } from '../config/index.js'
-import research from '../content/research.js'
-import slides from '../content/slides.js'
-import { sortedNews, sortedPublications } from '../lib/data.js'
+import { funders, research, slides, sortedNews, sortedPublications, upcomingEvents } from '../lib/data.js'
 import { asset, paragraphs } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 
@@ -65,6 +65,44 @@ const SECTIONS = {
       </Section>
     ),
 
+  events: (first) =>
+    upcomingEvents.length > 0 && (
+      <Section key="events" flush={first} title={home.events.title} more={more('events', home.events.moreLink)}>
+        <EventList events={take(upcomingEvents, home.events.count)} />
+      </Section>
+    ),
+
+  funders: (first) =>
+    funders.length > 0 && (
+      <Section key="funders" flush={first} title={home.funders.title}>
+        <ul className="flex flex-wrap items-center gap-x-10 gap-y-6">
+          {funders.map((f) => {
+            const mark = f.logo ? (
+              <img
+                src={asset(f.logo)}
+                alt={f.name}
+                loading="lazy"
+                className="h-10 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0 dark:invert"
+              />
+            ) : (
+              <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{f.name}</span>
+            )
+            return (
+              <li key={f.name}>
+                {f.url ? (
+                  <SmartLink to={f.url} className="hover:text-accent">
+                    {mark}
+                  </SmartLink>
+                ) : (
+                  mark
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </Section>
+    ),
+
   research: (first) => {
     const active = take(
       research.filter((r) => r.status !== 'past'),
@@ -72,7 +110,12 @@ const SECTIONS = {
     )
     return (
       active.length > 0 && (
-        <Section key="research" flush={first} title={home.research.title} more={more('research', home.research.moreLink)}>
+        <Section
+          key="research"
+          flush={first}
+          title={home.research.title}
+          more={more('research', home.research.moreLink)}
+        >
           <div className="grid gap-10 sm:grid-cols-2">
             {active.map((p) => (
               <ProjectCard key={p.id} project={p} />

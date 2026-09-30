@@ -1,13 +1,13 @@
 import { Link, useParams } from 'react-router'
 import Avatar from '../components/Avatar.jsx'
 import LinkList from '../components/LinkList.jsx'
+import Markdown from '../components/Markdown.jsx'
 import { personLinks } from '../components/personLinks.js'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationList from '../components/PublicationList.jsx'
 import Section from '../components/Section.jsx'
 import site, { pageEnabled } from '../config/index.js'
 import { personById, projectsByPerson, publicationsByPerson } from '../lib/data.js'
-import { paragraphs } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
 
@@ -100,13 +100,7 @@ export default function PersonDetail() {
           )}
           {person.now && <p className="mt-1 text-neutral-500 dark:text-neutral-400">Now: {person.now}</p>}
           {show('links') && <LinkList links={personLinks(person)} className="mt-4" />}
-          {show('bio') && (
-            <div className="mt-6 max-w-2xl space-y-4 leading-relaxed">
-              {paragraphs(person.bio).map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-          )}
+          {show('bio') && <Markdown html={person.bio} className="mt-6" />}
         </div>
       </header>
 

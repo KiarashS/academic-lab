@@ -23,7 +23,11 @@ export default function Layout() {
         Skip to content
       </button>
       <Header />
-      <main id="main" tabIndex={-1} className="outline-none mx-auto w-full max-w-5xl flex-1 px-4 pt-12 sm:px-6 sm:pt-16">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="outline-none mx-auto w-full max-w-5xl flex-1 px-4 pt-12 sm:px-6 sm:pt-16"
+      >
         <Outlet />
       </main>
       <Footer />
