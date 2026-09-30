@@ -5,16 +5,8 @@ import App from './App.jsx'
 import site from './config/site.js'
 import './index.css'
 
-const root = document.documentElement
-root.style.setProperty('--accent-light', site.theme.accent)
-root.style.setProperty('--accent-dark', site.theme.accentDark || site.theme.accent)
-root.style.setProperty('--font-body', site.theme.font)
-
-const description = document.createElement('meta')
-description.name = 'description'
-description.content = site.description
-document.head.append(description)
-
+// Colors, fonts, the page title and meta tags are written into index.html at build time
+// by scripts/site-plugin.js.
 const Router = site.router === 'hash' ? HashRouter : BrowserRouter
 const basename = site.router === 'hash' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
 

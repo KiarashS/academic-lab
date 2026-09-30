@@ -7,11 +7,10 @@
   --font-sans: var(--font-body);
 }
 
+/* --accent-light, --accent-dark and --font-body come from src/config/site.js
+   (written into the page head by scripts/site-plugin.js). */
 :root {
-  --accent-light: #2563eb;
-  --accent-dark: #60a5fa;
   --accent: var(--accent-light);
-  --font-body: ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {

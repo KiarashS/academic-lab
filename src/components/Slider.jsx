@@ -8,7 +8,7 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function Media({ slide, active, onEnded }) {
+function Media({ slide, active, loop, onEnded }) {
   const videoRef = useRef(null)
   const fit = `absolute inset-0 size-full object-cover ${POSITIONS[slide.position] || ''}`
 
@@ -30,6 +30,7 @@ function Media({ slide, active, onEnded }) {
         src={asset(slide.src)}
         poster={asset(slide.poster)}
         muted
+        loop={loop}
         playsInline
         preload="metadata"
         onEnded={onEnded}
@@ -72,6 +73,7 @@ export default function Slider({ slides, autoplay = true, interval = 6000, aspec
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(() => autoplay && !prefersReducedMotion())
   const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
   const touchX = useRef(null)
   const count = slides.length
 
@@ -82,10 +84,10 @@ export default function Slider({ slides, autoplay = true, interval = 6000, aspec
   // Images advance on a timer. Videos advance when they end; embeds wait for the visitor.
   const current = slides[index]
   useEffect(() => {
-    if (!playing || hovered || count < 2 || current.type !== 'image') return
+    if (!playing || hovered || focused || count < 2 || current.type !== 'image') return
     const id = setTimeout(next, interval)
     return () => clearTimeout(id)
-  }, [playing, hovered, count, current, interval, next])
+  }, [playing, hovered, focused, count, current, interval, next])
 
   if (!count) return null
 
@@ -108,6 +110,8 @@ export default function Slider({ slides, autoplay = true, interval = 6000, aspec
       onKeyDown={onKeyDown}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setFocused(false)}
       onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
       onTouchEnd={onTouchEnd}
       style={{ '--slider-ratio': aspectRatio }}
@@ -125,7 +129,7 @@ export default function Slider({ slides, autoplay = true, interval = 6000, aspec
             inert={!active}
             className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none ${active ? 'opacity-100' : 'opacity-0'}`}
           >
-            <Media slide={slide} active={active} onEnded={() => playing && count > 1 && next()} />
+            <Media slide={slide} active={active} loop={count === 1} onEnded={() => playing && count > 1 && next()} />
             {(slide.title || slide.caption) && (
               <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-5 pt-16 pb-5 text-white sm:px-8 sm:pb-7">
                 {slide.title && (

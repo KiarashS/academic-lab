@@ -5,6 +5,7 @@ import { personLinks } from '../components/personLinks.js'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationList from '../components/PublicationList.jsx'
 import Section from '../components/Section.jsx'
+import site from '../config/site.js'
 import { personById, projectsByPerson, publicationsByPerson } from '../lib/data.js'
 import { paragraphs } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
@@ -30,6 +31,11 @@ export default function PersonDetail() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{person.name}</h1>
           {person.role && <p className="mt-1 text-neutral-500 dark:text-neutral-400">{person.role}</p>}
+          {person.management && person.management !== person.role && site.people.management?.show && (
+            <p className="mt-1 text-neutral-500 dark:text-neutral-400">
+              {person.management}, {(site.people.management.title || 'Management team').toLowerCase()}
+            </p>
+          )}
           {person.now && <p className="mt-1 text-neutral-500 dark:text-neutral-400">Now: {person.now}</p>}
           <LinkList links={personLinks(person)} className="mt-4" />
           <div className="mt-6 max-w-2xl space-y-4 leading-relaxed">

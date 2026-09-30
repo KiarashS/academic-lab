@@ -38,7 +38,7 @@ export default function PublicationItem({ pub, showYear = true }) {
   const links = Object.entries(pub.links || {}).filter(([, url]) => url)
 
   return (
-    <article>
+    <article id={pub.id} className="scroll-mt-8 rounded-md target:bg-accent/5 target:ring-8 target:ring-accent/5">
       <h3 className="leading-snug font-medium text-neutral-900 dark:text-neutral-100">
         {pub.title}
         {pub.award && (
@@ -48,7 +48,7 @@ export default function PublicationItem({ pub, showYear = true }) {
       <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
         <Authors authors={pub.authors} />
       </p>
-      <p className="mt-0.5 text-sm text-neutral-500 italic dark:text-neutral-500">
+      <p className="mt-0.5 text-sm text-neutral-500 italic dark:text-neutral-400">
         {pub.venue}
         {pub.volume && `, vol. ${pub.volume}`}
         {pub.pages && `, pp. ${pub.pages}`}

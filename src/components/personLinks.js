@@ -1,6 +1,6 @@
 export function personLinks(person) {
   return [
-    { label: 'Email', url: person.email && `mailto:${person.email}` },
+    { label: person.email || 'Email', url: person.email && `mailto:${person.email}` },
     { label: 'Website', url: person.website },
     { label: 'Scholar', url: person.scholar },
     { label: 'GitHub', url: person.github },

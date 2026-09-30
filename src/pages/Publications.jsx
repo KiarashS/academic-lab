@@ -5,11 +5,20 @@ import PublicationList from '../components/PublicationList.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import Tag from '../components/Tag.jsx'
 import site from '../config/site.js'
+import { toBibtex } from '../lib/bibtex.js'
 import { sortedPublications } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
 const selectClass =
   'rounded-md border border-neutral-200 bg-transparent px-2.5 py-1.5 text-sm dark:border-neutral-800 dark:bg-neutral-950'
+
+function downloadBibtex(pubs) {
+  const blob = new Blob([pubs.map(toBibtex).join('\n\n') + '\n'], { type: 'application/x-bibtex' })
+  const url = URL.createObjectURL(blob)
+  const a = Object.assign(document.createElement('a'), { href: url, download: 'publications.bib' })
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 function matches(pub, query) {
   if (!query) return true
@@ -105,14 +114,23 @@ export default function Publications() {
             ))}
           </div>
         )}
-        {filtering && (
-          <p className="text-sm text-neutral-500">
-            {filtered.length} of {sortedPublications.length} publications.{' '}
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm text-neutral-500 dark:text-neutral-400">
+          <span>
+            {filtering
+              ? `${filtered.length} of ${sortedPublications.length} publications`
+              : `${sortedPublications.length} publications`}
+          </span>
+          {filtering && (
             <button type="button" onClick={() => setParams({}, { replace: true })} className="cursor-pointer text-accent hover:underline">
               Clear filters
             </button>
-          </p>
-        )}
+          )}
+          {site.publications.showBibtex && filtered.length > 0 && (
+            <button type="button" onClick={() => downloadBibtex(filtered)} className="cursor-pointer text-accent hover:underline">
+              Download BibTeX{filtering ? ' for these' : ''}
+            </button>
+          )}
+        </div>
       </div>
 
       {filtered.length > 0 ? (

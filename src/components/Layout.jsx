@@ -4,8 +4,13 @@ import Footer from './Footer.jsx'
 import Header from './Header.jsx'
 
 export default function Layout() {
-  const { pathname } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
+  const { pathname, hash } = useLocation()
+
+  useEffect(() => {
+    const target = hash && document.getElementById(decodeURIComponent(hash.slice(1)))
+    if (target) target.scrollIntoView()
+    else window.scrollTo(0, 0)
+  }, [pathname, hash])
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -6,7 +6,7 @@ export default function NewsList({ items }) {
     <ul className="space-y-4">
       {items.map((item, i) => (
         <li key={i} className="grid gap-1 sm:grid-cols-[7rem_1fr] sm:gap-4">
-          <time dateTime={item.date} className="text-sm text-neutral-400 tabular-nums dark:text-neutral-500">
+          <time dateTime={item.date} className="text-sm text-neutral-500 tabular-nums dark:text-neutral-400">
             {formatDate(item.date)}
           </time>
           <p className="leading-relaxed">

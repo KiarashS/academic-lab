@@ -13,7 +13,7 @@ export default function PublicationList({ publications }) {
     <div className="space-y-10">
       {years.map(({ year, items }) => (
         <section key={year} className="grid gap-4 sm:grid-cols-[5rem_1fr]">
-          <h2 className="text-sm font-medium text-neutral-400 tabular-nums dark:text-neutral-500">{year}</h2>
+          <h2 className="text-sm font-medium text-neutral-500 tabular-nums dark:text-neutral-400">{year}</h2>
           <div className="space-y-7">
             {items.map((pub) => (
               <PublicationItem key={pub.id} pub={pub} showYear={false} />

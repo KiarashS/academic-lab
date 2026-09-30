@@ -1,3 +1,5 @@
+import site from '../config/site.js'
+
 // Resolve a path in public/ against the deploy base. Full URLs pass through.
 export function asset(path) {
   if (!path) return path
@@ -17,7 +19,7 @@ export function formatDate(iso, style = 'medium') {
     style === 'short'
       ? { year: 'numeric', month: 'short', timeZone: 'UTC' }
       : { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }
-  return date.toLocaleDateString('en-US', options)
+  return date.toLocaleDateString(site.locale || 'en-US', options)
 }
 
 export function initials(name) {

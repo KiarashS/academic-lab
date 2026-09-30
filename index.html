@@ -3,16 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Lab</title>
-    <script>
-      // Apply the saved color mode before first paint to avoid a flash.
-      try {
-        var mode = localStorage.getItem('color-mode')
-        var dark = mode === 'dark' || ((!mode || mode === 'system') && matchMedia('(prefers-color-scheme: dark)').matches)
-        if (dark) document.documentElement.classList.add('dark')
-      } catch (e) {}
-    </script>
+    <!-- Filled in from src/config/site.js by scripts/site-plugin.js -->
+    <!--site-head--><!--/site-head-->
   </head>
   <body>
     <div id="root"></div>

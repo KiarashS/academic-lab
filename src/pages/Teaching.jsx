@@ -11,7 +11,7 @@ export default function Teaching() {
       <ul className="space-y-10">
         {teaching.map((c) => (
           <li key={`${c.code}-${c.term}`} className="grid gap-1 sm:grid-cols-[7rem_1fr] sm:gap-4">
-            <div className="text-sm text-neutral-400 tabular-nums dark:text-neutral-500">{c.code}</div>
+            <div className="text-sm text-neutral-500 tabular-nums dark:text-neutral-400">{c.code}</div>
             <div>
               <h2 className="font-medium text-neutral-900 dark:text-neutral-100">
                 {c.url ? (

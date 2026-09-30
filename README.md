@@ -7,11 +7,11 @@ A minimal website for a research group, built with React, React Router, Vite and
 - Home: an image/video slider, tagline, intro, latest news, current projects and featured publications
 - Research: current and past projects, each with a detail page listing its people and papers
 - People: members grouped by role, an optional management team, alumni with where they went, and a profile page per person with their projects and publications
-- Publications: search, filters by type, year and tag (kept in the URL so a filtered view can be shared), abstracts, and BibTeX generated from each entry with a copy button
+- Publications: search, filters by type, year and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX generated from each entry with a copy button, and a download of the whole (or filtered) list as a `.bib` file. `/publications#<id>` links to a single paper and highlights it.
 - News, Teaching, Join (open positions) and Contact (address and a map)
 - 404 page
 
-Lab members' names are bolded and linked in every author list. The site has a light/dark/system theme toggle, a mobile menu, per-page titles, and a skip-to-content link.
+Lab members' names are bolded and linked in every author list. The site has a light/dark/system theme toggle, a mobile menu and a skip-to-content link. Each page is built as its own HTML file with its own title, description and social-preview tags, and the build writes `sitemap.xml` and `robots.txt`.
 
 ## Getting started
 
@@ -26,7 +26,8 @@ npm run preview  # serve dist/ locally
 
 | What | Where |
 | --- | --- |
-| Lab name, tagline, institution, logo | `src/config/site.js` |
+| Lab name, tagline, institution, logo, favicon | `src/config/site.js` |
+| Public URL (sitemap, canonical links), social-preview image, date locale | `site.url`, `site.ogImage`, `site.locale` |
 | Accent colors, font, default theme | `site.theme` |
 | Which pages exist and their order in the menu | `site.nav` (remove an entry to remove the page) |
 | Home page slider (on/off, autoplay, speed, shape) | `site.home.slider`; slides in `src/content/slides.js` |
@@ -58,7 +59,9 @@ Styling uses Tailwind utility classes directly in the components. The accent col
 
 The site builds to static files and works on any static host.
 
-URLs are plain paths such as `/people/alex-rivera`. The build also writes `404.html` as a copy of `index.html`, so hosts that serve `404.html` for unknown paths (GitHub Pages, Netlify, Cloudflare Pages) load the right page when someone opens a deep link or refreshes. On other hosts, configure a fallback to `index.html`, or set `router: 'hash'` in `site.js` to use `/#/people` URLs instead.
+URLs are plain paths such as `/people/alex-rivera`. The build writes an HTML file for every page (`people/alex-rivera.html`, `people.html` and so on), which GitHub Pages, Netlify and Cloudflare Pages serve at the extensionless URL with a 200 status. Any other URL gets `404.html`, which shows the site's "Page not found" view. On a host that doesn't resolve `.html` extensions, configure a fallback to `index.html`, or set `router: 'hash'` in `site.js` to use `/#/people` URLs instead.
+
+The head of each page (title, description, colors, default theme) is generated from `site.js` by `scripts/site-plugin.js`. Restart `npm run dev` after changing `site.js` to see head changes locally.
 
 If the site is served from a subpath, build with `BASE_PATH`, e.g. `BASE_PATH=/academic-lab/ npm run build`. The GitHub Pages workflow sets it for you.
 
@@ -66,4 +69,4 @@ If the site is served from a subpath, build with `BASE_PATH`, e.g. `BASE_PATH=/a
 
 `.github/workflows/deploy.yml` builds and publishes the site on every push to `main`. In the repository settings, set Pages > Source to "GitHub Actions".
 
-GitHub Pages returns deep links through `404.html` with an HTTP 404 status. Browsers show the page normally, but search engines may skip those URLs; a custom domain on a host with real rewrites (Netlify, Cloudflare Pages) avoids that.
+To use a custom domain, set it under Settings > Pages and put the same address in `site.url`.

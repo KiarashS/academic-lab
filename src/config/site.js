@@ -11,8 +11,17 @@ const site = {
     name: 'Department of Computer Science, Example University',
     url: 'https://example.edu',
   },
+  // Public address of the site, used for the sitemap, canonical links and social previews.
+  // Leave empty if you don't know it yet.
+  url: 'https://lab.kiarashs.ir',
   // Optional logo shown in the header. Path relative to public/, or a full URL.
   logo: null,
+  // Browser tab icon, relative to public/.
+  favicon: 'favicon.svg',
+  // Image shown when a page is shared on social media (about 1200x630), relative to public/.
+  ogImage: null,
+  // Language and locale for dates, e.g. 'en-US', 'en-GB', 'de-DE'.
+  locale: 'en-US',
 
   // Appearance
   theme: {

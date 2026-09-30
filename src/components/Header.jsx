@@ -17,16 +17,23 @@ export default function Header() {
 
   useEffect(() => setOpen(false), [pathname])
 
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open])
+
   return (
     <header className="border-b border-neutral-100 dark:border-neutral-900">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-6 px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2.5 font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+        <Link to="/" className="flex shrink-0 items-center gap-2.5 font-semibold tracking-tight whitespace-nowrap text-neutral-900 dark:text-neutral-50">
           {site.logo && <img src={asset(site.logo)} alt="" className="h-7 w-auto" />}
           <span className="hidden sm:inline">{site.name}</span>
           <span className="sm:hidden">{site.shortName || site.name}</span>
         </Link>
 
-        <nav aria-label="Main" className="hidden items-center gap-6 md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
           {site.nav.map((item) => (
             <NavLink key={item.page} to={`/${item.page}`} className={navClass}>
               {item.label}
@@ -35,7 +42,7 @@ export default function Header() {
           {site.theme.showModeToggle && <ModeToggle />}
         </nav>
 
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
           {site.theme.showModeToggle && <ModeToggle />}
           <button
             type="button"
@@ -53,7 +60,7 @@ export default function Header() {
       </div>
 
       {open && (
-        <nav id="mobile-nav" aria-label="Main" className="border-t border-neutral-100 px-4 py-3 md:hidden dark:border-neutral-900">
+        <nav id="mobile-nav" aria-label="Main" className="border-t border-neutral-100 px-4 py-3 lg:hidden dark:border-neutral-900">
           <ul className="space-y-1">
             {site.nav.map((item) => (
               <li key={item.page}>
