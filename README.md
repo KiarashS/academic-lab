@@ -7,7 +7,7 @@ A minimal website for a research group, built with React, React Router, Vite and
 - Home: an image/video slider, tagline, intro, latest news, current projects and featured publications
 - Research: current and past projects, each with a detail page listing its people and papers
 - People: members grouped by role, an optional management team, alumni with where they went, and a profile page per person with their projects and publications
-- Publications: search, filters by type, year and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX generated from each entry with a copy button, and a download of the whole (or filtered) list as a `.bib` file. `/publications#<id>` links to a single paper and highlights it.
+- Publications: search, filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX generated from each entry with a copy button, and a download of the whole (or filtered) list as a `.bib` file. `/publications#<id>` links to a single paper and highlights it.
 - News, Teaching, Join (open positions) and Contact (address and a map)
 - 404 page
 
@@ -24,20 +24,31 @@ npm run preview  # serve dist/ locally
 
 ## Customizing
 
-| What | Where |
-| --- | --- |
-| Lab name, tagline, institution, logo, favicon | `src/config/site.js` |
-| Public URL (sitemap, canonical links), social-preview image, date locale | `site.url`, `site.ogImage`, `site.locale` |
-| Accent colors, font, default theme | `site.theme` |
-| Which pages exist and their order in the menu | `site.nav` (remove an entry to remove the page) |
-| Home page slider (on/off, autoplay, speed, shape) | `site.home.slider`; slides in `src/content/slides.js` |
-| Home page sections and their order | `site.home.sections` |
-| People groups and their order | `site.people.groups` |
-| Management team (on/off, title, position) | `site.people.management` |
-| Contact page map | `site.contact.map` |
-| Publication type labels | `site.publications.types` |
-| Footer links | `site.social` |
-| Content | `src/content/*.js` |
+All settings are in `src/config/site.js`, and all content is in `src/content/*.js`. Settings you delete from `site.js` fall back to `src/config/defaults.js`, so removing one never breaks the build.
+
+Turning things on and off:
+
+- Pages: remove a page from `nav` to take it off the site. Add `menu: false` to keep the page but hide its menu link. Links to a removed page disappear elsewhere too (person and project cards stop linking, "All news" links are dropped).
+- Sections: each page has a `sections` list that sets which sections appear and in what order. Delete an entry to hide it; reorder entries to move it.
+
+| Page | Settings | Sections |
+| --- | --- | --- |
+| Header | `header` (logo, name, theme toggle) | |
+| Home | `home` (slider timing, intro text and image, section titles, how many items, "All …" link text) | `slider`, `intro`, `news`, `research`, `publications` |
+| Research | `research` (title, intro, headings, tags on or off) | `current`, `past` |
+| Project page | `research.project` | `description`, `funding`, `links`, `people`, `publications` |
+| People | `people` (groups, management team, alumni heading, photos, author highlighting) | `members`, `alumni` |
+| Person page | `people.profile` | `links`, `bio`, `interests`, `education`, `projects`, `publications` |
+| Publications | `publications` (Scholar link, type labels, year grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
+| News | `news` (title, intro, group by year) | |
+| Teaching | `teaching` (title, intro, instructor and description on or off) | |
+| Join | `join` (title, headings, show closed positions) | `intro`, `positions`, `apply` |
+| Contact | `contact` (details, map) | `email`, `phone`, `address`, `directions`, `map` |
+| Footer | `footer` (on or off, text, links) | `copyright`, `institution`, `social` |
+
+Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap and canonical links), `ogImage` (social previews), `favicon`, `locale` (date format) and `theme` (accent colors, font, default light/dark mode).
+
+The publications author filter lists lab members by default; set `publications.authorFilter: 'all'` to include co-authors from outside the lab. `/publications?author=<person id>` links straight to one person's papers, and each profile page links there.
 
 Each content file starts with a comment listing the fields it accepts. Some things to know:
 

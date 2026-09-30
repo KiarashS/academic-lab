@@ -5,11 +5,26 @@ import { personLinks } from '../components/personLinks.js'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationList from '../components/PublicationList.jsx'
 import Section from '../components/Section.jsx'
-import site from '../config/site.js'
+import site, { pageEnabled } from '../config/index.js'
 import { personById, projectsByPerson, publicationsByPerson } from '../lib/data.js'
 import { paragraphs } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
+
+function ListBlock({ title, items }) {
+  return (
+    <div>
+      <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+        {title}
+      </h2>
+      <ul className="space-y-1">
+        {items.map((x) => (
+          <li key={x}>{x}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 export default function PersonDetail() {
   const { id } = useParams()
@@ -17,74 +32,92 @@ export default function PersonDetail() {
   useTitle(person?.name)
   if (!person) return <NotFound />
 
+  const config = site.people.profile
+  const show = (name) => config.sections.includes(name)
   const pubs = publicationsByPerson(person.id)
   const projects = projectsByPerson(person.id)
+  const management = site.people.management
 
-  return (
-    <>
-      <Link to="/people" className="text-sm text-neutral-500 hover:text-accent">
-        &larr; People
-      </Link>
-
-      <header className="mt-6 flex flex-col gap-8 sm:flex-row sm:items-start">
-        <Avatar person={person} size="lg" />
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{person.name}</h1>
-          {person.role && <p className="mt-1 text-neutral-500 dark:text-neutral-400">{person.role}</p>}
-          {person.management && person.management !== person.role && site.people.management?.show && (
-            <p className="mt-1 text-neutral-500 dark:text-neutral-400">
-              {person.management}, {(site.people.management.title || 'Management team').toLowerCase()}
-            </p>
-          )}
-          {person.now && <p className="mt-1 text-neutral-500 dark:text-neutral-400">Now: {person.now}</p>}
-          <LinkList links={personLinks(person)} className="mt-4" />
-          <div className="mt-6 max-w-2xl space-y-4 leading-relaxed">
-            {paragraphs(person.bio).map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
-        </div>
-      </header>
-
-      {(person.interests?.length > 0 || person.education?.length > 0) && (
-        <div className="mt-12 grid gap-10 sm:grid-cols-2">
-          {person.interests?.length > 0 && (
-            <div>
-              <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase">Interests</h2>
-              <ul className="space-y-1">
-                {person.interests.map((x) => (
-                  <li key={x}>{x}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {person.education?.length > 0 && (
-            <div>
-              <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase">Education</h2>
-              <ul className="space-y-1">
-                {person.education.map((x) => (
-                  <li key={x}>{x}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
-      {projects.length > 0 && (
-        <Section title="Projects">
+  // Sections below the header, in configured order. Interests and education share a row
+  // when they are next to each other.
+  const lower = config.sections.filter((s) => ['interests', 'education', 'projects', 'publications'].includes(s))
+  const SECTIONS = {
+    interests: () =>
+      person.interests?.length > 0 && (
+        <ListBlock key="interests" title={config.interestsTitle} items={person.interests} />
+      ),
+    education: () =>
+      person.education?.length > 0 && (
+        <ListBlock key="education" title={config.educationTitle} items={person.education} />
+      ),
+    projects: () =>
+      projects.length > 0 && (
+        <Section key="projects" title={config.projectsTitle}>
           <div className="grid gap-10 sm:grid-cols-2">
             {projects.map((p) => (
               <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         </Section>
-      )}
-
-      {pubs.length > 0 && (
-        <Section title="Publications">
+      ),
+    publications: () =>
+      pubs.length > 0 && (
+        <Section
+          key="publications"
+          title={config.publicationsTitle}
+          more={pageEnabled('publications') && { to: `/publications?author=${person.id}`, label: 'Search and filter' }}
+        >
           <PublicationList publications={pubs} />
         </Section>
+      ),
+  }
+
+  // Group adjacent interests/education into one two-column row.
+  const blocks = []
+  for (const key of lower) {
+    const el = SECTIONS[key]()
+    if (!el) continue
+    const last = blocks[blocks.length - 1]
+    if ((key === 'interests' || key === 'education') && last?.row) last.items.push(el)
+    else blocks.push(key === 'interests' || key === 'education' ? { row: true, items: [el] } : { el })
+  }
+
+  return (
+    <>
+      <Link to="/people" className="text-sm text-neutral-500 hover:text-accent dark:text-neutral-400">
+        &larr; {site.people.title}
+      </Link>
+
+      <header className="mt-6 flex flex-col gap-8 sm:flex-row sm:items-start">
+        {site.people.showPhotos && <Avatar person={person} size="lg" />}
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{person.name}</h1>
+          {person.role && <p className="mt-1 text-neutral-500 dark:text-neutral-400">{person.role}</p>}
+          {person.management && person.management !== person.role && management.show && (
+            <p className="mt-1 text-neutral-500 dark:text-neutral-400">
+              {person.management}, {management.title.toLowerCase()}
+            </p>
+          )}
+          {person.now && <p className="mt-1 text-neutral-500 dark:text-neutral-400">Now: {person.now}</p>}
+          {show('links') && <LinkList links={personLinks(person)} className="mt-4" />}
+          {show('bio') && (
+            <div className="mt-6 max-w-2xl space-y-4 leading-relaxed">
+              {paragraphs(person.bio).map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {blocks.map((b, i) =>
+        b.row ? (
+          <div key={i} className="mt-12 grid gap-10 sm:grid-cols-2">
+            {b.items}
+          </div>
+        ) : (
+          b.el
+        ),
       )}
     </>
   )

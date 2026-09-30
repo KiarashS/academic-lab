@@ -1,4 +1,4 @@
-import site from '../config/site.js'
+import site from '../config/index.js'
 
 // Resolve a path in public/ against the deploy base. Full URLs pass through.
 export function asset(path) {

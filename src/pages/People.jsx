@@ -1,7 +1,7 @@
 import PageHeader from '../components/PageHeader.jsx'
 import PersonCard from '../components/PersonCard.jsx'
 import Section from '../components/Section.jsx'
-import site from '../config/site.js'
+import site from '../config/index.js'
 import { alumni, currentMembers } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
@@ -15,40 +15,49 @@ function PeopleGrid({ people, management = false }) {
   )
 }
 
-export default function People() {
-  useTitle('People')
-  const { groups, showAlumni, management } = site.people
-
+// Current members grouped as configured, with the management team slotted in.
+function memberGroups() {
+  const { groups, management } = site.people
   // Anyone with a group that isn't listed in the config still shows up, under "Other".
   const known = new Set(groups)
-  const others = currentMembers.filter((p) => p.group && !known.has(p.group))
-  const sections = [
+  const list = [
     ...groups.map((g) => ({ title: g, people: currentMembers.filter((p) => p.group === g) })),
-    { title: 'Other', people: others },
+    { title: 'Other', people: currentMembers.filter((p) => p.group && !known.has(p.group)) },
   ]
-
-  if (management?.show) {
+  if (management.show) {
     const team = currentMembers.filter((p) => p.management)
-    const index = management.after ? sections.findIndex((s) => s.title === management.after) + 1 : 0
-    sections.splice(index, 0, { title: management.title || 'Management team', people: team, management: true })
+    const index = management.after ? list.findIndex((s) => s.title === management.after) + 1 : 0
+    list.splice(index, 0, { title: management.title, people: team, management: true })
+  }
+  return list
+}
+
+export default function People() {
+  const config = site.people
+  useTitle(config.title)
+
+  const SECTIONS = {
+    members: () =>
+      memberGroups().map(
+        (g) =>
+          g.people.length > 0 && (
+            <Section key={g.title} title={g.title}>
+              <PeopleGrid people={g.people} management={g.management} />
+            </Section>
+          ),
+      ),
+    alumni: () =>
+      alumni.length > 0 && (
+        <Section key="alumni" title={config.alumniTitle}>
+          <PeopleGrid people={alumni} />
+        </Section>
+      ),
   }
 
   return (
     <>
-      <PageHeader title="People" />
-      {sections.map(
-        (s) =>
-          s.people.length > 0 && (
-            <Section key={s.title} title={s.title}>
-              <PeopleGrid people={s.people} management={s.management} />
-            </Section>
-          ),
-      )}
-      {showAlumni && alumni.length > 0 && (
-        <Section title="Alumni">
-          <PeopleGrid people={alumni} />
-        </Section>
-      )}
+      <PageHeader title={config.title} intro={config.intro} />
+      {config.sections.map((key) => SECTIONS[key]?.())}
     </>
   )
 }

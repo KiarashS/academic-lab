@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
-import site from './config/site.js'
+import site from './config/index.js'
 import Contact from './pages/Contact.jsx'
 import Home from './pages/Home.jsx'
 import Join from './pages/Join.jsx'

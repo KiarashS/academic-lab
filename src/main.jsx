@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, HashRouter } from 'react-router'
 import App from './App.jsx'
-import site from './config/site.js'
+import site from './config/index.js'
 import './index.css'
 
 // Colors, fonts, the page title and meta tags are written into index.html at build time

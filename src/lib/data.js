@@ -20,16 +20,17 @@ export const projectById = Object.fromEntries(research.map((r) => [r.id, r]))
 const nameToId = new Map()
 for (const person of people) {
   for (const name of [person.name, ...(person.aliases || [])]) {
-    nameToId.set(normalize(name), person.id)
+    nameToId.set(normalizeName(name), person.id)
   }
 }
 
-function normalize(name) {
+// Compare names ignoring accents, periods and case: 'K. Müller' matches 'K Muller'.
+export function normalizeName(name) {
   return name.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/\./g, '').trim().toLowerCase()
 }
 
 export function memberIdForAuthor(author) {
-  return nameToId.get(normalize(author)) || null
+  return nameToId.get(normalizeName(author)) || null
 }
 
 export function publicationsByPerson(personId) {

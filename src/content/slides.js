@@ -1,4 +1,5 @@
-// Slides for the slider at the top of the home page (turn it off in site.home.slider).
+// Slides for the slider at the top of the home page. Turn it off by removing 'slider'
+// from home.sections in src/config/site.js; slider settings are in home.slider.
 // Files go in public/ (e.g. public/slides/group-photo.jpg -> 'slides/group-photo.jpg'). Full URLs also work.
 //
 // Slide types:

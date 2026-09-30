@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { Link } from 'react-router'
-import site from '../config/site.js'
+import site, { pageEnabled } from '../config/index.js'
 import { memberIdForAuthor } from '../lib/data.js'
 
 export default function Authors({ authors }) {
@@ -12,7 +12,9 @@ export default function Authors({ authors }) {
         return (
           <Fragment key={i}>
             {sep}
-            {id ? (
+            {id && !pageEnabled('people') ? (
+              <span className="font-medium text-neutral-800 dark:text-neutral-200">{author}</span>
+            ) : id ? (
               <Link to={`/people/${id}`} className="font-medium text-neutral-800 hover:text-accent dark:text-neutral-200">
                 {author}
               </Link>

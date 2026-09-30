@@ -3,7 +3,7 @@
 // description (and a 200 status on GitHub Pages instead of a 404.html fallback).
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import site from '../src/config/site.js'
+import site from '../src/config/index.js'
 import people from '../src/content/people.js'
 import research from '../src/content/research.js'
 
@@ -59,7 +59,7 @@ function pages() {
   const enabled = new Set(site.nav.map((item) => item.page))
   const list = [{ path: '/', description: site.description }]
   for (const item of site.nav) {
-    list.push({ path: `/${item.page}`, title: item.label, description: site.description })
+    list.push({ path: `/${item.page}`, title: site[item.page]?.title || item.label, description: site.description })
   }
   if (enabled.has('people')) {
     for (const p of people) {

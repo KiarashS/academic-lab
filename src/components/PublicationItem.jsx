@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import site from '../config/site.js'
+import site from '../config/index.js'
 import { toBibtex } from '../lib/bibtex.js'
 import Authors from './Authors.jsx'
 
@@ -61,7 +61,7 @@ export default function PublicationItem({ pub, showYear = true }) {
             {LINK_LABELS[key] || key}
           </a>
         ))}
-        {pub.abstract && (
+        {pub.abstract && site.publications.showAbstract && (
           <button type="button" className={buttonClass} aria-expanded={open === 'abstract'} onClick={() => toggle('abstract')}>
             Abstract
           </button>

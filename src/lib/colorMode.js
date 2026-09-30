@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import site from '../config/site.js'
+import site from '../config/index.js'
 
 const KEY = 'color-mode'
 const MODES = ['system', 'light', 'dark']

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import site from '../config/site.js'
+import site from '../config/index.js'
 
 export default function useTitle(title) {
   useEffect(() => {

@@ -1,6 +1,6 @@
 import PageHeader from '../components/PageHeader.jsx'
 import SmartLink from '../components/SmartLink.jsx'
-import site from '../config/site.js'
+import site from '../config/index.js'
 import useTitle from '../lib/useTitle.js'
 
 // Map embeds centered on a point, with a pin. Neither needs an API key.
@@ -39,53 +39,62 @@ function ContactMap({ map }) {
   )
 }
 
+function Field({ label, children }) {
+  return (
+    <div>
+      <dt className="text-sm text-neutral-500 dark:text-neutral-400">{label}</dt>
+      <dd className="mt-1">{children}</dd>
+    </div>
+  )
+}
+
 export default function Contact() {
-  useTitle('Contact')
-  const { email, phone, address, map, directions } = site.contact
+  const config = site.contact
+  useTitle(config.title)
+  const { email, phone, address, directions, map } = config
+
+  const FIELDS = {
+    email: () =>
+      email && (
+        <Field key="email" label="Email">
+          <SmartLink to={`mailto:${email}`}>{email}</SmartLink>
+        </Field>
+      ),
+    phone: () =>
+      phone && (
+        <Field key="phone" label="Phone">
+          <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} className="hover:text-accent">
+            {phone}
+          </a>
+        </Field>
+      ),
+    address: () =>
+      address?.length > 0 && (
+        <Field key="address" label="Address">
+          <address className="not-italic">
+            {address.map((line) => (
+              <div key={line}>{line}</div>
+            ))}
+          </address>
+        </Field>
+      ),
+    directions: () =>
+      directions && (
+        <Field key="directions" label="Getting here">
+          <span className="leading-relaxed text-neutral-600 dark:text-neutral-400">{directions}</span>
+        </Field>
+      ),
+  }
+
+  const fields = config.sections.map((key) => FIELDS[key]?.()).filter(Boolean)
+  const showMap = config.sections.includes('map') && map
 
   return (
     <>
-      <PageHeader title="Contact" />
-      <div className="grid gap-12 md:grid-cols-2">
-        <dl className="space-y-6">
-          {email && (
-            <div>
-              <dt className="text-sm text-neutral-500">Email</dt>
-              <dd className="mt-1">
-                <SmartLink to={`mailto:${email}`}>{email}</SmartLink>
-              </dd>
-            </div>
-          )}
-          {phone && (
-            <div>
-              <dt className="text-sm text-neutral-500">Phone</dt>
-              <dd className="mt-1">
-                <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} className="hover:text-accent">
-                  {phone}
-                </a>
-              </dd>
-            </div>
-          )}
-          {address?.length > 0 && (
-            <div>
-              <dt className="text-sm text-neutral-500">Address</dt>
-              <dd className="mt-1">
-                <address className="not-italic">
-                  {address.map((line) => (
-                    <div key={line}>{line}</div>
-                  ))}
-                </address>
-              </dd>
-            </div>
-          )}
-          {directions && (
-            <div>
-              <dt className="text-sm text-neutral-500">Getting here</dt>
-              <dd className="mt-1 leading-relaxed text-neutral-600 dark:text-neutral-400">{directions}</dd>
-            </div>
-          )}
-        </dl>
-        {map && <ContactMap map={map} />}
+      <PageHeader title={config.title} intro={config.intro} />
+      <div className={`grid gap-12 ${fields.length && showMap ? 'md:grid-cols-2' : ''}`}>
+        {fields.length > 0 && <dl className="space-y-6">{fields}</dl>}
+        {showMap && <ContactMap map={map} />}
       </div>
     </>
   )
