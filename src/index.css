@@ -31,7 +31,10 @@ body {
   @apply text-accent underline decoration-accent/30 underline-offset-2 hover:decoration-accent;
 }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+/* Keyboard focus ring. In the base layer so `outline-none` on an element can turn it off. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
