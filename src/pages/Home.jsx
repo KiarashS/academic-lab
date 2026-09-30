@@ -1,9 +1,11 @@
 import site from '../config/site.js'
 import research from '../content/research.js'
+import slides from '../content/slides.js'
 import NewsList from '../components/NewsList.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationItem from '../components/PublicationItem.jsx'
 import Section from '../components/Section.jsx'
+import Slider from '../components/Slider.jsx'
 import { sortedNews, sortedPublications } from '../lib/data.js'
 import { asset } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
@@ -54,9 +56,20 @@ const SECTIONS = {
 export default function Home() {
   useTitle()
   const { home } = site
+  const slider = home.slider
 
   return (
     <>
+      {slider?.show && slides.length > 0 && (
+        <div className="-mt-4 mb-14 sm:-mt-8">
+          <Slider
+            slides={slides}
+            autoplay={slider.autoplay}
+            interval={slider.interval}
+            aspectRatio={slider.aspectRatio}
+          />
+        </div>
+      )}
       <section className="mb-20">
         <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-50">
           {site.tagline}

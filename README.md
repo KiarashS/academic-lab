@@ -4,11 +4,11 @@ A minimal website for a research group, built with React, React Router, Vite and
 
 ## Pages
 
-- Home: tagline, intro, latest news, current projects and featured publications
+- Home: an image/video slider, tagline, intro, latest news, current projects and featured publications
 - Research: current and past projects, each with a detail page listing its people and papers
-- People: members grouped by role, alumni with where they went, and a profile page per person with their projects and publications
+- People: members grouped by role, an optional management team, alumni with where they went, and a profile page per person with their projects and publications
 - Publications: search, filters by type, year and tag (kept in the URL so a filtered view can be shared), abstracts, and BibTeX generated from each entry with a copy button
-- News, Teaching, Join (open positions) and Contact (address, optional map)
+- News, Teaching, Join (open positions) and Contact (address and a map)
 - 404 page
 
 Lab members' names are bolded and linked in every author list. The site has a light/dark/system theme toggle, a mobile menu, per-page titles, and a skip-to-content link.
@@ -29,8 +29,11 @@ npm run preview  # serve dist/ locally
 | Lab name, tagline, institution, logo | `src/config/site.js` |
 | Accent colors, font, default theme | `site.theme` |
 | Which pages exist and their order in the menu | `site.nav` (remove an entry to remove the page) |
+| Home page slider (on/off, autoplay, speed, shape) | `site.home.slider`; slides in `src/content/slides.js` |
 | Home page sections and their order | `site.home.sections` |
 | People groups and their order | `site.people.groups` |
+| Management team (on/off, title, position) | `site.people.management` |
+| Contact page map | `site.contact.map` |
 | Publication type labels | `site.publications.types` |
 | Footer links | `site.social` |
 | Content | `src/content/*.js` |
@@ -43,6 +46,9 @@ Each content file starts with a comment listing the fields it accepts. Some thin
 - Set `featured: true` on a publication to show it on the home page.
 - Set `bibtex` on a publication to replace the generated entry.
 - Mark a person `alumni: true` and add `now` to move them to the Alumni section.
+- Give a person a `management` title (e.g. `'Lab Manager'`) to list them in the management team. People who are only on the management team can leave out `group`.
+- Slides can be images, video files (mp4/webm, played muted) or YouTube/Vimeo embeds. Images advance on a timer, videos when they finish. The slider pauses on hover and has a pause button, and it doesn't autoplay for visitors who have reduced motion turned on.
+- For the map, give the building's `lat` and `lng`; the page embeds Google Maps or OpenStreetMap with a pin, no API key needed. Or paste any embed URL into `embedUrl`.
 
 To add a new page, create a component in `src/pages/`, register it in the `PAGES` map in `src/App.jsx`, and add it to `site.nav`.
 
@@ -52,8 +58,12 @@ Styling uses Tailwind utility classes directly in the components. The accent col
 
 The site builds to static files and works on any static host.
 
-By default it uses hash URLs (`/#/people`), which need no server configuration. For clean URLs, set `router: 'browser'` in `site.js`, build with `BASE_PATH` set to the path the site is served from (e.g. `BASE_PATH=/ npm run build`), and configure the host to serve `index.html` for unknown paths.
+URLs are plain paths such as `/people/alex-rivera`. The build also writes `404.html` as a copy of `index.html`, so hosts that serve `404.html` for unknown paths (GitHub Pages, Netlify, Cloudflare Pages) load the right page when someone opens a deep link or refreshes. On other hosts, configure a fallback to `index.html`, or set `router: 'hash'` in `site.js` to use `/#/people` URLs instead.
+
+If the site is served from a subpath, build with `BASE_PATH`, e.g. `BASE_PATH=/academic-lab/ npm run build`. The GitHub Pages workflow sets it for you.
 
 ### GitHub Pages
 
 `.github/workflows/deploy.yml` builds and publishes the site on every push to `main`. In the repository settings, set Pages > Source to "GitHub Actions".
+
+GitHub Pages returns deep links through `404.html` with an HTTP 404 status. Browsers show the page normally, but search engines may skip those URLs; a custom domain on a host with real rewrites (Netlify, Cloudflare Pages) avoids that.

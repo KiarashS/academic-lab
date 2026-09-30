@@ -15,10 +15,8 @@ description.name = 'description'
 description.content = site.description
 document.head.append(description)
 
-const Router = site.router === 'browser' ? BrowserRouter : HashRouter
-// A relative base ('./') has no meaning to the router, so treat it as the site root.
-const base = import.meta.env.BASE_URL
-const basename = site.router === 'browser' && base.startsWith('/') ? base.replace(/\/$/, '') || '/' : undefined
+const Router = site.router === 'hash' ? HashRouter : BrowserRouter
+const basename = site.router === 'hash' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

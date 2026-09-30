@@ -4,7 +4,10 @@
 //   role, photo (path in public/ or URL), email, website, scholar, github, orcid,
 //   twitter, linkedin, bluesky, bio (string or array of paragraphs), interests [],
 //   education [], aliases [] (other spellings used in author lists, e.g. 'A. Rivera'),
+//   management: 'Title on the management team' (see site.people.management),
 //   alumni: true + now: 'Where they went'
+//
+// `group` can be left out for people who only belong to the management team.
 
 const people = [
   {
@@ -12,6 +15,7 @@ const people = [
     name: 'Alex Rivera',
     role: 'Associate Professor',
     group: 'Principal Investigator',
+    management: 'Director',
     photo: null,
     email: 'arivera@example.edu',
     website: 'https://example.edu/~arivera',
@@ -71,6 +75,21 @@ const people = [
     name: 'Lucas Weber',
     role: 'Undergraduate Researcher',
     group: 'Undergraduate Researchers',
+  },
+  {
+    id: 'dana-brooks',
+    name: 'Dana Brooks',
+    role: 'Lab Manager',
+    management: 'Lab Manager',
+    email: 'dbrooks@example.edu',
+    bio: 'Dana manages the lab\'s budget, purchasing, compute resources and onboarding.',
+  },
+  {
+    id: 'ruth-abebe',
+    name: 'Ruth Abebe',
+    role: 'Program Coordinator',
+    management: 'Program Coordinator',
+    bio: 'Ruth coordinates the lab\'s industry partnerships and events.',
   },
   {
     id: 'hana-sato',

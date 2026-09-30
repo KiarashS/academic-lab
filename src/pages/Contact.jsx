@@ -3,9 +3,45 @@ import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/site.js'
 import useTitle from '../lib/useTitle.js'
 
+// Map embeds centered on a point, with a pin. Neither needs an API key.
+function pointEmbedUrl({ lat, lng, zoom = 16, provider }) {
+  if (provider === 'openstreetmap') {
+    // OpenStreetMap takes a bounding box, sized here from the zoom level.
+    const span = 360 / 2 ** zoom
+    const bbox = [lng - span, lat - span / 2, lng + span, lat + span / 2].join(',')
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`
+  }
+  return `https://maps.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`
+}
+
+function ContactMap({ map }) {
+  const hasPoint = Number.isFinite(map.lat) && Number.isFinite(map.lng)
+  const src = map.embedUrl || (hasPoint ? pointEmbedUrl(map) : null)
+  if (!src) return null
+  const query = hasPoint ? `${map.lat},${map.lng}` : null
+
+  return (
+    <figure>
+      <iframe
+        title="Map"
+        src={src}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        className="aspect-[4/3] w-full rounded-md border border-neutral-200 dark:border-neutral-800"
+      />
+      {map.showLinks !== false && query && (
+        <figcaption className="mt-2 flex gap-4 text-sm">
+          <SmartLink to={`https://www.google.com/maps/search/?api=1&query=${query}`}>Open in Google Maps</SmartLink>
+          <SmartLink to={`https://www.google.com/maps/dir/?api=1&destination=${query}`}>Directions</SmartLink>
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
 export default function Contact() {
   useTitle('Contact')
-  const { email, phone, address, mapEmbedUrl, directions } = site.contact
+  const { email, phone, address, map, directions } = site.contact
 
   return (
     <>
@@ -49,14 +85,7 @@ export default function Contact() {
             </div>
           )}
         </dl>
-        {mapEmbedUrl && (
-          <iframe
-            title="Map"
-            src={mapEmbedUrl}
-            loading="lazy"
-            className="aspect-square w-full rounded-md border-0 grayscale dark:invert-[.9]"
-          />
-        )}
+        {map && <ContactMap map={map} />}
       </div>
     </>
   )

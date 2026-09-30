@@ -5,40 +5,48 @@ import site from '../config/site.js'
 import { alumni, currentMembers } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
+function PeopleGrid({ people, management = false }) {
+  return (
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {people.map((p) => (
+        <PersonCard key={p.id} person={p} role={management ? p.management : p.role} />
+      ))}
+    </div>
+  )
+}
+
 export default function People() {
   useTitle('People')
-  const { groups, showAlumni } = site.people
+  const { groups, showAlumni, management } = site.people
 
-  // Anyone whose group isn't listed in the config still shows up, under "Other".
+  // Anyone with a group that isn't listed in the config still shows up, under "Other".
   const known = new Set(groups)
-  const others = currentMembers.filter((p) => !known.has(p.group))
+  const others = currentMembers.filter((p) => p.group && !known.has(p.group))
   const sections = [
-    ...groups.map((g) => [g, currentMembers.filter((p) => p.group === g)]),
-    ['Other', others],
+    ...groups.map((g) => ({ title: g, people: currentMembers.filter((p) => p.group === g) })),
+    { title: 'Other', people: others },
   ]
+
+  if (management?.show) {
+    const team = currentMembers.filter((p) => p.management)
+    const index = management.after ? sections.findIndex((s) => s.title === management.after) + 1 : 0
+    sections.splice(index, 0, { title: management.title || 'Management team', people: team, management: true })
+  }
 
   return (
     <>
       <PageHeader title="People" />
       {sections.map(
-        ([title, members]) =>
-          members.length > 0 && (
-            <Section key={title} title={title}>
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                {members.map((p) => (
-                  <PersonCard key={p.id} person={p} />
-                ))}
-              </div>
+        (s) =>
+          s.people.length > 0 && (
+            <Section key={s.title} title={s.title}>
+              <PeopleGrid people={s.people} management={s.management} />
             </Section>
           ),
       )}
       {showAlumni && alumni.length > 0 && (
         <Section title="Alumni">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {alumni.map((p) => (
-              <PersonCard key={p.id} person={p} />
-            ))}
-          </div>
+          <PeopleGrid people={alumni} />
         </Section>
       )}
     </>

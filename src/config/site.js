@@ -27,9 +27,10 @@ const site = {
     font: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
 
-  // 'hash' works on any static host (GitHub Pages included) with no server config.
-  // 'browser' gives clean URLs but needs the server to fall back to index.html.
-  router: 'hash',
+  // 'browser' gives clean URLs (/people/alex-rivera). The build writes a 404.html copy of
+  // index.html so static hosts like GitHub Pages can serve every route.
+  // 'hash' gives /#/people/alex-rivera URLs and works on hosts with no fallback at all.
+  router: 'browser',
 
   // Header navigation. Order here is the order in the menu.
   // Remove an entry to disable that page entirely (its route goes away too).
@@ -45,6 +46,13 @@ const site = {
   ],
 
   home: {
+    // Image/video slider at the top of the home page. Slides are in src/content/slides.js.
+    slider: {
+      show: true,
+      autoplay: true,
+      interval: 6000, // ms each image stays up; videos play to the end
+      aspectRatio: '21 / 9', // any CSS aspect-ratio; phones use 4 / 3
+    },
     // Paragraphs shown under the tagline.
     intro: [
       'We develop methods that let learning systems generalize from a handful of examples, and we apply them to problems in biology, medicine and the physical sciences.',
@@ -68,6 +76,14 @@ const site = {
       'Undergraduate Researchers',
       'Staff',
     ],
+    // Optional management team. Anyone with a `management` field in src/content/people.js
+    // is listed here with that title. Set show to false to hide the section.
+    management: {
+      show: true,
+      title: 'Management team',
+      // Group the section appears after. null puts it at the top of the page.
+      after: 'Principal Investigator',
+    },
     showAlumni: true,
     // Bold lab members' names in author lists across the site.
     highlightInAuthorLists: true,
@@ -93,8 +109,20 @@ const site = {
     email: 'lab@example.edu',
     phone: '+1 (555) 010-0000',
     address: ['Room 404, Example Hall', '123 University Ave', 'Example City, ST 00000'],
-    // Optional map embed URL (e.g. from Google Maps "Share > Embed a map" or OpenStreetMap).
-    mapEmbedUrl: null,
+    // Map on the contact page. Set to null to hide it. Two ways to set it up:
+    //   1. Coordinates: a map with a pin, from Google Maps or OpenStreetMap. No API key needed.
+    //      Find them by right-clicking the building in Google Maps or OpenStreetMap.
+    //   2. embedUrl: any embeddable map, e.g. the src="..." from Google Maps
+    //      "Share > Embed a map". If set, it is used instead of the coordinates.
+    map: {
+      lat: 42.3601,
+      lng: -71.0942,
+      zoom: 16, // higher is closer; 15-17 suits a single building
+      provider: 'google', // 'google' | 'openstreetmap'
+      embedUrl: null,
+      // Shown under the map as "Open in Google Maps" / "Directions". Set to false to hide.
+      showLinks: true,
+    },
     directions:
       'The lab is on the fourth floor of Example Hall. Visitors can park in Lot C and check in at the front desk.',
   },
