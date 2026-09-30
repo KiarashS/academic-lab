@@ -1,0 +1,90 @@
+// Publications. Order does not matter; the list is sorted by year (newest first).
+//
+// Fields:
+//   id (unique, also used as the BibTeX key), title, authors [], venue, year, type
+//   (a key of site.publications.types), month (1-12, for sorting), volume, pages, publisher,
+//   featured (show on the home page), award, tags [], projects [research ids],
+//   abstract, bibtex (overrides the generated entry),
+//   links: { pdf, doi, arxiv, code, project, slides, video, poster, data } (any subset)
+
+const publications = [
+  {
+    id: 'nair2026metaprot',
+    title: 'Meta-learning protein fitness landscapes from few measurements',
+    authors: ['Priya Nair', 'Sam Chen', 'Alex Rivera'],
+    venue: 'International Conference on Machine Learning (ICML)',
+    year: 2026,
+    month: 7,
+    type: 'conference',
+    featured: true,
+    award: 'Oral presentation',
+    tags: ['meta-learning', 'biology'],
+    projects: ['few-shot-science'],
+    abstract:
+      'We present a meta-learning approach that predicts protein fitness from as few as 20 labeled variants by transferring structure across related assays.',
+    links: { pdf: 'https://arxiv.org/', code: 'https://github.com/', arxiv: 'https://arxiv.org/' },
+  },
+  {
+    id: 'chen2026calib',
+    title: 'Calibration without a validation set',
+    authors: ['Sam Chen', 'Alex Rivera'],
+    venue: 'arXiv preprint',
+    year: 2026,
+    month: 3,
+    type: 'preprint',
+    tags: ['uncertainty'],
+    projects: ['calibrated-uncertainty'],
+    links: { arxiv: 'https://arxiv.org/' },
+  },
+  {
+    id: 'lee2025augment',
+    title: 'Physics-aware augmentation for scientific time series',
+    authors: ['Jordan Lee', 'Priya Nair', 'Alex Rivera'],
+    venue: 'NeurIPS Workshop on AI for Science',
+    year: 2025,
+    month: 12,
+    type: 'workshop',
+    tags: ['augmentation'],
+    projects: ['few-shot-science'],
+    links: { pdf: 'https://example.com', poster: 'https://example.com' },
+  },
+  {
+    id: 'okafor2025bench',
+    title: 'SmallMed: a benchmark for low-resource medical image classification',
+    authors: ['Mia Okafor', 'Omar Haddad', 'R. Gupta', 'Alex Rivera'],
+    venue: 'Journal of Machine Learning Research',
+    volume: '26',
+    pages: '1-34',
+    year: 2025,
+    type: 'journal',
+    featured: true,
+    tags: ['benchmarks', 'medicine'],
+    projects: ['medical-benchmarks'],
+    links: { pdf: 'https://example.com', data: 'https://example.com', doi: 'https://doi.org/' },
+  },
+  {
+    id: 'sato2024thesis',
+    title: 'Learning from few examples in the natural sciences',
+    authors: ['Hana Sato'],
+    venue: 'PhD thesis, Example University',
+    year: 2024,
+    type: 'thesis',
+    links: { pdf: 'https://example.com' },
+  },
+  {
+    id: 'rivera2023prior',
+    title: 'Hierarchical priors for transfer across experiments',
+    authors: ['Alex Rivera', 'Hana Sato', 'K. Müller'],
+    venue: 'Nature Machine Intelligence',
+    volume: '5',
+    pages: '101-112',
+    year: 2023,
+    type: 'journal',
+    featured: true,
+    tags: ['bayesian', 'meta-learning'],
+    projects: ['few-shot-science', 'calibrated-uncertainty'],
+    links: { doi: 'https://doi.org/', code: 'https://github.com/' },
+  },
+]
+
+export default publications

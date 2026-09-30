@@ -1,0 +1,45 @@
+// Derived views over the content files, shared by several pages.
+import people from '../content/people.js'
+import publications from '../content/publications.js'
+import research from '../content/research.js'
+import news from '../content/news.js'
+
+export const sortedPublications = [...publications].sort(
+  (a, b) => b.year - a.year || (b.month || 0) - (a.month || 0) || a.title.localeCompare(b.title),
+)
+
+export const sortedNews = [...news].sort((a, b) => b.date.localeCompare(a.date))
+
+export const currentMembers = people.filter((p) => !p.alumni)
+export const alumni = people.filter((p) => p.alumni)
+
+export const personById = Object.fromEntries(people.map((p) => [p.id, p]))
+export const projectById = Object.fromEntries(research.map((r) => [r.id, r]))
+
+// Map every name and alias of a lab member to their id.
+const nameToId = new Map()
+for (const person of people) {
+  for (const name of [person.name, ...(person.aliases || [])]) {
+    nameToId.set(normalize(name), person.id)
+  }
+}
+
+function normalize(name) {
+  return name.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/\./g, '').trim().toLowerCase()
+}
+
+export function memberIdForAuthor(author) {
+  return nameToId.get(normalize(author)) || null
+}
+
+export function publicationsByPerson(personId) {
+  return sortedPublications.filter((pub) => pub.authors.some((a) => memberIdForAuthor(a) === personId))
+}
+
+export function publicationsByProject(projectId) {
+  return sortedPublications.filter((pub) => pub.projects?.includes(projectId))
+}
+
+export function projectsByPerson(personId) {
+  return research.filter((r) => r.members?.includes(personId))
+}
