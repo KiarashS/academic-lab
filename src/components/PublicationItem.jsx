@@ -54,7 +54,7 @@ export default function PublicationItem({ pub, showYear = true }) {
         {showYear && `, ${pub.year}`}
       </p>
 
-      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm pointer-coarse:gap-x-4 pointer-coarse:gap-y-2 pointer-coarse:[&>*]:py-0.5">
         {links.map(([key, url]) => (
           <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
             {LINK_LABELS[key] || key}

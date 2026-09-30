@@ -209,7 +209,7 @@ export default function Publications() {
             ))}
           </div>
         )}
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm text-neutral-500 dark:text-neutral-400">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm pointer-coarse:[&>*]:py-0.5 text-neutral-500 dark:text-neutral-400">
           {config.showCount && (
             <span aria-live="polite">
               {filtering

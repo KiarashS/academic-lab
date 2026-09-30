@@ -49,7 +49,7 @@ export default function EventList({ events, showCalendar = true }) {
                   {event.summary}
                 </p>
               )}
-              <div className="mt-2 flex flex-wrap gap-x-4 text-sm">
+              <div className="mt-2 flex flex-wrap gap-x-4 text-sm pointer-coarse:[&>*]:py-0.5">
                 {event.link && event.hasPage && <SmartLink to={event.link}>Event link</SmartLink>}
                 {showCalendar && pageEnabled('events') && (
                   <a href={calendarFile(event)} download className="prose-link">

@@ -4,6 +4,7 @@ import { asset } from '../lib/utils.js'
 // Full-screen photo viewer. Arrow keys move between photos, Escape closes.
 export default function Lightbox({ photos, index, onChange, onClose }) {
   const dialog = useRef(null)
+  const touchX = useRef(null)
   const photo = photos[index]
   const count = photos.length
 
@@ -26,6 +27,13 @@ export default function Lightbox({ photos, index, onChange, onClose }) {
       ref={dialog}
       onClose={onClose}
       onClick={(e) => e.target === dialog.current && dialog.current.close()}
+      onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+      onTouchEnd={(e) => {
+        if (touchX.current === null || count < 2) return
+        const dx = e.changedTouches[0].clientX - touchX.current
+        if (Math.abs(dx) > 40) onChange((index + (dx < 0 ? 1 : -1) + count) % count)
+        touchX.current = null
+      }}
       aria-label="Photo viewer"
       className="m-0 size-full max-h-none max-w-none bg-black/95 p-0 backdrop:bg-black/80"
     >
@@ -69,7 +77,7 @@ export default function Lightbox({ photos, index, onChange, onClose }) {
             type="button"
             onClick={() => onChange((index - 1 + count) % count)}
             aria-label="Previous photo"
-            className={`${button} top-1/2 left-4 -translate-y-1/2`}
+            className={`${button} bottom-6 left-4 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2`}
           >
             <svg
               width="18"
@@ -88,7 +96,7 @@ export default function Lightbox({ photos, index, onChange, onClose }) {
             type="button"
             onClick={() => onChange((index + 1) % count)}
             aria-label="Next photo"
-            className={`${button} top-1/2 right-4 -translate-y-1/2`}
+            className={`${button} right-4 bottom-6 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2`}
           >
             <svg
               width="18"

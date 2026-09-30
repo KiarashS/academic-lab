@@ -94,9 +94,9 @@ export default function Search({ onClose }) {
               aria-selected={i === active}
               onMouseMove={() => setActive(i)}
               onClick={() => go(r)}
-              className={`flex cursor-pointer items-baseline gap-3 px-4 py-2 ${i === active ? 'bg-neutral-100 dark:bg-neutral-900' : ''}`}
+              className={`flex cursor-pointer flex-col px-4 py-2 sm:flex-row sm:items-baseline sm:gap-3 ${i === active ? 'bg-neutral-100 dark:bg-neutral-900' : ''}`}
             >
-              <span className="w-20 shrink-0 text-xs text-neutral-500 dark:text-neutral-400">{r.type}</span>
+              <span className="shrink-0 text-xs text-neutral-500 sm:w-20 dark:text-neutral-400">{r.type}</span>
               <span className="min-w-0">
                 <span className="block truncate text-sm text-neutral-900 dark:text-neutral-100">{r.title}</span>
                 {r.subtitle && (

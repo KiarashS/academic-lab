@@ -1,5 +1,5 @@
 export default function Tag({ children, active, onClick }) {
-  const base = 'inline-block rounded-full px-2.5 py-0.5 text-xs transition-colors'
+  const base = 'inline-block rounded-full px-2.5 py-0.5 pointer-coarse:py-1 text-xs transition-colors'
   const look = active
     ? 'bg-accent text-white dark:text-neutral-950'
     : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800/70 dark:text-neutral-400'

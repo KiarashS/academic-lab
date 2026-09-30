@@ -90,7 +90,7 @@ function SearchButton({ onClick }) {
       onClick={onClick}
       aria-label="Search (Ctrl+K)"
       title="Search (Ctrl+K)"
-      className="cursor-pointer rounded p-1.5 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+      className="cursor-pointer rounded p-1.5 pointer-coarse:p-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
     >
       <svg
         width="18"
@@ -179,7 +179,7 @@ export default function Header() {
               aria-expanded={open}
               aria-controls="mobile-nav"
               aria-label="Menu"
-              className="cursor-pointer rounded p-1.5 text-neutral-600 dark:text-neutral-300"
+              className="cursor-pointer rounded p-1.5 pointer-coarse:p-2 text-neutral-600 dark:text-neutral-300"
             >
               <svg
                 width="20"

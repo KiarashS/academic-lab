@@ -60,7 +60,7 @@ function ArrowButton({ direction, onClick }) {
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`absolute top-1/2 ${direction === 'prev' ? 'left-3' : 'right-3'} z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/30 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 hover:bg-black/50 pointer-coarse:opacity-100`}
+      className={`absolute top-1/2 ${direction === 'prev' ? 'left-3' : 'right-3'} z-10 hidden size-9 -translate-y-1/2 cursor-pointer sm:flex items-center justify-center rounded-full bg-black/30 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 hover:bg-black/50 pointer-coarse:opacity-100`}
     >
       <svg
         width="18"
@@ -162,9 +162,10 @@ export default function Slider({ slides, autoplay = true, interval = 6000, aspec
 
       {count > 1 && (
         <>
+          {/* On phones the arrows would cover the caption; swiping does the same job there. */}
           <ArrowButton direction="prev" onClick={prev} />
           <ArrowButton direction="next" onClick={next} />
-          <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 rounded-full bg-black/30 px-2 py-1">
+          <div className="absolute top-2 right-2 z-10 flex items-center rounded-full bg-black/30 px-1 sm:top-3 sm:right-3">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -172,15 +173,19 @@ export default function Slider({ slides, autoplay = true, interval = 6000, aspec
                 onClick={() => go(i)}
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={i === index}
-                className={`size-2 cursor-pointer rounded-full transition-colors ${i === index ? 'bg-white' : 'bg-white/40 hover:bg-white/70'}`}
-              />
+                className="group/dot flex size-6 cursor-pointer items-center justify-center"
+              >
+                <span
+                  className={`size-2 rounded-full transition-colors ${i === index ? 'bg-white' : 'bg-white/40 group-hover/dot:bg-white/70'}`}
+                />
+              </button>
             ))}
             {autoplay && (
               <button
                 type="button"
                 onClick={() => setPlaying((p) => !p)}
                 aria-label={playing ? 'Pause slideshow' : 'Play slideshow'}
-                className="ml-1 cursor-pointer text-white/80 hover:text-white"
+                className="flex size-6 cursor-pointer items-center justify-center text-white/80 hover:text-white"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   {playing ? <path d="M6 4h4v16H6zM14 4h4v16h-4z" /> : <path d="M7 4l13 8-13 8z" />}

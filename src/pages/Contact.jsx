@@ -30,7 +30,7 @@ function ContactMap({ map }) {
         className="aspect-[4/3] w-full rounded-md border border-neutral-200 dark:border-neutral-800"
       />
       {map.showLinks !== false && query && (
-        <figcaption className="mt-2 flex gap-4 text-sm">
+        <figcaption className="mt-2 flex gap-4 text-sm pointer-coarse:[&>*]:py-0.5">
           <SmartLink to={`https://www.google.com/maps/search/?api=1&query=${query}`}>Open in Google Maps</SmartLink>
           <SmartLink to={`https://www.google.com/maps/dir/?api=1&destination=${query}`}>Directions</SmartLink>
         </figcaption>

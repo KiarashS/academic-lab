@@ -45,7 +45,7 @@ export default function ModeToggle() {
       onClick={cycle}
       title={`${LABELS[mode]} (click to change)`}
       aria-label={`${LABELS[mode]}. Click to change.`}
-      className="cursor-pointer rounded p-1.5 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+      className="cursor-pointer rounded p-1.5 pointer-coarse:p-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
     >
       <Icon mode={mode} />
     </button>
