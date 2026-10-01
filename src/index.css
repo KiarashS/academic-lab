@@ -5,6 +5,7 @@
 
 @theme inline {
   --color-accent: var(--accent);
+  --color-link: var(--link);
   --font-sans: var(--font-body);
 }
 
@@ -12,10 +13,15 @@
    (written into the page head by scripts/site-plugin.js). */
 :root {
   --accent: var(--accent-light);
+  /* Link text: the accent pulled slightly darker on white so it reads as text, not a
+     highlight (and passes contrast checks even with a light accent color). */
+  --link: color-mix(in oklab, var(--accent) 82%, black);
 }
 
 .dark {
   --accent: var(--accent-dark);
+  /* On a dark background, lighter instead. */
+  --link: color-mix(in oklab, var(--accent) 80%, white);
 }
 
 html {
@@ -26,9 +32,51 @@ body {
   @apply bg-white text-neutral-800 antialiased dark:bg-neutral-950 dark:text-neutral-200;
 }
 
-/* Plain text links inside prose */
-.prose-link {
-  @apply text-accent underline decoration-accent/30 underline-offset-2 hover:decoration-accent;
+/* Inline text links (and links in Markdown content): a faint underline that fills in
+   from left to right in full color on hover or keyboard focus. Drawn with two
+   background gradients so it follows the text across line breaks. */
+@layer components {
+  .prose-link,
+  .prose a {
+    color: var(--link);
+    font-weight: inherit;
+    text-decoration: none;
+    background-image:
+      linear-gradient(currentColor, currentColor),
+      linear-gradient(
+        color-mix(in oklab, currentColor 28%, transparent),
+        color-mix(in oklab, currentColor 28%, transparent)
+      );
+    background-size:
+      0% 1.5px,
+      100% 1px;
+    background-position:
+      0 100%,
+      0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 1px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition:
+      background-size 300ms cubic-bezier(0.25, 0.8, 0.25, 1),
+      color 200ms;
+  }
+
+  .prose-link:hover,
+  .prose-link:focus-visible,
+  .prose a:hover,
+  .prose a:focus-visible {
+    background-size:
+      100% 1.5px,
+      100% 1px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prose-link,
+    .prose a {
+      transition: none;
+    }
+  }
 }
 
 /* Keyboard focus ring. In the base layer so `outline-none` on an element can turn it off. */

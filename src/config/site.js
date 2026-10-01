@@ -100,8 +100,9 @@ const site = {
   ],
 
   home: {
-    // slider | intro | news | events | research | publications | funders
-    sections: ['slider', 'intro', 'news', 'events', 'research', 'publications', 'funders'],
+    // slider | intro | hiring | news | events | research | publications | funders
+    // plus your own text blocks: 'block:<name>' shows content/home/<name>.md
+    sections: ['slider', 'intro', 'hiring', 'news', 'events', 'research', 'block:approach', 'publications', 'funders'],
 
     // Slides are in content/slides.yml.
     slider: {
@@ -128,6 +129,10 @@ const site = {
     events: { title: 'Upcoming events', count: 3, moreLink: 'All events' },
     // Logos from content/funders.yml.
     funders: { title: 'Funding' },
+    // A notice linking to the Join page. It only appears while at least one position in
+    // content/join.yml is open. text: null lists the open positions ("We're hiring: PhD
+    // students, Postdoctoral researcher."); set your own text to replace it.
+    hiring: { text: null, linkLabel: 'See open positions' },
   },
 
   research: {

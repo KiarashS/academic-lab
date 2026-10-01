@@ -224,7 +224,7 @@ export default function Publications() {
             <button
               type="button"
               onClick={() => setParams({}, { replace: true })}
-              className="cursor-pointer text-accent hover:underline"
+              className="cursor-pointer text-link hover:underline underline-offset-2"
             >
               Clear filters
             </button>
@@ -233,7 +233,7 @@ export default function Publications() {
             <button
               type="button"
               onClick={() => downloadBibtex(filtered)}
-              className="cursor-pointer text-accent hover:underline"
+              className="cursor-pointer text-link hover:underline underline-offset-2"
             >
               Download BibTeX{filtering ? ' for these' : ''}
             </button>

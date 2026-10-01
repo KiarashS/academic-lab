@@ -1,4 +1,6 @@
 import EventList from '../components/EventList.jsx'
+import Img from '../components/Img.jsx'
+import Markdown from '../components/Markdown.jsx'
 import NewsList from '../components/NewsList.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationItem from '../components/PublicationItem.jsx'
@@ -6,11 +8,19 @@ import Section from '../components/Section.jsx'
 import Slider from '../components/Slider.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site, { pageEnabled } from '../config/index.js'
-import { funders, research, slides, sortedNews, sortedPublications, splitEvents } from '../lib/data.js'
+import {
+  funders,
+  homeBlocks,
+  join,
+  research,
+  slides,
+  sortedNews,
+  sortedPublications,
+  splitEvents,
+} from '../lib/data.js'
 import { useToday } from '../lib/hydration.js'
 import { paragraphs } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
-import Img from '../components/Img.jsx'
 
 const { home } = site
 
@@ -21,6 +31,54 @@ function more(page, label) {
 
 function take(items, count) {
   return count ? items.slice(0, count) : items
+}
+
+const blockById = Object.fromEntries(homeBlocks.map((b) => [b.id, b]))
+
+// A free text block from content/home/<id>.md: optional title, Markdown text, optional
+// image beside it, optional link, and a plain or highlighted style.
+function TextBlock({ block, first }) {
+  const side = block.image && (
+    <Img
+      src={block.image}
+      sizes="(min-width: 768px) 30rem, 100vw"
+      alt={block.imageAlt || ''}
+      loading="lazy"
+      className="w-full rounded-md"
+    />
+  )
+  const body = (
+    <div>
+      <Markdown html={block.html} />
+      {block.link?.url && (
+        <p className="mt-4">
+          <SmartLink to={block.link.url}>{block.link.label || 'Read more'} &rarr;</SmartLink>
+        </p>
+      )}
+    </div>
+  )
+  const content = side ? (
+    <div className="grid items-start gap-8 md:grid-cols-2">
+      {block.imagePosition === 'left'
+        ? [<div key="i">{side}</div>, <div key="b">{body}</div>]
+        : [<div key="b">{body}</div>, <div key="i">{side}</div>]}
+    </div>
+  ) : (
+    body
+  )
+  const inner =
+    block.style === 'highlight' ? (
+      <div className="rounded-lg bg-neutral-50 p-6 sm:p-8 dark:bg-neutral-900">{content}</div>
+    ) : (
+      content
+    )
+  return block.title ? (
+    <Section flush={first} title={block.title}>
+      {inner}
+    </Section>
+  ) : (
+    <section className={first ? '' : 'mt-16'}>{inner}</section>
+  )
 }
 
 const SECTIONS = {
@@ -39,7 +97,7 @@ const SECTIONS = {
   intro: () => {
     const { heading, text, image, imageCaption } = home.intro
     return (
-      <section key="intro" className="mb-20">
+      <section key="intro" className="mb-4">
         {(heading || site.tagline) && (
           <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-50">
             {heading || site.tagline}
@@ -62,6 +120,30 @@ const SECTIONS = {
           </figure>
         )}
       </section>
+    )
+  },
+
+  // Shown only while the Join page has at least one open position.
+  hiring: (first) => {
+    const open = (join.openings || []).filter((o) => o.open)
+    if (!open.length || !pageEnabled('join')) return null
+    const text = home.hiring.text || `We're hiring: ${open.map((o) => o.title).join(', ')}.`
+    return (
+      <aside
+        key="hiring"
+        className={`${first ? '' : 'mt-12'} flex flex-col gap-2 rounded-lg border border-accent/20 bg-accent/5 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6`}
+      >
+        <p className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200">
+          <span aria-hidden="true" className="relative flex size-2.5 shrink-0">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:animate-none" />
+            <span className="relative inline-flex size-2.5 rounded-full bg-accent" />
+          </span>
+          {text}
+        </p>
+        <SmartLink to="/join" className="prose-link shrink-0 pl-5.5 text-sm sm:pl-0 pointer-coarse:py-1">
+          {home.hiring.linkLabel} &rarr;
+        </SmartLink>
+      </aside>
     )
   },
 
@@ -161,13 +243,20 @@ const SECTIONS = {
 export default function Home() {
   useTitle()
   const events = splitEvents(useToday())
-  const sections = home.sections.filter((key) => SECTIONS[key])
+  const render = (key, first) => {
+    if (key.startsWith('block:')) {
+      const block = blockById[key.slice(6)]
+      return block && <TextBlock key={key} block={block} first={first} />
+    }
+    return SECTIONS[key](first, events)
+  }
+  const sections = home.sections.filter((key) => SECTIONS[key] || (key.startsWith('block:') && blockById[key.slice(6)]))
 
   return (
     <>
       {/* Keep one h1 on the page for screen readers when the intro is turned off. */}
       {!sections.includes('intro') && <h1 className="sr-only">{site.name}</h1>}
-      {sections.map((key, i) => SECTIONS[key](i === 0, events))}
+      {sections.map((key, i) => render(key, i === 0))}
     </>
   )
 }

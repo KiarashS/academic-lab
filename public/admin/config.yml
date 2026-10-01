@@ -135,6 +135,33 @@ collections:
       - { name: order, label: Order, widget: number, value_type: int, required: false, hint: 'Lower numbers come first. Without it, projects are sorted by title.' }
       - { name: body, label: Description, widget: markdown, required: false }
 
+  - name: home
+    label: Home page blocks
+    label_singular: Block
+    folder: content/home
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: '{{slug}}'
+    summary: '{{title}} (block:{{slug}})'
+    description: "Free text blocks for the home page. To show one, add 'block:<file name>' to home.sections in src/config/site.js."
+    fields:
+      - { name: title, label: Title, widget: string, required: false }
+      - { name: style, label: Style, widget: select, options: [plain, highlight], default: plain }
+      - { name: image, label: Image, widget: image, required: false }
+      - { name: imageAlt, label: Image description, widget: string, required: false }
+      - { name: imagePosition, label: Image position, widget: select, options: [right, left], default: right, required: false }
+      - name: link
+        label: Link
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: label, label: Label, widget: string, required: false }
+          - { name: url, label: URL, widget: string, required: false }
+      - { name: body, label: Text, widget: markdown, required: false }
+
   - name: data
     label: Lists
     files:

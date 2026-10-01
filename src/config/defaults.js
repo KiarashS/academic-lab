@@ -29,7 +29,7 @@ const defaults = {
   },
   nav: [],
   home: {
-    sections: ['slider', 'intro', 'news', 'events', 'research', 'publications', 'funders'],
+    sections: ['slider', 'intro', 'hiring', 'news', 'events', 'research', 'publications', 'funders'],
     slider: { autoplay: true, interval: 6000, aspectRatio: '21 / 9' },
     intro: { heading: null, text: [], image: null, imageCaption: '' },
     news: { title: 'News', count: 4, moreLink: 'All news' },
@@ -37,6 +37,7 @@ const defaults = {
     publications: { title: 'Selected publications', count: null, moreLink: 'All publications' },
     events: { title: 'Upcoming events', count: 3, moreLink: 'All events' },
     funders: { title: 'Funding' },
+    hiring: { text: null, linkLabel: 'See open positions' },
   },
   research: {
     title: 'Research',

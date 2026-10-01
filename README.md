@@ -4,7 +4,7 @@ A minimal website for a research group, built with React, React Router, Vite and
 
 ## Pages
 
-- Home: image/video slider, intro, latest news, upcoming events, current projects, featured publications and funders
+- Home: image/video slider, intro, a hiring notice while positions are open, latest news, upcoming events, current projects, featured publications, funders, and text blocks of your own
 - Research: current and past projects, each with its own page listing its people and papers
 - People: members grouped by role, an optional management team, alumni, and a profile page per person
 - Publications: search and filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX per paper and for the whole or filtered list, and citation counts from Semantic Scholar. Each paper has its own page with a citation to copy and the tags Google Scholar uses to index it. Papers can be imported from BibTeX files and ORCID.
@@ -41,6 +41,7 @@ Everything visitors read is in `content/`:
 | `content/gallery.yml` | Photo albums. |
 | `content/resources.yml` | Software and datasets. |
 | `content/teaching.yml`, `content/join.yml`, `content/funders.yml` | Courses, open positions, funder logos. |
+| `content/home/*.md` | Text blocks for the home page (see below). |
 
 `npm run check` reads all content and lists problems, such as a project member with no file in `content/people/`, a paper linked to a project that doesn't exist, a group name that isn't in the settings, a badly written date or time, or a missing image. The same checks run on every build (as warnings) and on every pull request (where they fail the check).
 
@@ -53,6 +54,12 @@ Each YAML file starts with a comment listing its fields. Some things to know:
 - Link a paper to a project by listing the project's file name in the paper's `projects`.
 - Set `featured: true` on a paper to show it on the home page.
 - Give a person a `management` title (e.g. `Lab Manager`) to list them in the management team. Mark a person `alumni: true` and add `now` to move them to Alumni.
+
+### Home page text blocks and hiring notice
+
+Write a Markdown file in `content/home/` (or use "Home page blocks" in `/admin`) and add `block:<file name>` to `home.sections` where it should appear, e.g. `'block:approach'` for `content/home/approach.md`. A block can have a `title`, a `style` (`plain` or `highlight`, a tinted box), an `image` shown beside the text (`imagePosition: left` or `right`) and a `link`.
+
+The `hiring` section shows a one-line notice with a link to the Join page while at least one position in `content/join.yml` has `open: true`, and disappears when none do. By default it lists the open positions; set `home.hiring.text` to write your own.
 
 ### Photos
 
@@ -96,7 +103,7 @@ Turning things on and off:
 | Page | Settings | Sections |
 | --- | --- | --- |
 | Header | `header` (logo, name, search, theme toggle) | |
-| Home | `home` (slider timing, intro, section titles, item counts, "All …" link text) | `slider`, `intro`, `news`, `events`, `research`, `publications`, `funders` |
+| Home | `home` (slider timing, intro, hiring notice, section titles, item counts, "All …" link text) | `slider`, `intro`, `hiring`, `news`, `events`, `research`, `publications`, `funders`, `block:<name>` |
 | Research | `research` (title, intro, headings, tags) | `current`, `past` |
 | Project page | `research.project` | `description`, `funding`, `links`, `people`, `publications` |
 | People | `people` (groups, management team, alumni heading, photos, author highlighting) | `members`, `alumni` |

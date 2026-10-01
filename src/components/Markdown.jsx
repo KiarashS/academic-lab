@@ -22,7 +22,7 @@ export default function Markdown({ html, className = '' }) {
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       onClick={onClick}
-      className={`prose max-w-2xl prose-neutral dark:prose-invert prose-a:text-accent prose-a:decoration-accent/30 prose-a:underline-offset-2 hover:prose-a:decoration-accent prose-headings:font-semibold prose-img:rounded-md ${className}`}
+      className={`prose max-w-2xl prose-neutral dark:prose-invert prose-headings:font-semibold prose-img:rounded-md ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

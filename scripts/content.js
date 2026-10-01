@@ -167,6 +167,9 @@ export async function loadContent(site, base = '/') {
 
   const gallery = (readYaml('gallery.yml').albums || []).map((a) => ({ ...a, date: day(a.date) }))
 
+  // Free text blocks for the home page, placed with 'block:<file name>' in home.sections.
+  const homeBlocks = readMarkdownFolder('home', render)
+
   let publications = await loadPublications(site)
   if (site.publications.citations?.show) publications = await addCitationCounts(publications)
 
@@ -182,6 +185,7 @@ export async function loadContent(site, base = '/') {
     gallery,
     resources: readYaml('resources.yml').items || [],
     funders: readYaml('funders.yml').funders || [],
+    homeBlocks,
   }
 
   reportProblems(validateContent(content, site))
@@ -198,11 +202,13 @@ export async function loadContent(site, base = '/') {
     ...content.slides.flatMap((s) => (s.type === 'image' || !s.type ? [s.src] : [s.poster])),
     ...gallery.flatMap((a) => (a.photos || []).map((p) => p.src)),
     ...content.funders.map((f) => f.logo),
+    ...homeBlocks.flatMap((b) => [b.image, ...htmlImages(b.html)]),
   ])
   for (const p of people) p.bio = enhanceHtmlImages(p.bio, content.images, base)
   for (const r of research) r.description = enhanceHtmlImages(r.description, content.images, base)
   for (const n of news) n.html = enhanceHtmlImages(n.html, content.images, base)
   for (const e of events) e.html = enhanceHtmlImages(e.html, content.images, base)
+  for (const b of homeBlocks) b.html = enhanceHtmlImages(b.html, content.images, base)
 
   return content
 }

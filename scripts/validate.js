@@ -90,6 +90,14 @@ export function validateContent(content, site) {
   })
   content.funders.forEach((f) => checkImage(`content/funders.yml, "${f.name}"`, f.logo))
 
+  const blockIds = new Set(content.homeBlocks.map((b) => b.id))
+  for (const b of content.homeBlocks) checkImage(`content/home/${b.id}.md`, b.image)
+  for (const key of site.home.sections) {
+    if (key.startsWith('block:') && !blockIds.has(key.slice(6))) {
+      add('home.sections in src/config/site.js', `"${key}" has no file content/home/${key.slice(6)}.md`)
+    }
+  }
+
   return problems
 }
 
