@@ -20,13 +20,14 @@ export default function EventList({ events, showCalendar = true }) {
       {events.map((event) => {
         const page = event.hasPage && pageEnabled('events') ? `/events/${event.id}` : event.link
         return (
-          <li key={event.id} className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:gap-4">
-            <div className="text-sm text-neutral-500 tabular-nums dark:text-neutral-400">
+          <li key={event.id} className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-4">
+            {/* Aligned on the title's baseline, so the date and title share a line. */}
+            <div className="text-sm leading-6 text-neutral-500 tabular-nums dark:text-neutral-400">
               <div>{formatDateRange(event.date, event.endDate)}</div>
               {event.time && <div>{eventTime(event)}</div>}
             </div>
             <div>
-              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
+              <h3 className="leading-6 font-medium text-neutral-900 dark:text-neutral-100">
                 {page ? (
                   <SmartLink to={page} className="hover:text-accent">
                     {event.title}

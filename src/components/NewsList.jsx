@@ -8,17 +8,21 @@ export default function NewsList({ items, showYear = true }) {
   return (
     <ul>
       {items.map((item) => (
+        // Grid columns aligned on the first line's baseline: the small date sits on the same
+        // line as the text, as on the lab blog.
         <li
           key={item.id}
-          className="flex items-baseline gap-4 border-b border-neutral-200 py-3 first:pt-0 dark:border-neutral-800"
+          className={`grid items-baseline gap-4 border-b border-neutral-200 py-3 first:pt-0 dark:border-neutral-800 ${
+            showYear ? 'grid-cols-[5.5rem_minmax(0,1fr)]' : 'grid-cols-[3.5rem_minmax(0,1fr)]'
+          }`}
         >
           <time
             dateTime={item.date}
-            className={`shrink-0 text-[0.8rem] text-neutral-500 tabular-nums dark:text-neutral-400 ${showYear ? 'w-[5.5rem]' : 'w-14'}`}
+            className="text-[0.8rem] leading-[1.625rem] text-neutral-500 tabular-nums dark:text-neutral-400"
           >
             {formatDayMonth(item.date, showYear)}
           </time>
-          <p className="min-w-0 leading-relaxed">
+          <p className="leading-[1.625rem]">
             {item.text || item.title}
             {item.link?.url && (
               <>
