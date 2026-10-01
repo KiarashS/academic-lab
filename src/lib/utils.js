@@ -22,34 +22,6 @@ export function formatDate(iso, style = 'medium') {
   return date.toLocaleDateString(site.locale || 'en-US', options)
 }
 
-// "16 Feb 2026", or "16 Feb" without the year: day first, short month name in the
-// site's language, as on the lab blog.
-export function formatDayMonth(iso, withYear = true) {
-  const [y, m, d] = iso.split('-').map(Number)
-  const month = new Date(Date.UTC(y, (m || 1) - 1, 1)).toLocaleDateString(site.locale || 'en-US', {
-    month: 'short',
-    timeZone: 'UTC',
-  })
-  return withYear ? `${d} ${month} ${y}` : `${d} ${month}`
-}
-
-function utcDate(iso) {
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(Date.UTC(y, (m || 1) - 1, d || 1))
-}
-
-// "Jun 2 – 3, 2026" for multi-day events, a single date otherwise.
-export function formatDateRange(start, end) {
-  if (!end || end === start) return formatDate(start)
-  const fmt = new Intl.DateTimeFormat(site.locale || 'en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  })
-  return fmt.formatRange(utcDate(start), utcDate(end))
-}
-
 export function initials(name) {
   return name
     .split(/\s+/)

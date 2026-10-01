@@ -1,5 +1,4 @@
 import { pageEnabled } from '../config/index.js'
-import { formatDateRange } from '../lib/utils.js'
 import DateParts from './DateParts.jsx'
 import SmartLink from './SmartLink.jsx'
 
@@ -9,10 +8,6 @@ export function calendarFile(event) {
 
 function eventTime(event) {
   return event.time ? `${event.time}${event.end ? `–${event.end}` : ''}` : null
-}
-
-export function eventWhen(event) {
-  return [formatDateRange(event.date, event.endDate), eventTime(event)].filter(Boolean).join(', ')
 }
 
 export default function EventList({ events, showCalendar = true }) {

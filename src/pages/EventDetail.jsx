@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router'
-import { calendarFile, eventWhen } from '../components/EventList.jsx'
+import DateParts from '../components/DateParts.jsx'
+import { calendarFile } from '../components/EventList.jsx'
 import Markdown from '../components/Markdown.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
@@ -14,7 +15,26 @@ export default function EventDetail() {
   if (!event?.hasPage) return <NotFound />
 
   const details = [
-    ['When', eventWhen(event)],
+    [
+      'When',
+      // Same date columns as the lists ("08 Sep 2026"), then the time.
+      <>
+        <DateParts iso={event.date} />
+        {event.endDate && event.endDate !== event.date && (
+          <>
+            <span aria-hidden="true"> – </span>
+            <span className="sr-only"> to </span>
+            <DateParts iso={event.endDate} />
+          </>
+        )}
+        {event.time && (
+          <span className="ml-3 tabular-nums">
+            {event.time}
+            {event.end && `–${event.end}`}
+          </span>
+        )}
+      </>,
+    ],
     ['Speaker', event.speaker && [event.speaker, event.affiliation].filter(Boolean).join(', ')],
     ['Where', event.location],
   ].filter(([, v]) => v)
@@ -31,7 +51,7 @@ export default function EventDetail() {
         <p className="mt-3 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">{event.summary}</p>
       )}
 
-      <dl className="mt-8 grid max-w-2xl gap-x-6 gap-y-2 sm:grid-cols-[6rem_1fr]">
+      <dl className="mt-8 grid max-w-2xl gap-x-6 gap-y-2 sm:grid-cols-[6rem_1fr] sm:items-baseline">
         {details.map(([label, value]) => (
           <div key={label} className="contents">
             <dt className="text-sm text-neutral-500 dark:text-neutral-400">{label}</dt>
