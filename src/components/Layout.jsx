@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router'
 import CookieConsent, { consentNeeded } from './CookieConsent.jsx'
 import Footer from './Footer.jsx'
 import Header from './Header.jsx'
+import { SiteNotices } from './Notice.jsx'
 
 export default function Layout() {
   const { pathname, hash } = useLocation()
@@ -23,6 +24,7 @@ export default function Layout() {
       >
         Skip to content
       </button>
+      <SiteNotices />
       <Header />
       <main
         id="main"

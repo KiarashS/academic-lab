@@ -206,6 +206,32 @@ collections:
                   - { name: video, label: Video, widget: string, required: false }
               - { name: bibtex, label: BibTeX (replaces the generated entry), widget: code, output_code_only: true, default_language: bibtex, required: false }
 
+      - name: notices
+        label: Notices
+        file: content/notices.yml
+        fields:
+          - name: notices
+            label: Notices
+            label_singular: Notice
+            widget: list
+            summary: '{{fields.placement}} · {{fields.text}}'
+            fields:
+              - { name: id, label: ID, widget: string, hint: 'A short name, e.g. lab-move. Change it to show a closed notice again.' }
+              - { name: text, label: Text, widget: string }
+              - name: link
+                label: Link
+                widget: object
+                required: false
+                collapsed: true
+                fields:
+                  - { name: label, label: Label, widget: string, required: false }
+                  - { name: url, label: URL, widget: string, required: false }
+              - { name: placement, label: Where, widget: select, options: [{ label: 'Home page', value: home }, { label: 'Top of every page', value: site }], default: home }
+              - { name: style, label: Color, widget: select, options: [accent, info, success, warning], default: accent }
+              - { name: from, label: Show from, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false }
+              - { name: until, label: Show until, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false }
+              - { name: dismissible, label: Visitors can close it, widget: boolean, default: false, required: false }
+
       - name: slides
         label: Home page slider
         file: content/slides.yml

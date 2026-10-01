@@ -15,6 +15,7 @@ export const {
   resources,
   funders,
   homeBlocks,
+  notices,
   images,
 } = content
 

@@ -1,0 +1,29 @@
+# Short notices: announcements, closures, deadlines, calls for papers, anything.
+#
+# Fields (only text is required):
+#   text         the message
+#   link         { label, url } shown after the text, e.g. { label: Details, url: /news }
+#   placement    home (default): in the home page's 'notices' section
+#                site: a slim bar at the top of every page
+#   style        accent (default) | info | success | warning
+#   from, until  show only between these dates (YYYY-MM-DD, both included). Leave out to
+#                show it until you delete it.
+#   dismissible  true adds a close button; the visitor's choice is remembered
+#   id           a short name; give a notice a new id to show it again to visitors who
+#                closed an earlier version
+notices:
+  - id: lab-move
+    text: The lab moves to Example Hall, 4th floor, on November 3. Our phone number stays the same.
+    style: info
+    until: 2026-11-03
+    link:
+      label: Directions
+      url: /contact
+  - id: workshop-cfp
+    text: Workshop on learning with limited data, call for papers open until November 30.
+    placement: site
+    dismissible: true
+    until: 2026-11-30
+    link:
+      label: Submit
+      url: https://example.com

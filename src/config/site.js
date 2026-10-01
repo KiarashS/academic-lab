@@ -100,9 +100,10 @@ const site = {
   ],
 
   home: {
-    // slider | intro | hiring | news | events | research | publications | funders
+    // slider | intro | notices | hiring | news | events | research | publications | funders
+    // notices are the placement: home notices in content/notices.yml;
     // plus your own text blocks: 'block:<name>' shows content/home/<name>.md
-    sections: ['slider', 'intro', 'hiring', 'news', 'events', 'research', 'block:approach', 'publications', 'funders'],
+    sections: ['slider', 'intro', 'notices', 'hiring', 'news', 'events', 'research', 'block:approach', 'publications', 'funders'],
 
     // Slides are in content/slides.yml.
     slider: {

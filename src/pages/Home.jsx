@@ -2,6 +2,7 @@ import EventList from '../components/EventList.jsx'
 import Img from '../components/Img.jsx'
 import Markdown from '../components/Markdown.jsx'
 import NewsList from '../components/NewsList.jsx'
+import Notice, { useNotices } from '../components/Notice.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationItem from '../components/PublicationItem.jsx'
 import Section from '../components/Section.jsx'
@@ -123,27 +124,35 @@ const SECTIONS = {
     )
   },
 
+  // Notices from content/notices.yml with placement: home.
+  notices: (first, { homeNotices, dismiss, gap }) =>
+    homeNotices.length > 0 && (
+      <div key="notices" className={`${first ? '' : gap} space-y-3`}>
+        {homeNotices.map((n) => (
+          <Notice
+            key={n.id}
+            text={n.text}
+            link={n.link}
+            style={n.style}
+            onDismiss={n.dismissible ? () => dismiss(n.id) : undefined}
+          />
+        ))}
+      </div>
+    ),
+
   // Shown only while the Join page has at least one open position.
-  hiring: (first) => {
+  hiring: (first, { gap }) => {
     const open = (join.openings || []).filter((o) => o.open)
     if (!open.length || !pageEnabled('join')) return null
     const text = home.hiring.text || `We're hiring: ${open.map((o) => o.title).join(', ')}.`
     return (
-      <aside
+      <Notice
         key="hiring"
-        className={`${first ? '' : 'mt-12'} flex flex-col gap-2 rounded-lg border border-accent/20 bg-accent/5 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6`}
-      >
-        <p className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200">
-          <span aria-hidden="true" className="relative flex size-2.5 shrink-0">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:animate-none" />
-            <span className="relative inline-flex size-2.5 rounded-full bg-accent" />
-          </span>
-          {text}
-        </p>
-        <SmartLink to="/join" className="prose-link shrink-0 pl-5.5 text-sm sm:pl-0 pointer-coarse:py-1">
-          {home.hiring.linkLabel} &rarr;
-        </SmartLink>
-      </aside>
+        text={text}
+        link={{ label: home.hiring.linkLabel, url: '/join' }}
+        pulse
+        className={first ? '' : gap}
+      />
     )
   },
 
@@ -243,12 +252,16 @@ const SECTIONS = {
 export default function Home() {
   useTitle()
   const events = splitEvents(useToday())
-  const render = (key, first) => {
+  const [homeNotices, dismiss] = useNotices('home')
+  // Notices right after other notices stack closely; otherwise they get section spacing.
+  const isNotice = (key) => key === 'notices' || key === 'hiring'
+  const render = (key, first, prev) => {
     if (key.startsWith('block:')) {
       const block = blockById[key.slice(6)]
       return block && <TextBlock key={key} block={block} first={first} />
     }
-    return SECTIONS[key](first, events)
+    const gap = isNotice(key) && prev && isNotice(prev) ? 'mt-3' : 'mt-12'
+    return SECTIONS[key](first, { ...events, homeNotices, dismiss, gap })
   }
   const sections = home.sections.filter((key) => SECTIONS[key] || (key.startsWith('block:') && blockById[key.slice(6)]))
 
@@ -256,7 +269,7 @@ export default function Home() {
     <>
       {/* Keep one h1 on the page for screen readers when the intro is turned off. */}
       {!sections.includes('intro') && <h1 className="sr-only">{site.name}</h1>}
-      {sections.map((key, i) => render(key, i === 0))}
+      {sections.map((key, i) => render(key, i === 0, sections[i - 1]))}
     </>
   )
 }

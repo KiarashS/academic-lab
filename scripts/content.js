@@ -186,6 +186,12 @@ export async function loadContent(site, base = '/') {
     resources: readYaml('resources.yml').items || [],
     funders: readYaml('funders.yml').funders || [],
     homeBlocks,
+    notices: (readYaml('notices.yml').notices || []).map((n, i) => ({
+      ...n,
+      id: n.id || `notice-${i + 1}`,
+      from: day(n.from),
+      until: day(n.until),
+    })),
   }
 
   reportProblems(validateContent(content, site))

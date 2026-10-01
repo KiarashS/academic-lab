@@ -90,6 +90,18 @@ export function validateContent(content, site) {
   })
   content.funders.forEach((f) => checkImage(`content/funders.yml, "${f.name}"`, f.logo))
 
+  for (const n of content.notices) {
+    const where = `content/notices.yml, notice "${n.id}"`
+    if (!n.text) add(where, 'text is missing')
+    checkDate(where, 'from', n.from, false)
+    checkDate(where, 'until', n.until, false)
+    if (n.from && n.until && n.until < n.from) add(where, 'until is before from')
+    if (n.style && !['accent', 'info', 'success', 'warning'].includes(n.style)) {
+      add(where, `style "${n.style}" should be accent, info, success or warning`)
+    }
+    if (n.placement && !['home', 'site'].includes(n.placement)) add(where, `placement "${n.placement}" should be home or site`)
+  }
+
   const blockIds = new Set(content.homeBlocks.map((b) => b.id))
   for (const b of content.homeBlocks) checkImage(`content/home/${b.id}.md`, b.image)
   for (const key of site.home.sections) {

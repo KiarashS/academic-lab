@@ -29,7 +29,7 @@ const defaults = {
   },
   nav: [],
   home: {
-    sections: ['slider', 'intro', 'hiring', 'news', 'events', 'research', 'publications', 'funders'],
+    sections: ['slider', 'intro', 'notices', 'hiring', 'news', 'events', 'research', 'publications', 'funders'],
     slider: { autoplay: true, interval: 6000, aspectRatio: '21 / 9' },
     intro: { heading: null, text: [], image: null, imageCaption: '' },
     news: { title: 'News', count: 4, moreLink: 'All news' },
