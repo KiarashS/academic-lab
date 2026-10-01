@@ -126,15 +126,19 @@ const site = {
       // right | left: beside the text on screens 1024px and wider, below it on smaller ones
       imagePosition: 'right',
     },
+    // `count` is the most items each section shows on the home page (newest or first ones);
+    // the rest are a click away through the "All …" link. null shows everything.
     news: { title: 'News', count: 4, moreLink: 'All news' },
-    // Current (not past) projects. count: null shows all of them.
-    research: { title: 'Research', count: null, moreLink: 'All projects' },
+    // Current (not past) projects.
+    research: { title: 'Research', count: 4, moreLink: 'All projects' },
     // Publications marked `featured: true`.
-    publications: { title: 'Selected publications', count: null, moreLink: 'All publications' },
+    publications: { title: 'Selected publications', count: 3, moreLink: 'All publications' },
     // Events that haven't happened yet.
     events: { title: 'Upcoming events', count: 3, moreLink: 'All events' },
     // Logos from content/funders.yml.
-    funders: { title: 'Funding' },
+    funders: { title: 'Funding', count: 8 },
+    // Notices from content/notices.yml with placement: home.
+    notices: { count: 3 },
     // A notice linking to the Join page. It only appears while at least one position in
     // content/join.yml is open. text: null lists the open positions ("We're hiring: PhD
     // students, Postdoctoral researcher."); set your own text to replace it.

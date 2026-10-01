@@ -50,7 +50,7 @@ function TextBlock({ block, first }) {
   )
   const body = (
     <div>
-      <Markdown html={block.html} />
+      <Markdown html={block.html} wide />
       {block.link?.url && (
         <p className="mt-4">
           <SmartLink to={block.link.url}>{block.link.label || 'Read more'} &rarr;</SmartLink>
@@ -164,7 +164,7 @@ const SECTIONS = {
   notices: (first, { homeNotices, dismiss, gap }) =>
     homeNotices.length > 0 && (
       <div key="notices" className={`${first ? '' : gap} space-y-3`}>
-        {homeNotices.map((n) => (
+        {take(homeNotices, home.notices.count).map((n) => (
           <Notice
             key={n.id}
             text={n.text}
@@ -210,7 +210,7 @@ const SECTIONS = {
     funders.length > 0 && (
       <Section key="funders" flush={first} title={home.funders.title}>
         <ul className="flex flex-wrap items-center gap-x-10 gap-y-6">
-          {funders.map((f) => {
+          {take(funders, home.funders.count).map((f) => {
             const mark = f.logo ? (
               <Img
                 src={f.logo}

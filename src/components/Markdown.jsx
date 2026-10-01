@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router'
 // Renders HTML produced from Markdown at build time (content/ files are written by the
 // lab, so the HTML is trusted). Clicks on links to other pages of this site are handled
 // by the router instead of reloading the page.
-export default function Markdown({ html, className = '' }) {
+// `wide` lets the text use the full width of its container instead of a reading width.
+export default function Markdown({ html, wide = false, className = '' }) {
   const navigate = useNavigate()
   if (!html) return null
 
@@ -22,7 +23,7 @@ export default function Markdown({ html, className = '' }) {
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       onClick={onClick}
-      className={`prose max-w-2xl prose-neutral dark:prose-invert prose-headings:font-semibold prose-img:rounded-md ${className}`}
+      className={`prose ${wide ? 'max-w-none' : 'max-w-2xl'} prose-neutral dark:prose-invert prose-headings:font-semibold prose-img:rounded-md ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

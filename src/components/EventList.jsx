@@ -1,5 +1,6 @@
 import { pageEnabled } from '../config/index.js'
 import { formatDateRange } from '../lib/utils.js'
+import DateParts from './DateParts.jsx'
 import SmartLink from './SmartLink.jsx'
 
 export function calendarFile(event) {
@@ -20,11 +21,22 @@ export default function EventList({ events, showCalendar = true }) {
       {events.map((event) => {
         const page = event.hasPage && pageEnabled('events') ? `/events/${event.id}` : event.link
         return (
-          <li key={event.id} className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-4">
-            {/* Aligned on the title's baseline, so the date and title share a line. */}
-            <div className="text-sm leading-6 text-neutral-500 tabular-nums dark:text-neutral-400">
-              <div>{formatDateRange(event.date, event.endDate)}</div>
-              {event.time && <div>{eventTime(event)}</div>}
+          // Same date column as the news list: days, months and years line up from row to
+          // row, and the date shares the title's baseline. A multi-day event shows its last
+          // day on the next line after a hanging dash; the time goes below.
+          <li key={event.id} className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-baseline gap-4">
+            <div className="text-[0.8rem] leading-6 text-neutral-500 dark:text-neutral-400">
+              <DateParts iso={event.date} className="block" />
+              {event.endDate && event.endDate !== event.date && (
+                <span className="block whitespace-nowrap">
+                  <span aria-hidden="true" className="-ml-[0.9em] inline-block w-[0.9em]">
+                    –
+                  </span>
+                  <span className="sr-only">to </span>
+                  <DateParts iso={event.endDate} />
+                </span>
+              )}
+              {event.time && <span className="block tabular-nums">{eventTime(event)}</span>}
             </div>
             <div>
               <h3 className="leading-6 font-medium text-neutral-900 dark:text-neutral-100">
