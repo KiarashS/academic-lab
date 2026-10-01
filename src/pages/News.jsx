@@ -42,7 +42,7 @@ export default function News() {
       {header}
       {years.map((y) => (
         <Section key={y} title={y}>
-          <NewsList items={byYear[y]} />
+          <NewsList items={byYear[y]} showYear={false} />
         </Section>
       ))}
     </>

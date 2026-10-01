@@ -1,16 +1,24 @@
 import site, { pageEnabled } from '../config/index.js'
-import { formatDate } from '../lib/utils.js'
+import { formatDayMonth } from '../lib/utils.js'
 import SmartLink from './SmartLink.jsx'
 
-export default function NewsList({ items }) {
+// One row per item: a narrow column of small dates ("16 Feb 2026", or "16 Feb" under a
+// year heading) with the text lined up beside it, and a thin rule between rows.
+export default function NewsList({ items, showYear = true }) {
   return (
-    <ul className="space-y-4">
+    <ul>
       {items.map((item) => (
-        <li key={item.id} className="grid gap-1 sm:grid-cols-[7rem_1fr] sm:gap-4">
-          <time dateTime={item.date} className="text-sm text-neutral-500 tabular-nums dark:text-neutral-400">
-            {formatDate(item.date)}
+        <li
+          key={item.id}
+          className="flex items-baseline gap-4 border-b border-neutral-200 py-3 first:pt-0 dark:border-neutral-800"
+        >
+          <time
+            dateTime={item.date}
+            className={`shrink-0 text-[0.8rem] text-neutral-500 tabular-nums dark:text-neutral-400 ${showYear ? 'w-[5.5rem]' : 'w-14'}`}
+          >
+            {formatDayMonth(item.date, showYear)}
           </time>
-          <p className="leading-relaxed">
+          <p className="min-w-0 leading-relaxed">
             {item.text || item.title}
             {item.link?.url && (
               <>

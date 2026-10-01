@@ -3,7 +3,7 @@ import Markdown from '../components/Markdown.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
 import { newsById } from '../lib/data.js'
-import { formatDate } from '../lib/utils.js'
+import { formatDayMonth } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
 import Img from '../components/Img.jsx'
@@ -21,7 +21,7 @@ export default function NewsPost() {
       </Link>
       <header className="mt-6 mb-8 max-w-2xl">
         <time dateTime={post.date} className="text-sm text-neutral-500 dark:text-neutral-400">
-          {formatDate(post.date)}
+          {formatDayMonth(post.date)}
         </time>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
           {post.title || post.text}
