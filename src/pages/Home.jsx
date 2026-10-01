@@ -6,9 +6,11 @@ import Section from '../components/Section.jsx'
 import Slider from '../components/Slider.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site, { pageEnabled } from '../config/index.js'
-import { funders, research, slides, sortedNews, sortedPublications, upcomingEvents } from '../lib/data.js'
-import { asset, paragraphs } from '../lib/utils.js'
+import { funders, research, slides, sortedNews, sortedPublications, splitEvents } from '../lib/data.js'
+import { useToday } from '../lib/hydration.js'
+import { paragraphs } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
+import Img from '../components/Img.jsx'
 
 const { home } = site
 
@@ -50,7 +52,12 @@ const SECTIONS = {
         ))}
         {image && (
           <figure className="mt-10">
-            <img src={asset(image)} alt={imageCaption || ''} className="w-full rounded-md" />
+            <Img
+              src={image}
+              sizes="(min-width: 1024px) 64rem, 100vw"
+              alt={imageCaption || ''}
+              className="w-full rounded-md"
+            />
             {imageCaption && <figcaption className="mt-2 text-sm text-neutral-500">{imageCaption}</figcaption>}
           </figure>
         )}
@@ -65,10 +72,10 @@ const SECTIONS = {
       </Section>
     ),
 
-  events: (first) =>
-    upcomingEvents.length > 0 && (
+  events: (first, { upcoming }) =>
+    upcoming.length > 0 && (
       <Section key="events" flush={first} title={home.events.title} more={more('events', home.events.moreLink)}>
-        <EventList events={take(upcomingEvents, home.events.count)} />
+        <EventList events={take(upcoming, home.events.count)} />
       </Section>
     ),
 
@@ -78,8 +85,9 @@ const SECTIONS = {
         <ul className="flex flex-wrap items-center gap-x-10 gap-y-6">
           {funders.map((f) => {
             const mark = f.logo ? (
-              <img
-                src={asset(f.logo)}
+              <Img
+                src={f.logo}
+                sizes="12rem"
                 alt={f.name}
                 loading="lazy"
                 className="h-10 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0 dark:invert"
@@ -152,13 +160,14 @@ const SECTIONS = {
 
 export default function Home() {
   useTitle()
+  const events = splitEvents(useToday())
   const sections = home.sections.filter((key) => SECTIONS[key])
 
   return (
     <>
       {/* Keep one h1 on the page for screen readers when the intro is turned off. */}
       {!sections.includes('intro') && <h1 className="sr-only">{site.name}</h1>}
-      {sections.map((key, i) => SECTIONS[key](i === 0))}
+      {sections.map((key, i) => SECTIONS[key](i === 0, events))}
     </>
   )
 }

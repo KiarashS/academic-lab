@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { asset } from '../lib/utils.js'
+import Img from './Img.jsx'
 
 // Full-screen photo viewer. Arrow keys move between photos, Escape closes.
 export default function Lightbox({ photos, index, onChange, onClose }) {
@@ -38,8 +38,9 @@ export default function Lightbox({ photos, index, onChange, onClose }) {
       className="m-0 size-full max-h-none max-w-none bg-black/95 p-0 backdrop:bg-black/80"
     >
       <figure className="flex h-full flex-col items-center justify-center gap-3 p-4 sm:p-12">
-        <img
-          src={asset(photo.src)}
+        <Img
+          src={photo.src}
+          sizes="100vw"
           alt={photo.alt || photo.caption || ''}
           className="max-h-[80vh] max-w-full object-contain"
         />

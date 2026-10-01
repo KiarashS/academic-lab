@@ -2,12 +2,14 @@ import EventList from '../components/EventList.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import Section from '../components/Section.jsx'
 import site from '../config/index.js'
-import { pastEvents, upcomingEvents } from '../lib/data.js'
+import { splitEvents } from '../lib/data.js'
+import { useToday } from '../lib/hydration.js'
 import useTitle from '../lib/useTitle.js'
 
 export default function Events() {
   const config = site.events
   useTitle(config.title)
+  const { upcoming: upcomingEvents, past: pastEvents } = splitEvents(useToday())
 
   const feed = `${import.meta.env.BASE_URL}events.ics`
   // webcal:// makes calendar apps subscribe (and keep updating) instead of importing once.

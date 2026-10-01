@@ -20,16 +20,26 @@ function apply(mode) {
 }
 
 export function useColorMode() {
-  const [mode, setMode] = useState(readMode)
+  // Start from the configured default so the pre-rendered page and the browser match,
+  // then switch to the visitor's saved choice. The page colors themselves were already
+  // set before first paint by the script in the page head.
+  const [mode, setMode] = useState(site.theme.defaultMode)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
+    setMode(readMode())
+    setLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    if (!loaded) return
     apply(mode)
     if (mode !== 'system') return
     const media = window.matchMedia('(prefers-color-scheme: dark)')
     const onChange = () => apply('system')
     media.addEventListener('change', onChange)
     return () => media.removeEventListener('change', onChange)
-  }, [mode])
+  }, [mode, loaded])
 
   const cycle = useCallback(() => {
     setMode((current) => {

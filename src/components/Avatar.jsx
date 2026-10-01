@@ -1,11 +1,14 @@
-import { asset, initials } from '../lib/utils.js'
+import { initials } from '../lib/utils.js'
+import Img from './Img.jsx'
 
+// Rendered widths, so the browser fetches a small copy of the photo.
+const SIZE_PX = { sm: '64px', md: '96px', lg: '160px' }
 const SIZES = { sm: 'size-16 text-base', md: 'size-24 text-xl', lg: 'size-40 text-3xl' }
 
 export default function Avatar({ person, size = 'md' }) {
   const cls = `${SIZES[size]} shrink-0 rounded-full object-cover`
   if (person.photo) {
-    return <img src={asset(person.photo)} alt={person.name} className={cls} loading="lazy" />
+    return <Img src={person.photo} sizes={SIZE_PX[size]} alt={person.name} className={cls} loading="lazy" />
   }
   return (
     <div

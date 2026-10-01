@@ -1,4 +1,6 @@
 import site, { hasSection } from '../config/index.js'
+import { BUILD_DATE } from '../lib/hydration.js'
+import { consentNeeded, OPEN_EVENT } from './CookieConsent.jsx'
 import LinkList from './LinkList.jsx'
 import SmartLink from './SmartLink.jsx'
 
@@ -6,7 +8,7 @@ export default function Footer() {
   const { footer, institution } = site
   if (!footer.show) return null
 
-  const year = new Date().getFullYear()
+  const year = BUILD_DATE.slice(0, 4) // the site rebuilds nightly, so this stays current
   const show = (name) => hasSection(footer.sections, name)
 
   return (
@@ -24,6 +26,15 @@ export default function Footer() {
                 institution.name
               )}
             </p>
+          )}
+          {consentNeeded() && (
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_EVENT))}
+              className="mt-1 block cursor-pointer hover:text-accent"
+            >
+              Cookie settings
+            </button>
           )}
         </div>
         {show('social') && <LinkList links={footer.social} />}

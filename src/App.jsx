@@ -13,6 +13,7 @@ import NotFound from './pages/NotFound.jsx'
 import People from './pages/People.jsx'
 import PersonDetail from './pages/PersonDetail.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
+import PublicationDetail from './pages/PublicationDetail.jsx'
 import Publications from './pages/Publications.jsx'
 import Research from './pages/Research.jsx'
 import Resources from './pages/Resources.jsx'
@@ -24,7 +25,7 @@ import Teaching from './pages/Teaching.jsx'
 const PAGES = {
   research: { component: Research, detail: ProjectDetail },
   people: { component: People, detail: PersonDetail },
-  publications: { component: Publications },
+  publications: { component: Publications, detail: PublicationDetail },
   news: { component: News, detail: NewsPost },
   events: { component: Events, detail: EventDetail },
   resources: { component: Resources },

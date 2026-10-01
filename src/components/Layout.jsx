@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router'
+import CookieConsent, { consentNeeded } from './CookieConsent.jsx'
 import Footer from './Footer.jsx'
 import Header from './Header.jsx'
 
@@ -31,6 +32,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      {consentNeeded() && <CookieConsent />}
     </div>
   )
 }

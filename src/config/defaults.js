@@ -10,6 +10,7 @@ const defaults = {
   url: '',
   favicon: 'favicon.svg',
   ogImage: null,
+  socialImages: true,
   locale: 'en-US',
   theme: {
     accent: '#2563eb',
@@ -23,6 +24,8 @@ const defaults = {
     plausible: { domain: '', src: 'https://plausible.io/js/script.js' },
     umami: { websiteId: '', src: 'https://cloud.umami.is/script.js' },
     googleAnalytics: '',
+    cookieConsent: true,
+    consentText: 'This site uses cookies from Google Analytics to count visits.',
   },
   nav: [],
   home: {
@@ -77,6 +80,8 @@ const defaults = {
     showBibtex: true,
     showAbstract: true,
     import: { bibtex: 'publications.bib', orcid: [] },
+    pages: true,
+    citations: { show: true, label: 'Cited by' },
     types: {
       journal: 'Journal',
       conference: 'Conference',
@@ -115,12 +120,19 @@ const defaults = {
   contact: {
     title: 'Contact',
     intro: null,
-    sections: ['email', 'phone', 'address', 'directions', 'map'],
+    sections: ['email', 'phone', 'address', 'directions', 'map', 'form'],
     email: null,
     phone: null,
     address: [],
     directions: null,
     map: { lat: null, lng: null, zoom: 16, provider: 'google', embedUrl: null, showLinks: true },
+    form: {
+      provider: null,
+      formspreeId: '',
+      web3formsKey: '',
+      title: 'Send us a message',
+      success: 'Thanks, your message was sent. We will get back to you soon.',
+    },
   },
   footer: { show: true, sections: ['copyright', 'institution', 'social'], text: '', social: [] },
 }

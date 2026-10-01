@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import site from '../config/index.js'
+import { Link } from 'react-router'
+import site, { pageEnabled } from '../config/index.js'
 import { toBibtex } from '../lib/bibtex.js'
 import Authors from './Authors.jsx'
 
-const LINK_LABELS = {
+export const LINK_LABELS = {
   pdf: 'PDF',
   arxiv: 'arXiv',
   doi: 'DOI',
@@ -13,6 +14,26 @@ const LINK_LABELS = {
   slides: 'Slides',
   poster: 'Poster',
   video: 'Video',
+}
+
+// "Cited by 12", linking to the paper on Semantic Scholar.
+export function CitationCount({ pub, className = '' }) {
+  const c = pub.citations
+  if (!site.publications.citations?.show || !c?.count) return null
+  return (
+    <a
+      href={c.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`text-neutral-500 hover:text-accent dark:text-neutral-400 ${className}`}
+    >
+      {site.publications.citations.label} {c.count.toLocaleString(site.locale)}
+    </a>
+  )
+}
+
+export function publicationPage(pub) {
+  return pageEnabled('publications') && site.publications.pages ? `/publications/${pub.id}` : null
 }
 
 const buttonClass = 'cursor-pointer text-neutral-500 hover:text-accent dark:text-neutral-400 aria-expanded:text-accent'
@@ -39,7 +60,13 @@ export default function PublicationItem({ pub, showYear = true }) {
   return (
     <article id={pub.id} className="scroll-mt-8 rounded-md target:bg-accent/5 target:ring-8 target:ring-accent/5">
       <h3 className="leading-snug font-medium text-neutral-900 dark:text-neutral-100">
-        {pub.title}
+        {publicationPage(pub) ? (
+          <Link to={publicationPage(pub)} className="hover:text-accent">
+            {pub.title}
+          </Link>
+        ) : (
+          pub.title
+        )}
         {pub.award && (
           <span className="ml-2 align-middle text-xs font-normal whitespace-nowrap text-accent">{pub.award}</span>
         )}
@@ -60,6 +87,7 @@ export default function PublicationItem({ pub, showYear = true }) {
             {LINK_LABELS[key] || key}
           </a>
         ))}
+        <CitationCount pub={pub} />
         {pub.abstract && site.publications.showAbstract && (
           <button
             type="button"

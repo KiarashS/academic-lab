@@ -7,12 +7,14 @@ A minimal website for a research group, built with React, React Router, Vite and
 - Home: image/video slider, intro, latest news, upcoming events, current projects, featured publications and funders
 - Research: current and past projects, each with its own page listing its people and papers
 - People: members grouped by role, an optional management team, alumni, and a profile page per person
-- Publications: search and filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX per paper and for the whole or filtered list. Papers can be imported from BibTeX files and ORCID.
+- Publications: search and filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX per paper and for the whole or filtered list, and citation counts from Semantic Scholar. Each paper has its own page with a citation to copy and the tags Google Scholar uses to index it. Papers can be imported from BibTeX files and ORCID.
 - News: one-line items, or full posts with their own page, and an RSS feed
 - Events: upcoming and past events, event pages, "Add to calendar" files and a calendar feed people can subscribe to
-- Software & Data, Teaching, Gallery (albums with a full-screen photo viewer), Join and Contact (with a map)
+- Software & Data, Teaching, Gallery (albums with a full-screen photo viewer), Join and Contact (with a map and an optional contact form)
 
-The header has a Home link, dropdown groups for less-used pages, site-wide search (Ctrl+K, Cmd+K or `/`) and a light/dark/system switch. Lab members' names are bolded and linked in every author list. Each page is built as its own HTML file with its own title, description and social-preview tags, and the build writes `sitemap.xml` and `robots.txt`.
+The header has a Home link, dropdown groups for less-used pages, site-wide search (Ctrl+K, Cmd+K or `/`) and a light/dark/system switch. Lab members' names are bolded and linked in every author list.
+
+Every page is built as a complete HTML file: the page content is already there before any JavaScript runs, so search engines, link previews and visitors with JavaScript off all see it. Each page also gets its own title, description, generated social preview image and schema.org structured data, and the build writes `sitemap.xml` and `robots.txt`. Photos are resized at build time.
 
 ## Getting started
 
@@ -40,6 +42,8 @@ Everything visitors read is in `content/`:
 | `content/resources.yml` | Software and datasets. |
 | `content/teaching.yml`, `content/join.yml`, `content/funders.yml` | Courses, open positions, funder logos. |
 
+`npm run check` reads all content and lists problems, such as a project member with no file in `content/people/`, a paper linked to a project that doesn't exist, a group name that isn't in the settings, a badly written date or time, or a missing image. The same checks run on every build (as warnings) and on every pull request (where they fail the check).
+
 Each YAML file starts with a comment listing its fields. Some things to know:
 
 - Images and files go in `public/uploads/` and are referenced as `/uploads/name.jpg`. Full URLs also work. People without a photo get their initials.
@@ -50,6 +54,10 @@ Each YAML file starts with a comment listing its fields. Some things to know:
 - Set `featured: true` on a paper to show it on the home page.
 - Give a person a `management` title (e.g. `Lab Manager`) to list them in the management team. Mark a person `alumni: true` and add `now` to move them to Alumni.
 
+### Photos
+
+Put photos in `public/uploads/` (the editor at `/admin` does this for you) at whatever size you have. The build makes WebP copies at several widths and each page loads the smallest one that looks sharp on the visitor's screen, so a large photo from a phone doesn't slow the site down. SVGs, GIFs and images on other sites are used as they are.
+
 ### Importing publications
 
 Papers come from three places, combined into one list. If a paper appears twice (same DOI or same title), the first source wins:
@@ -57,6 +65,12 @@ Papers come from three places, combined into one list. If a paper appears twice 
 1. `content/publications.yml`, entered by hand
 2. BibTeX files in `content/`, listed in `publications.import.bibtex`. Standard fields are read as usual; a few extra ones are understood too: `code`, `data`, `slides`, `video`, `poster`, `project` and `pdf` become links, `featured = {true}` shows the paper on the home page, `award` adds a label, and `projects` links it to research projects.
 3. ORCID: put ORCID iDs in `publications.import.orcid`, e.g. `['0000-0002-1825-0097']`. Public works are fetched at build time; no API key is needed. If ORCID can't be reached, the build continues without those papers and prints a warning. Pushes to `main` rebuild the site, so new ORCID works show up with the next push, or with a manual run of the deploy workflow.
+
+### Paper pages, Google Scholar and citation counts
+
+Each paper gets a page at `/publications/<id>` with its abstract, links, a citation in APA style and BibTeX to copy, and the projects it belongs to. The page carries the `citation_*` meta tags Google Scholar reads; with a PDF link on the paper, Scholar can index it from your site. Turn the pages off with `publications.pages: false`.
+
+Citation counts come from [Semantic Scholar](https://www.semanticscholar.org), looked up by the paper's DOI or arXiv link when the site builds and shown as "Cited by N". Papers Semantic Scholar doesn't know show no count. Turn this off with `publications.citations.show: false`.
 
 ## Editing in the browser
 
@@ -87,26 +101,36 @@ Turning things on and off:
 | Project page | `research.project` | `description`, `funding`, `links`, `people`, `publications` |
 | People | `people` (groups, management team, alumni heading, photos, author highlighting) | `members`, `alumni` |
 | Person page | `people.profile` | `links`, `bio`, `interests`, `education`, `projects`, `publications` |
-| Publications | `publications` (Scholar link, import, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
+| Publications | `publications` (Scholar link, import, paper pages, citation counts, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
 | News | `news` (title, intro, group by year, RSS, "Read more" text) | |
 | Events | `events` (title, intro, headings, time zone, subscribe link) | `upcoming`, `past` |
 | Software & Data | `resources` (title, intro, headings) | `software`, `dataset`, `other` |
 | Teaching | `teaching` (instructor and description on or off) | |
 | Gallery | `gallery` (title, intro) | |
 | Join | `join` (title, headings, closed positions) | `intro`, `positions`, `apply` |
-| Contact | `contact` (details, map) | `email`, `phone`, `address`, `directions`, `map` |
+| Contact | `contact` (details, map, form) | `email`, `phone`, `address`, `directions`, `map`, `form` |
 | Footer | `footer` (on or off, text, links) | `copyright`, `institution`, `social` |
 
-Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap, RSS and canonical links), `ogImage` (social previews), `favicon`, `locale` (date format), `theme` (accent colors, font, default light/dark mode) and `analytics`.
+Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap, RSS and canonical links), `ogImage` (social previews), `favicon`, `locale` (date format), `theme` (accent colors, font, default light/dark mode), `socialImages` and `analytics` (with `cookieConsent`).
 
 ### Feeds and calendars
 
 - News RSS is at `/news.xml` when `news.rss` is on and `url` is set. The News page links to it.
 - `/events.ics` is a calendar feed with every event; the Events page offers a "Subscribe" link, so calendar apps pick up new events automatically. Each event also has its own `.ics` file behind "Add to calendar". Set `events.timezone` to the time zone your event times are written in.
 
-### Analytics
+### Analytics and cookie consent
 
-Fill in one option under `analytics` in `site.js`: Plausible (`domain`), Umami (`websiteId`) or Google Analytics (`googleAnalytics: 'G-…'`). Plausible and Umami don't use cookies, so they don't need a consent banner in most places. All three count page changes inside the site automatically.
+Fill in one option under `analytics` in `site.js`: Plausible (`domain`), Umami (`websiteId`) or Google Analytics (`googleAnalytics: 'G-…'`). All three count page changes inside the site automatically.
+
+Google Analytics sets cookies, so by default (`analytics.cookieConsent: true`) visitors first see a banner asking for consent, and Google Analytics only loads after they accept. The choice is remembered, and a "Cookie settings" link in the footer lets them change it. Plausible and Umami don't use cookies and never show the banner.
+
+### Contact form
+
+A static site can't send email, so the optional form on the Contact page goes through a free form service that emails each message to you. Sign up with [Formspree](https://formspree.io) or [Web3Forms](https://web3forms.com), then set `contact.form.provider` to `'formspree'` or `'web3forms'` and fill in `formspreeId` or `web3formsKey`. The form has name, email and message fields and a hidden field that catches most spam bots.
+
+### Social preview images
+
+When a page is shared on social media or in a chat app, it shows a 1200×630 image with the page title, a subtitle and the lab name, generated for every page at build time (`socialImages: true`, needs `url`). Pages with their own image, such as a project or news post with `image`, use that instead.
 
 ### Adding a page
 
@@ -118,12 +142,14 @@ The site builds to static files and works on any static host.
 
 URLs are plain paths such as `/people/alex-rivera`. The build writes an HTML file for every page (`people/alex-rivera.html`, `people.html` and so on), which GitHub Pages, Netlify and Cloudflare Pages serve at the extensionless URL with a 200 status. Any other URL gets `404.html`, which shows the site's "Page not found" view. On a host that doesn't resolve `.html` extensions, configure a fallback to `index.html`, or set `router: 'hash'` in `site.js` to use `/#/people` URLs instead.
 
-The page head (title, description, colors, default theme, analytics) is generated from `site.js` by `scripts/site-plugin.js`; content is read by `scripts/content.js`. Restart `npm run dev` after changing `site.js`.
+`npm run build` runs three steps: the browser build, a server-side build of the same app, and `scripts/prerender.js`, which renders every page to HTML and writes its head, the social images, feeds, calendar files and sitemap. Content is read by `scripts/content.js`. Restart `npm run dev` after changing `site.js`.
 
 If the site is served from a subpath, build with `BASE_PATH`, e.g. `BASE_PATH=/academic-lab/ npm run build`. The GitHub Pages workflow sets it for you.
 
 ### GitHub Pages
 
-`.github/workflows/deploy.yml` builds and publishes the site on every push to `main`, including commits made from `/admin`. In the repository settings, set Pages > Source to "GitHub Actions".
+`.github/workflows/deploy.yml` builds and publishes the site on every push to `main`, including commits made from `/admin`, and again every night so ORCID papers, citation counts and upcoming events stay current. In the repository settings, set Pages > Source to "GitHub Actions". GitHub pauses nightly runs in repositories with no commits for 60 days; any push or a manual run from the Actions tab starts them again.
+
+`.github/workflows/check.yml` runs `npm run check` and a full build on every pull request.
 
 To use a custom domain, set it under Settings > Pages and put the same address in `site.url` and in `site_url` in `public/admin/config.yml`.

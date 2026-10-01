@@ -25,7 +25,11 @@ const site = {
   // Browser tab icon, relative to public/.
   favicon: 'favicon.svg',
   // Image shown when a page is shared on social media (about 1200x630), relative to public/.
+  // Pages without their own image get a generated one (see socialImages).
   ogImage: null,
+  // Generate a preview image for every page (title, subtitle and lab name on a plain
+  // background) when it is shared on social media or in chat apps. Needs `url` above.
+  socialImages: true,
   // Language and locale for dates, e.g. 'en-US', 'en-GB', 'de-DE'.
   locale: 'en-US',
 
@@ -63,6 +67,11 @@ const site = {
     umami: { websiteId: '', src: 'https://cloud.umami.is/script.js' },
     // Google Analytics 4 measurement ID, e.g. 'G-XXXXXXX'.
     googleAnalytics: '',
+    // Google Analytics sets cookies, which in the EU and UK needs the visitor's consent.
+    // With this on, a banner asks first and Google Analytics only loads after "Accept".
+    // (Plausible and Umami don't use cookies and never show the banner.)
+    cookieConsent: true,
+    consentText: 'This site uses cookies from Google Analytics to count visits.',
   },
 
   // Pages, in menu order. Remove an entry to remove the page and its URL.
@@ -198,6 +207,11 @@ const site = {
       // ORCID iDs whose public works are pulled in at build time, e.g. ['0000-0002-1825-0097'].
       orcid: [],
     },
+    // A page for each paper at /publications/<id>, with the tags Google Scholar reads to
+    // index it, a citation in text and BibTeX, and links. Titles in lists link to it.
+    pages: true,
+    // "Cited by N" from Semantic Scholar, looked up by DOI or arXiv link at build time.
+    citations: { show: true, label: 'Cited by' },
     // Labels for the `type` field of each publication.
     types: {
       journal: 'Journal',
@@ -266,8 +280,9 @@ const site = {
   contact: {
     title: 'Contact',
     intro: null,
-    // email | phone | address | directions | map  (the map sits beside the others on wide screens)
-    sections: ['email', 'phone', 'address', 'directions', 'map'],
+    // email | phone | address | directions | map | form
+    // (the map sits beside the details on wide screens; the form goes below both)
+    sections: ['email', 'phone', 'address', 'directions', 'map', 'form'],
     email: 'lab@example.edu',
     phone: '+1 (555) 010-0000',
     address: ['Room 404, Example Hall', '123 University Ave', 'Example City, ST 00000'],
@@ -286,6 +301,18 @@ const site = {
       embedUrl: null,
       // "Open in Google Maps" and "Directions" links under the map.
       showLinks: true,
+    },
+    // Optional contact form. A static site can't send email itself, so messages go through
+    // a free form service that emails them to you. Pick one and fill in its ID:
+    //   'formspree'  -> formspreeId from https://formspree.io (e.g. 'xyzabcd')
+    //   'web3forms'  -> web3formsKey from https://web3forms.com (an access key)
+    // provider: null turns the form off.
+    form: {
+      provider: null,
+      formspreeId: '',
+      web3formsKey: '',
+      title: 'Send us a message',
+      success: 'Thanks, your message was sent. We will get back to you soon.',
     },
   },
 

@@ -1,10 +1,15 @@
-# Builds the site and publishes it to GitHub Pages on every push to main.
+# Builds the site and publishes it to GitHub Pages on every push to main and every night.
 # In the repository settings, set Pages > Source to "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  # Rebuild every night so new ORCID papers, citation counts, the copyright year and
+  # "upcoming" events stay current without anyone pushing a change. (GitHub pauses
+  # scheduled runs after 60 days without commits; any push or a manual run restarts them.)
+  schedule:
+    - cron: '17 2 * * *'
   workflow_dispatch:
 
 permissions:
@@ -28,6 +33,15 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v5
       - run: npm ci
+      # Keep resized photos and social images between runs so only new ones are made.
+      # (After npm ci, which empties node_modules.)
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.cache/academic-lab/img
+            node_modules/.cache/academic-lab/og
+          key: images-${{ hashFiles('public/**', 'content/**') }}
+          restore-keys: images-
       - run: npm run build
         env:
           # e.g. '/academic-lab/' for a project site, '/' for a custom domain

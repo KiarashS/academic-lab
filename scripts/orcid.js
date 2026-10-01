@@ -1,9 +1,10 @@
 // Pulls a researcher's works from their public ORCID record (no API key needed) and turns
-// them into the site's publication format. Results are cached for the life of the process
-// so the dev server doesn't refetch on every change. If ORCID can't be reached the build
-// carries on without those papers and prints a warning.
+// them into the site's publication format. Results are cached on disk for 12 hours (see
+// cache.js) so dev-server reloads and the two build steps don't refetch. If ORCID can't be
+// reached the build carries on without those papers and prints a warning.
+import { cachedJson } from './cache.js'
+
 const API = 'https://pub.orcid.org/v3.0'
-const cache = new Map()
 
 const TYPES = {
   'journal-article': 'journal',
@@ -59,7 +60,10 @@ function toPublication(work, ownerName) {
 
 export async function fetchOrcidWorks(orcidId) {
   const id = orcidId.replace(/^https?:\/\/orcid\.org\//, '').trim()
-  if (cache.has(id)) return cache.get(id)
+  return (await cachedJson(`orcid-${id}`, 12, () => loadWorks(id))) || []
+}
+
+async function loadWorks(id) {
   try {
     const [person, summary] = await Promise.all([get(`/${id}/person`), get(`/${id}/works`)])
     const given = person.name?.['given-names']?.value
@@ -79,11 +83,9 @@ export async function fetchOrcidWorks(orcidId) {
       .filter((p) => p.title && p.year)
       .map((p) => Object.fromEntries(Object.entries(p).filter(([, v]) => v !== undefined)))
     console.log(`[orcid] ${id}: ${pubs.length} works`)
-    cache.set(id, pubs)
     return pubs
   } catch (error) {
     console.warn(`[orcid] Could not load works for ${id}: ${error.message}. Continuing without them.`)
-    cache.set(id, [])
-    return []
+    return undefined // not cached, so the next build tries again
   }
 }

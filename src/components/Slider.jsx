@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { asset } from '../lib/utils.js'
 import SmartLink from './SmartLink.jsx'
+import Img from './Img.jsx'
 
 const POSITIONS = { top: 'object-top', center: 'object-center', bottom: 'object-bottom' }
 
@@ -50,7 +51,7 @@ function Media({ slide, active, loop, onEnded }) {
       />
     ) : null
   }
-  return <img src={asset(slide.src)} alt={slide.alt || ''} className={fit} />
+  return <Img src={slide.src} sizes="(min-width: 1024px) 64rem, 100vw" alt={slide.alt || ''} className={fit} />
 }
 
 function ArrowButton({ direction, onClick }) {
@@ -81,7 +82,11 @@ function ArrowButton({ direction, onClick }) {
 
 export default function Slider({ slides, autoplay = true, interval = 6000, aspectRatio = '21 / 9' }) {
   const [index, setIndex] = useState(0)
-  const [playing, setPlaying] = useState(() => autoplay && !prefersReducedMotion())
+  const [playing, setPlaying] = useState(autoplay)
+  // Checked after the first render so the pre-rendered page and the browser match.
+  useEffect(() => {
+    if (prefersReducedMotion()) setPlaying(false)
+  }, [])
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
   const touchX = useRef(null)

@@ -7,9 +7,9 @@ import Section from '../components/Section.jsx'
 import Tag from '../components/Tag.jsx'
 import site from '../config/index.js'
 import { personById, projectById, publicationsByProject } from '../lib/data.js'
-import { asset } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
+import Img from '../components/Img.jsx'
 
 export default function ProjectDetail() {
   const { id } = useParams()
@@ -78,7 +78,9 @@ export default function ProjectDetail() {
         )}
       </header>
 
-      {project.image && <img src={asset(project.image)} alt="" className="mt-8 w-full rounded-md" />}
+      {project.image && (
+        <Img src={project.image} sizes="(min-width: 1024px) 64rem, 100vw" className="mt-8 w-full rounded-md" />
+      )}
 
       {config.sections.map((key) => SECTIONS[key]?.())}
     </>

@@ -26,7 +26,7 @@ function buildIndex() {
       add(
         'Publication',
         p.title,
-        `/publications#${p.id}`,
+        site.publications.pages ? `/publications/${p.id}` : `/publications#${p.id}`,
         `${p.authors.join(', ')} · ${p.year}`,
         p.venue,
         p.tags,

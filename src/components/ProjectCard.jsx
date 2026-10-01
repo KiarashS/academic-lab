@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import site, { pageEnabled } from '../config/index.js'
-import { asset } from '../lib/utils.js'
 import Tag from './Tag.jsx'
+import Img from './Img.jsx'
 
 // Links to the project's page only when the Research page is turned on.
 export default function ProjectCard({ project }) {
@@ -10,8 +10,9 @@ export default function ProjectCard({ project }) {
   return (
     <Wrapper {...(linked && { to: `/research/${project.id}` })} className="group block">
       {project.image && (
-        <img
-          src={asset(project.image)}
+        <Img
+          src={project.image}
+          sizes="(min-width: 640px) 30rem, 100vw"
           alt=""
           loading="lazy"
           className="mb-4 aspect-[16/9] w-full rounded-md object-cover"

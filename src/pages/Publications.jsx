@@ -8,6 +8,7 @@ import Tag from '../components/Tag.jsx'
 import site from '../config/index.js'
 import { toBibtex } from '../lib/bibtex.js'
 import { memberIdForAuthor, normalizeName, personById, sortedPublications } from '../lib/data.js'
+import { useHydrated } from '../lib/hydration.js'
 import useTitle from '../lib/useTitle.js'
 
 const selectClass =
@@ -65,7 +66,9 @@ export default function Publications() {
 
   // Filters live in the URL so a filtered view can be shared or bookmarked.
   const [params, setParams] = useSearchParams()
-  const get = (key) => (filters.includes(key === 'q' ? 'search' : key) && params.get(key)) || ''
+  // Pre-rendered pages have no ?query, so filters from the URL apply once hydrated.
+  const hydrated = useHydrated()
+  const get = (key) => (hydrated && filters.includes(key === 'q' ? 'search' : key) && params.get(key)) || ''
   const query = get('q')
   const type = get('type')
   const year = get('year')

@@ -1,6 +1,7 @@
 import PageHeader from '../components/PageHeader.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
+import ContactForm from '../components/ContactForm.jsx'
 import useTitle from '../lib/useTitle.js'
 
 // Map embeds centered on a point, with a pin. Neither needs an API key.
@@ -96,6 +97,11 @@ export default function Contact() {
         {fields.length > 0 && <dl className="space-y-6">{fields}</dl>}
         {showMap && <ContactMap map={map} />}
       </div>
+      {config.sections.includes('form') && config.form?.provider && (
+        <div className="mt-16">
+          <ContactForm />
+        </div>
+      )}
     </>
   )
 }

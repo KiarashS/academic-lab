@@ -6,7 +6,10 @@ import { join, resolve } from 'node:path'
 import { Marked } from 'marked'
 import YAML from 'yaml'
 import { parseBibtex } from './bibtex.js'
+import { addCitationCounts } from './citations.js'
+import { enhanceHtmlImages, processImages } from './images.js'
 import { fetchOrcidWorks } from './orcid.js'
+import { reportProblems, validateContent } from './validate.js'
 
 export const CONTENT_DIR = resolve(import.meta.dirname, '../content')
 
@@ -164,12 +167,15 @@ export async function loadContent(site, base = '/') {
 
   const gallery = (readYaml('gallery.yml').albums || []).map((a) => ({ ...a, date: day(a.date) }))
 
-  return {
+  let publications = await loadPublications(site)
+  if (site.publications.citations?.show) publications = await addCitationCounts(publications)
+
+  const content = {
     people,
     research,
     news,
     events,
-    publications: await loadPublications(site),
+    publications,
     teaching: readYaml('teaching.yml').courses || [],
     join: readYaml('join.yml'),
     slides: readYaml('slides.yml').slides || [],
@@ -177,4 +183,26 @@ export async function loadContent(site, base = '/') {
     resources: readYaml('resources.yml').items || [],
     funders: readYaml('funders.yml').funders || [],
   }
+
+  reportProblems(validateContent(content, site))
+
+  // Resize every photo the content uses (see images.js); the app looks them up by path.
+  const htmlImages = (html) =>
+    [...(html || '').matchAll(/<img [^>]*src="([^"]+)"/g)].map((m) => m[1].slice(base.length - 1))
+  content.images = await processImages([
+    site.home.intro.image,
+    ...people.flatMap((p) => [p.photo, ...htmlImages(p.bio)]),
+    ...research.flatMap((r) => [r.image, ...htmlImages(r.description)]),
+    ...news.flatMap((n) => [n.image, ...htmlImages(n.html)]),
+    ...events.flatMap((e) => htmlImages(e.html)),
+    ...content.slides.flatMap((s) => (s.type === 'image' || !s.type ? [s.src] : [s.poster])),
+    ...gallery.flatMap((a) => (a.photos || []).map((p) => p.src)),
+    ...content.funders.map((f) => f.logo),
+  ])
+  for (const p of people) p.bio = enhanceHtmlImages(p.bio, content.images, base)
+  for (const r of research) r.description = enhanceHtmlImages(r.description, content.images, base)
+  for (const n of news) n.html = enhanceHtmlImages(n.html, content.images, base)
+  for (const e of events) e.html = enhanceHtmlImages(e.html, content.images, base)
+
+  return content
 }

@@ -3,9 +3,10 @@ import Markdown from '../components/Markdown.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
 import { newsById } from '../lib/data.js'
-import { asset, formatDate } from '../lib/utils.js'
+import { formatDate } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
+import Img from '../components/Img.jsx'
 
 export default function NewsPost() {
   const { id } = useParams()
@@ -27,7 +28,9 @@ export default function NewsPost() {
         </h1>
         {post.title && post.text && <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-400">{post.text}</p>}
       </header>
-      {post.image && <img src={asset(post.image)} alt="" className="mb-8 w-full max-w-2xl rounded-md" />}
+      {post.image && (
+        <Img src={post.image} sizes="(min-width: 768px) 42rem, 100vw" className="mb-8 w-full max-w-2xl rounded-md" />
+      )}
       <Markdown html={post.html} />
       {post.link?.url && (
         <p className="mt-8">
