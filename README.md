@@ -56,6 +56,10 @@ Each YAML file starts with a comment listing its fields. Some things to know:
 - Set `featured: true` on a paper to show it on the home page.
 - Give a person a `management` title (e.g. `Lab Manager`) to list them in the management team. Mark a person `alumni: true` and add `now` to move them to Alumni.
 
+### Intro image
+
+`home.intro.image` adds a picture to the intro, such as a group photo or a figure from your work. `home.intro.imagePosition` places it: `right` or `left` puts it beside the text on screens 1024px and wider (cropped to 4:3) and below the text on smaller screens (16:9); `below` shows it full width under the text at its own shape. Add `imageAlt` to describe it for screen readers. The site ships with a placeholder image on the right; replace it with your own.
+
 ### Notices
 
 `content/notices.yml` (or "Lists → Notices" in `/admin`) holds short announcements of any kind: a lab move, a deadline, a call for papers, a closure. Each notice has `text` and optionally:

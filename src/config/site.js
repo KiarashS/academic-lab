@@ -117,9 +117,14 @@ const site = {
         'We develop methods that let learning systems generalize from a handful of examples, and we apply them to problems in biology, medicine and the physical sciences.',
         'The lab is part of the Department of Computer Science at Example University and is funded by the NSF, the NIH and industry partners.',
       ],
-      // Optional image under the text (path relative to public/ or full URL).
-      image: null,
+      // Optional image (path relative to public/, e.g. /uploads/group.jpg, or a full URL).
+      // Replace the placeholder below with a group photo or a figure from your work.
+      image: '/slides/slide-2.svg',
+      imageAlt: '', // describe the image for screen readers
       imageCaption: '',
+      // below: under the text, full width
+      // right | left: beside the text on screens 1024px and wider, below it on smaller ones
+      imagePosition: 'right',
     },
     news: { title: 'News', count: 4, moreLink: 'All news' },
     // Current (not past) projects. count: null shows all of them.

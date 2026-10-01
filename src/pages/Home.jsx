@@ -96,9 +96,10 @@ const SECTIONS = {
     ),
 
   intro: () => {
-    const { heading, text, image, imageCaption } = home.intro
-    return (
-      <section key="intro" className="mb-4">
+    const { heading, text, image, imageAlt, imageCaption, imagePosition } = home.intro
+    const side = image && (imagePosition === 'right' || imagePosition === 'left')
+    const words = (
+      <div>
         {(heading || site.tagline) && (
           <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-50">
             {heading || site.tagline}
@@ -109,17 +110,52 @@ const SECTIONS = {
             {p}
           </p>
         ))}
-        {image && (
-          <figure className="mt-10">
-            <Img
-              src={image}
-              sizes="(min-width: 1024px) 64rem, 100vw"
-              alt={imageCaption || ''}
-              className="w-full rounded-md"
-            />
-            {imageCaption && <figcaption className="mt-2 text-sm text-neutral-500">{imageCaption}</figcaption>}
-          </figure>
-        )}
+      </div>
+    )
+    const figure = image && (
+      <figure className={side ? 'mt-10 lg:mt-0' : 'mt-10'}>
+        <Img
+          src={image}
+          // Beside the text the image is at most about 24rem wide.
+          sizes={side ? '(min-width: 1024px) 24rem, 100vw' : '(min-width: 1024px) 64rem, 100vw'}
+          alt={imageAlt || imageCaption || ''}
+          className={`w-full rounded-md ${side ? 'aspect-[16/9] object-cover lg:aspect-[4/3]' : ''}`}
+        />
+        {imageCaption && <figcaption className="mt-2 text-sm text-neutral-500">{imageCaption}</figcaption>}
+      </figure>
+    )
+
+    if (side) {
+      // Text keeps its readable width; the image fills the rest of the row on wide
+      // screens (1024px+) and drops below the text on smaller ones.
+      return (
+        <section
+          key="intro"
+          className={`mb-4 lg:grid lg:items-center lg:gap-12 ${
+            imagePosition === 'left'
+              ? 'lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]'
+              : 'lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]'
+          }`}
+        >
+          {imagePosition === 'left' ? (
+            <>
+              <div className="lg:order-2">{words}</div>
+              <div className="lg:order-1">{figure}</div>
+            </>
+          ) : (
+            <>
+              {words}
+              {figure}
+            </>
+          )}
+        </section>
+      )
+    }
+
+    return (
+      <section key="intro" className="mb-4">
+        {words}
+        {figure}
       </section>
     )
   },

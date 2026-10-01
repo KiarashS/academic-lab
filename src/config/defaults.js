@@ -31,7 +31,7 @@ const defaults = {
   home: {
     sections: ['slider', 'intro', 'notices', 'hiring', 'news', 'events', 'research', 'publications', 'funders'],
     slider: { autoplay: true, interval: 6000, aspectRatio: '21 / 9' },
-    intro: { heading: null, text: [], image: null, imageCaption: '' },
+    intro: { heading: null, text: [], image: null, imageAlt: '', imageCaption: '', imagePosition: 'below' },
     news: { title: 'News', count: 4, moreLink: 'All news' },
     research: { title: 'Research', count: null, moreLink: 'All projects' },
     publications: { title: 'Selected publications', count: null, moreLink: 'All publications' },
