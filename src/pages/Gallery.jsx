@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import Lightbox from '../components/Lightbox.jsx'
 import PageHeader from '../components/PageHeader.jsx'
+import DateParts from '../components/DateParts.jsx'
 import Section from '../components/Section.jsx'
 import site from '../config/index.js'
 import { gallery } from '../lib/data.js'
-import { formatDate } from '../lib/utils.js'
 import useTitle from '../lib/useTitle.js'
 import Img from '../components/Img.jsx'
 
@@ -22,7 +22,9 @@ export default function Gallery() {
         <Section key={album.title} title={album.title}>
           {(album.date || album.description) && (
             <p className="-mt-2 mb-5 text-sm text-neutral-500 dark:text-neutral-400">
-              {[album.date && formatDate(album.date), album.description].filter(Boolean).join(' · ')}
+              {album.date && <DateParts iso={album.date} />}
+              {album.date && album.description && ' · '}
+              {album.description}
             </p>
           )}
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

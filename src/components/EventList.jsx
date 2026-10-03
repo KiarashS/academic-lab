@@ -36,9 +36,7 @@ export default function EventList({ events, showCalendar = true }) {
             <div>
               <h3 className="leading-6 font-medium text-neutral-900 dark:text-neutral-100">
                 {page ? (
-                  <SmartLink to={page} className="hover:text-accent">
-                    {event.title}
-                  </SmartLink>
+                  <SmartLink to={page}>{event.title}</SmartLink>
                 ) : (
                   event.title
                 )}

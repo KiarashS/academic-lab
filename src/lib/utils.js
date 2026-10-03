@@ -1,5 +1,3 @@
-import site from '../config/index.js'
-
 // Resolve a path in public/ against the deploy base. Full URLs pass through.
 export function asset(path) {
   if (!path) return path
@@ -10,16 +8,6 @@ export function asset(path) {
 export function paragraphs(value) {
   if (!value) return []
   return Array.isArray(value) ? value : [value]
-}
-
-export function formatDate(iso, style = 'medium') {
-  const [y, m, d] = iso.split('-').map(Number)
-  const date = new Date(Date.UTC(y, (m || 1) - 1, d || 1))
-  const options =
-    style === 'short'
-      ? { year: 'numeric', month: 'short', timeZone: 'UTC' }
-      : { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }
-  return date.toLocaleDateString(site.locale || 'en-US', options)
 }
 
 export function initials(name) {
