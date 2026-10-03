@@ -12,7 +12,7 @@ import { useHydrated } from '../lib/hydration.js'
 import useTitle from '../lib/useTitle.js'
 
 const selectClass =
-  'min-w-0 rounded-md border border-neutral-200 bg-transparent px-2.5 py-1.5 text-sm dark:border-neutral-800 dark:bg-neutral-950'
+  'min-w-0 rounded-md border border-neutral-200 bg-transparent px-2.5 py-1.5 text-base sm:text-sm dark:border-neutral-800 dark:bg-neutral-950'
 
 function downloadBibtex(pubs) {
   const blob = new Blob([pubs.map(toBibtex).join('\n\n') + '\n'], { type: 'application/x-bibtex' })
@@ -113,7 +113,7 @@ export default function Publications() {
         onChange={(e) => update('q', e.target.value)}
         placeholder="Search titles, authors, venues"
         aria-label="Search publications"
-        className="min-w-0 flex-1 basis-60 rounded-md border border-neutral-200 bg-transparent px-3 py-1.5 text-sm placeholder:text-neutral-500 dark:border-neutral-800"
+        className="min-w-0 flex-1 basis-60 rounded-md border border-neutral-200 bg-transparent px-3 py-1.5 text-base placeholder:text-neutral-500 sm:text-sm dark:border-neutral-800"
       />
     ),
     type: () =>

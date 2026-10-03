@@ -1,17 +1,48 @@
-import { useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+import { Outlet, useLocation, useNavigationType } from 'react-router'
 import CookieConsent, { consentNeeded } from './CookieConsent.jsx'
 import Footer from './Footer.jsx'
 import Header from './Header.jsx'
 import { SiteNotices } from './Notice.jsx'
 
 export default function Layout() {
-  const { pathname, hash } = useLocation()
+  const location = useLocation()
+  const { pathname, hash } = location
+  const navigationType = useNavigationType()
+  const positions = useRef(new Map()) // scroll position per history entry
+  const firstRender = useRef(true)
+  const [announcement, setAnnouncement] = useState('')
 
+  // The app restores scroll positions itself (see below), not the browser.
   useEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
+  }, [])
+
+  // Remember how far down each page in the history was scrolled.
+  useEffect(() => {
+    const save = () => positions.current.set(location.key, window.scrollY)
+    window.addEventListener('scroll', save, { passive: true })
+    return () => window.removeEventListener('scroll', save)
+  }, [location.key])
+
+  // On a page change: Back/Forward returns to where you were, a link to #something
+  // scrolls to it, anything else starts at the top. Screen readers hear the new page's
+  // title, and keyboard focus moves to the page content.
+  useEffect(() => {
+    const saved = positions.current.get(location.key)
     const target = hash && document.getElementById(decodeURIComponent(hash.slice(1)))
-    if (target) target.scrollIntoView()
-    else window.scrollTo(0, 0)
+    if (navigationType === 'POP' && saved !== undefined) window.scrollTo({ top: saved, behavior: 'instant' })
+    else if (target) target.scrollIntoView()
+    else window.scrollTo({ top: 0, behavior: 'instant' })
+
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    setAnnouncement(document.title)
+    if (!target) document.getElementById('main')?.focus({ preventScroll: true })
+    // Only path and hash changes count as a new page; filter changes in ?query don't.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, hash])
 
   return (
@@ -34,6 +65,10 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      {/* Read out by screen readers after each page change. */}
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
+      </p>
       {consentNeeded() && <CookieConsent />}
     </div>
   )

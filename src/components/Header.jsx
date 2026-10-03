@@ -5,6 +5,8 @@ import { asset } from '../lib/utils.js'
 import ModeToggle from './ModeToggle.jsx'
 import Search from './Search.jsx'
 
+export const OPEN_SEARCH_EVENT = 'open-search'
+
 const linkClass = (active) =>
   `text-sm transition-colors ${
     active
@@ -123,6 +125,13 @@ export default function Header() {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
+
+  // Other parts of the page (like the "Page not found" view) can open search too.
+  useEffect(() => {
+    const open = () => setSearching(true)
+    window.addEventListener(OPEN_SEARCH_EVENT, open)
+    return () => window.removeEventListener(OPEN_SEARCH_EVENT, open)
+  }, [])
 
   // Ctrl+K / Cmd+K anywhere, or "/" when not typing, opens search.
   useEffect(() => {

@@ -26,6 +26,37 @@
 
 html {
   scrollbar-gutter: stable;
+  /* No grey flash when tapping links on phones; the hover and focus styles are enough. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Links to a spot on the same page (#id) glide there, unless motion is turned down. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 22%, transparent);
+}
+
+/* Printing a page (a publication list, a profile) prints just the content. */
+@media print {
+  #root > div > header,
+  #root > div > footer,
+  [aria-roledescription='carousel'],
+  [role='region'][aria-label='Notice'],
+  [role='dialog'] {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main {
+    padding-top: 0 !important;
+  }
 }
 
 body {

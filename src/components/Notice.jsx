@@ -94,7 +94,7 @@ export default function Notice({ text, link, style = 'accent', pulse = false, on
       <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <p className="text-neutral-800 dark:text-neutral-200">{text}</p>
         {link?.url && (
-          <SmartLink to={link.url} className="prose-link shrink-0 text-sm pointer-coarse:py-1">
+          <SmartLink to={link.url} className="prose-link shrink-0 self-start text-sm pointer-coarse:py-1 sm:self-auto">
             {link.label || 'More'} &rarr;
           </SmartLink>
         )}
