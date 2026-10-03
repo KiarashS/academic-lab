@@ -33,3 +33,31 @@ export function parseEmbed(src) {
   }
   return { provider: null, player: src }
 }
+
+const VIDEO_FILE = /\.(mp4|webm|m4v|mov|ogv)$/i
+
+// What kind of slide this is. A video file or a YouTube/Vimeo link is recognised from the
+// link itself, so `type` can be left out (or left at "image" by mistake) and it still plays.
+export function slideType(slide) {
+  const src = String(slide.src || '')
+  let path = src
+  try {
+    path = new URL(src, 'http://x').pathname
+  } catch {
+    // Not a URL; check the text as it is.
+  }
+  if (VIDEO_FILE.test(path)) return 'video'
+  if (/^https?:\/\//.test(src) && parseEmbed(src)?.provider) return 'embed'
+  return slide.type || 'image'
+}
+
+// Dropbox share links open a preview page; ?raw=1 serves the file itself.
+export function directVideoUrl(src) {
+  if (/^https:\/\/(www\.)?dropbox\.com\//.test(src)) {
+    const url = new URL(src)
+    url.searchParams.delete('dl')
+    url.searchParams.set('raw', '1')
+    return url.toString()
+  }
+  return src
+}

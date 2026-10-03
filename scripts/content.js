@@ -10,6 +10,7 @@ import { addCitationCounts } from './citations.js'
 import { enhanceHtmlImages, processImages } from './images.js'
 import { fetchOrcidWorks } from './orcid.js'
 import { reportProblems, validateContent } from './validate.js'
+import { directVideoUrl, slideType } from '../src/lib/embed.js'
 
 export const CONTENT_DIR = resolve(import.meta.dirname, '../content')
 
@@ -181,7 +182,10 @@ export async function loadContent(site, base = '/') {
     publications,
     teaching: readYaml('teaching.yml').courses || [],
     join: readYaml('join.yml'),
-    slides: readYaml('slides.yml').slides || [],
+    slides: (readYaml('slides.yml').slides || []).map((s) => {
+      const type = slideType(s)
+      return { ...s, type, src: type === 'video' ? directVideoUrl(s.src) : s.src }
+    }),
     gallery,
     resources: readYaml('resources.yml').items || [],
     funders: readYaml('funders.yml').funders || [],

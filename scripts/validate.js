@@ -1,7 +1,7 @@
 // Checks the content for mistakes that would otherwise fail silently: a typo in a person's
 // id, a project that doesn't exist, a missing image. Problems are printed during every
 // build and `npm run check`; with STRICT_CONTENT=1 (used on pull requests) they fail it.
-import { existsSync } from 'node:fs'
+import { existsSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { imageKey, PUBLIC_DIR } from './images.js'
 
@@ -85,7 +85,15 @@ export function validateContent(content, site) {
     if (!s.src) add(where, 'src is missing')
     else if (s.type === 'embed') {
       if (!/^https?:\/\//.test(s.src)) add(where, `src "${s.src}" should be a YouTube or Vimeo link`)
-    } else checkImage(where, s.src)
+    } else {
+      checkImage(where, s.src)
+      // GitHub refuses files over 100 MB, and a big video is slow for visitors anyway.
+      const file = join(PUBLIC_DIR, imageKey(s.src))
+      if (s.type === 'video' && !/^(https?:)?\/\//.test(s.src) && existsSync(file)) {
+        const mb = statSync(file).size / 1e6
+        if (mb > 50) add(where, `video is ${Math.round(mb)} MB; keep it under 50 MB (GitHub refuses files over 100 MB)`)
+      }
+    }
     if (s.duration != null && !(Number(s.duration) > 0)) add(where, `duration "${s.duration}" should be a number of milliseconds, e.g. 8000`)
     checkImage(where, s.poster)
   })

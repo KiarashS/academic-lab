@@ -243,7 +243,7 @@ collections:
             summary: '{{fields.type}} · {{fields.title}}'
             fields:
               - { name: type, label: Type, widget: select, options: [image, video, embed], default: image }
-              - { name: src, label: Image or video file (or YouTube/Vimeo link), widget: file, hint: 'For YouTube or Vimeo, choose embed above and paste the video link, e.g. https://www.youtube.com/watch?v=VIDEO_ID' }
+              - { name: src, label: Image or video file (or YouTube/Vimeo link), widget: file, hint: 'Upload an image or an MP4/WebM video (under 50 MB), or use Enter URL to paste a direct link to a video file or a YouTube/Vimeo link. Videos and YouTube/Vimeo links are recognised whatever the type says.' }
               - { name: poster, label: Video poster image, widget: image, required: false, hint: 'Optional for YouTube, which has its own thumbnail' }
               - { name: sound, label: Video has sound (adds a sound button), widget: boolean, required: false }
               - { name: alt, label: Image description, widget: string, required: false }
