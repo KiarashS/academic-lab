@@ -10,7 +10,7 @@ A minimal website for a research group, built with React, React Router, Vite and
 - Publications: search and filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX per paper and for the whole or filtered list, and citation counts from Semantic Scholar. Each paper has its own page with a citation to copy and the tags Google Scholar uses to index it. Papers can be imported from BibTeX files and ORCID.
 - News: one-line items, or full posts with their own page, and an RSS feed
 - Events: upcoming and past events, event pages, "Add to calendar" files and a calendar feed people can subscribe to
-- Software & Data, Teaching, Gallery (albums with a full-screen photo viewer), Join and Contact (with a map and an optional contact form)
+- Software & Data, Teaching, Gallery (albums of photos and videos with a full-screen viewer), Join and Contact (with a map and an optional contact form)
 
 The header has a Home link, dropdown groups for less-used pages, site-wide search (Ctrl+K, Cmd+K or `/`) and a light/dark/system switch. Lab members' names are bolded and linked in every author list.
 
@@ -38,7 +38,7 @@ Everything visitors read is in `content/`:
 | `content/publications.yml` | Papers entered by hand. |
 | `content/publications.bib` | Papers in BibTeX, e.g. exported from Zotero or Google Scholar. |
 | `content/slides.yml` | Home page slider: images, videos, or YouTube/Vimeo videos that load only when a visitor presses play. |
-| `content/gallery.yml` | Photo albums. |
+| `content/gallery.yml` | Albums of photos and videos (files, direct links, YouTube or Vimeo). |
 | `content/resources.yml` | Software and datasets. |
 | `content/teaching.yml`, `content/join.yml`, `content/funders.yml` | Courses, open positions, funder logos. |
 | `content/home/*.md` | Text blocks for the home page (see below). |

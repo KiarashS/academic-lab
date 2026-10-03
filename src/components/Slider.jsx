@@ -204,10 +204,12 @@ export default function Slider({
   const isVideo = current.type === 'video'
   const embedPlaying = current.type === 'embed' && started === index
   // Videos (and embeds once started) decide when to move on; everything else uses the timer.
-  const timed = autoplay && playing && count > 1 && !isVideo && !embedPlaying
+  // The pause button freezes the timer rather than removing it, so playing again picks up
+  // where it stopped instead of starting the slide's time over.
+  const timed = autoplay && count > 1 && !isVideo && !embedPlaying
   // Any motion stops while the slider is off screen or the tab is in the background.
   const visible = onScreen && tabVisible
-  const timerRunning = timed && visible && !hovered && !keyboardFocus
+  const timerRunning = timed && playing && visible && !hovered && !keyboardFocus
   const hasMotion = autoplay || slides.some((s) => s.type === 'video')
 
   const onKeyDown = (e) => {
@@ -260,7 +262,7 @@ export default function Slider({
       className="group relative aspect-(--slider-mobile-ratio) overflow-hidden rounded-md bg-neutral-100 sm:aspect-(--slider-ratio) dark:bg-neutral-900"
     >
       {/* Screen readers hear the new slide when someone changes it, not on every timed change. */}
-      <div aria-live={timed ? 'off' : 'polite'} className="absolute inset-0">
+      <div aria-live={timed && playing ? 'off' : 'polite'} className="absolute inset-0">
         {slides.map((slide, i) => {
           const active = i === index
           const label = slide.title || slide.alt || slide.caption

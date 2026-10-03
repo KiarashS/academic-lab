@@ -267,12 +267,14 @@ collections:
               - { name: date, label: Date, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false }
               - { name: description, label: Description, widget: string, required: false }
               - name: photos
-                label: Photos
-                label_singular: Photo
+                label: Photos and videos
+                label_singular: Photo or video
                 widget: list
                 fields:
-                  - { name: src, label: Photo, widget: image }
+                  - { name: src, label: Photo or video, widget: file, hint: 'Upload a photo or an MP4/WebM video (under 50 MB), or use Enter URL to paste a direct link to a video file or a YouTube/Vimeo link.' }
+                  - { name: poster, label: Video thumbnail, widget: image, required: false, hint: 'Optional. Without one, a video shows its first frame and YouTube its own thumbnail.' }
                   - { name: caption, label: Caption, widget: string, required: false }
+                  - { name: alt, label: Image description, widget: string, required: false }
 
       - name: resources
         label: Software & data

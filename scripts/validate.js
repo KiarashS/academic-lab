@@ -79,27 +79,32 @@ export function validateContent(content, site) {
     if (e.endDate && e.date && e.endDate < e.date) add(where, 'endDate is before date')
   }
 
-  content.slides.forEach((s, i) => {
-    const where = `content/slides.yml, slide ${i + 1}`
-    if (s.type && !['image', 'video', 'embed'].includes(s.type)) add(where, `type "${s.type}" should be image, video or embed`)
-    if (!s.src) add(where, 'src is missing')
-    else if (s.type === 'embed') {
-      if (!/^https?:\/\//.test(s.src)) add(where, `src "${s.src}" should be a YouTube or Vimeo link`)
+  // A slide or gallery item: image, video file or YouTube/Vimeo link.
+  const checkMedia = (where, m) => {
+    if (m.type && !['image', 'video', 'embed'].includes(m.type)) add(where, `type "${m.type}" should be image, video or embed`)
+    if (!m.src) add(where, 'src is missing')
+    else if (m.type === 'embed') {
+      if (!/^https?:\/\//.test(m.src)) add(where, `src "${m.src}" should be a YouTube or Vimeo link`)
     } else {
-      checkImage(where, s.src)
+      checkImage(where, m.src)
       // GitHub refuses files over 100 MB, and a big video is slow for visitors anyway.
-      const file = join(PUBLIC_DIR, imageKey(s.src))
-      if (s.type === 'video' && !/^(https?:)?\/\//.test(s.src) && existsSync(file)) {
+      const file = join(PUBLIC_DIR, imageKey(m.src))
+      if (m.type === 'video' && !/^(https?:)?\/\//.test(m.src) && existsSync(file)) {
         const mb = statSync(file).size / 1e6
         if (mb > 50) add(where, `video is ${Math.round(mb)} MB; keep it under 50 MB (GitHub refuses files over 100 MB)`)
       }
     }
+    checkImage(where, m.poster)
+  }
+
+  content.slides.forEach((s, i) => {
+    const where = `content/slides.yml, slide ${i + 1}`
+    checkMedia(where, s)
     if (s.duration != null && !(Number(s.duration) > 0)) add(where, `duration "${s.duration}" should be a number of milliseconds, e.g. 8000`)
-    checkImage(where, s.poster)
   })
-  content.gallery.forEach((album) => {
-    for (const photo of album.photos || []) checkImage(`content/gallery.yml, album "${album.title}"`, photo.src)
-  })
+  for (const album of content.gallery) {
+    album.photos.forEach((photo, i) => checkMedia(`content/gallery.yml, album "${album.title}", item ${i + 1}`, photo))
+  }
   content.funders.forEach((f) => checkImage(`content/funders.yml, "${f.name}"`, f.logo))
 
   for (const n of content.notices) {

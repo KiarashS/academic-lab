@@ -1,5 +1,10 @@
 # Photo albums for the Gallery page. Put photos in public/uploads/ (or any folder in
 # public/) and reference them as /uploads/name.jpg. Full URLs also work.
+#
+# Videos go in the same list: src can be an MP4/WebM file (/uploads/clip.mp4, under
+# 50 MB), a direct link to one, or a YouTube/Vimeo link. Add poster: for a thumbnail;
+# without one a video file shows its first frame and YouTube its own thumbnail.
+# Each item: src, caption, alt, poster
 albums:
   - title: Lab retreat 2026
     date: 2026-08-20

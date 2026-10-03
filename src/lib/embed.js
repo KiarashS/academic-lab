@@ -36,10 +36,11 @@ export function parseEmbed(src) {
 
 const VIDEO_FILE = /\.(mp4|webm|m4v|mov|ogv)$/i
 
-// What kind of slide this is. A video file or a YouTube/Vimeo link is recognised from the
-// link itself, so `type` can be left out (or left at "image" by mistake) and it still plays.
-export function slideType(slide) {
-  const src = String(slide.src || '')
+// What a slide or gallery item is: image, video (a file) or embed (YouTube/Vimeo). A video
+// file or a YouTube/Vimeo link is recognised from the link itself, so `type` can be left
+// out (or left at "image" by mistake) and it still plays.
+export function mediaType(item) {
+  const src = String(item.src || '')
   let path = src
   try {
     path = new URL(src, 'http://x').pathname
@@ -48,7 +49,7 @@ export function slideType(slide) {
   }
   if (VIDEO_FILE.test(path)) return 'video'
   if (/^https?:\/\//.test(src) && parseEmbed(src)?.provider) return 'embed'
-  return slide.type || 'image'
+  return item.type || 'image'
 }
 
 // Dropbox share links open a preview page; ?raw=1 serves the file itself.
@@ -60,4 +61,10 @@ export function directVideoUrl(src) {
     return url.toString()
   }
   return src
+}
+
+// The item with its type filled in and a video link made direct.
+export function normalizeMedia(item) {
+  const type = mediaType(item)
+  return { ...item, type, src: type === 'video' ? directVideoUrl(item.src) : item.src }
 }

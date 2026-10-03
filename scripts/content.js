@@ -10,7 +10,7 @@ import { addCitationCounts } from './citations.js'
 import { enhanceHtmlImages, processImages } from './images.js'
 import { fetchOrcidWorks } from './orcid.js'
 import { reportProblems, validateContent } from './validate.js'
-import { directVideoUrl, slideType } from '../src/lib/embed.js'
+import { normalizeMedia } from '../src/lib/embed.js'
 
 export const CONTENT_DIR = resolve(import.meta.dirname, '../content')
 
@@ -166,7 +166,11 @@ export async function loadContent(site, base = '/') {
     hasPage: Boolean(e.html),
   }))
 
-  const gallery = (readYaml('gallery.yml').albums || []).map((a) => ({ ...a, date: day(a.date) }))
+  const gallery = (readYaml('gallery.yml').albums || []).map((a) => ({
+    ...a,
+    date: day(a.date),
+    photos: (a.photos || []).map(normalizeMedia),
+  }))
 
   // Free text blocks for the home page, placed with 'block:<file name>' in home.sections.
   const homeBlocks = readMarkdownFolder('home', render)
@@ -182,10 +186,7 @@ export async function loadContent(site, base = '/') {
     publications,
     teaching: readYaml('teaching.yml').courses || [],
     join: readYaml('join.yml'),
-    slides: (readYaml('slides.yml').slides || []).map((s) => {
-      const type = slideType(s)
-      return { ...s, type, src: type === 'video' ? directVideoUrl(s.src) : s.src }
-    }),
+    slides: (readYaml('slides.yml').slides || []).map(normalizeMedia),
     gallery,
     resources: readYaml('resources.yml').items || [],
     funders: readYaml('funders.yml').funders || [],
@@ -209,8 +210,7 @@ export async function loadContent(site, base = '/') {
     ...research.flatMap((r) => [r.image, ...htmlImages(r.description)]),
     ...news.flatMap((n) => [n.image, ...htmlImages(n.html)]),
     ...events.flatMap((e) => htmlImages(e.html)),
-    ...content.slides.flatMap((s) => (s.type === 'image' || !s.type ? [s.src] : [s.poster])),
-    ...gallery.flatMap((a) => (a.photos || []).map((p) => p.src)),
+    ...[...content.slides, ...gallery.flatMap((a) => a.photos)].map((m) => (m.type === 'image' ? m.src : m.poster)),
     ...content.funders.map((f) => f.logo),
     ...homeBlocks.flatMap((b) => [b.image, ...htmlImages(b.html)]),
   ])
