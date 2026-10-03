@@ -108,8 +108,10 @@ const site = {
     // Slides are in content/slides.yml.
     slider: {
       autoplay: true,
-      interval: 6000, // ms each image stays up; videos play to the end
-      aspectRatio: '21 / 9', // any CSS aspect-ratio; phones use 4 / 3
+      interval: 6000, // ms each image stays up (a slide's own `duration` wins); videos play to the end
+      progress: true, // thin bar along the bottom showing time to the next slide
+      aspectRatio: '21 / 9', // any CSS aspect-ratio
+      mobileAspectRatio: '4 / 3', // the same on screens narrower than 640px
     },
     intro: {
       heading: null, // null uses `tagline` above

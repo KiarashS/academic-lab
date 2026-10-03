@@ -81,8 +81,12 @@ export function validateContent(content, site) {
 
   content.slides.forEach((s, i) => {
     const where = `content/slides.yml, slide ${i + 1}`
+    if (s.type && !['image', 'video', 'embed'].includes(s.type)) add(where, `type "${s.type}" should be image, video or embed`)
     if (!s.src) add(where, 'src is missing')
-    else if (s.type !== 'embed') checkImage(where, s.src)
+    else if (s.type === 'embed') {
+      if (!/^https?:\/\//.test(s.src)) add(where, `src "${s.src}" should be a YouTube or Vimeo link`)
+    } else checkImage(where, s.src)
+    if (s.duration != null && !(Number(s.duration) > 0)) add(where, `duration "${s.duration}" should be a number of milliseconds, e.g. 8000`)
     checkImage(where, s.poster)
   })
   content.gallery.forEach((album) => {

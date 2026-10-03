@@ -91,6 +91,8 @@ const SECTIONS = {
           autoplay={home.slider.autoplay}
           interval={home.slider.interval}
           aspectRatio={home.slider.aspectRatio}
+          mobileAspectRatio={home.slider.mobileAspectRatio}
+          progress={home.slider.progress}
         />
       </div>
     ),

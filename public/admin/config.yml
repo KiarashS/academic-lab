@@ -243,13 +243,15 @@ collections:
             summary: '{{fields.type}} · {{fields.title}}'
             fields:
               - { name: type, label: Type, widget: select, options: [image, video, embed], default: image }
-              - { name: src, label: Image or video file (or embed URL), widget: file, hint: 'For YouTube/Vimeo, paste the embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID' }
-              - { name: poster, label: Video poster image, widget: image, required: false }
+              - { name: src, label: Image or video file (or YouTube/Vimeo link), widget: file, hint: 'For YouTube or Vimeo, choose embed above and paste the video link, e.g. https://www.youtube.com/watch?v=VIDEO_ID' }
+              - { name: poster, label: Video poster image, widget: image, required: false, hint: 'Optional for YouTube, which has its own thumbnail' }
+              - { name: sound, label: Video has sound (adds a sound button), widget: boolean, required: false }
               - { name: alt, label: Image description, widget: string, required: false }
               - { name: title, label: Title, widget: string, required: false }
               - { name: caption, label: Caption, widget: string, required: false }
               - { name: link, label: Link, widget: string, required: false }
               - { name: position, label: Crop position, widget: select, options: [center, top, bottom], required: false }
+              - { name: duration, label: 'Time on screen (ms, instead of the default)', widget: number, value_type: int, required: false }
 
       - name: gallery
         label: Gallery

@@ -30,7 +30,7 @@ const defaults = {
   nav: [],
   home: {
     sections: ['slider', 'intro', 'notices', 'hiring', 'news', 'events', 'research', 'publications', 'funders'],
-    slider: { autoplay: true, interval: 6000, aspectRatio: '21 / 9' },
+    slider: { autoplay: true, interval: 6000, progress: true, aspectRatio: '21 / 9', mobileAspectRatio: '4 / 3' },
     intro: { heading: null, text: [], image: null, imageAlt: '', imageCaption: '', imagePosition: 'below' },
     news: { title: 'News', count: 4, moreLink: 'All news' },
     research: { title: 'Research', count: 4, moreLink: 'All projects' },

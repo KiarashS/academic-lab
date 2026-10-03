@@ -37,7 +37,7 @@ Everything visitors read is in `content/`:
 | `content/events/*.md` | One file per event: `title`, `date`, optional `endDate`, `time` and `end` (24-hour `HH:MM`), `speaker`, `affiliation`, `location`, `link`, `summary`. Text below the front matter gives the event its own page. |
 | `content/publications.yml` | Papers entered by hand. |
 | `content/publications.bib` | Papers in BibTeX, e.g. exported from Zotero or Google Scholar. |
-| `content/slides.yml` | Home page slider: images, videos or YouTube/Vimeo embeds. |
+| `content/slides.yml` | Home page slider: images, videos, or YouTube/Vimeo videos that load only when a visitor presses play. |
 | `content/gallery.yml` | Photo albums. |
 | `content/resources.yml` | Software and datasets. |
 | `content/teaching.yml`, `content/join.yml`, `content/funders.yml` | Courses, open positions, funder logos. |

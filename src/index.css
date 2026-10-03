@@ -102,6 +102,13 @@ body {
       100% 1px;
   }
 
+  /* The home slider's timer bar (src/components/Slider.jsx). */
+  .slider-progress {
+    animation-name: slider-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .prose-link,
     .prose a {
@@ -115,5 +122,14 @@ body {
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+  }
+}
+
+@keyframes slider-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }

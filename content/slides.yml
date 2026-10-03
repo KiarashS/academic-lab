@@ -2,9 +2,13 @@
 # 'slider' from home.sections in src/config/site.js; timing settings are in home.slider.
 #
 # type: image  -> src, alt
-# type: video  -> src (mp4/webm, plays muted; the slider moves on when it ends), poster
-# type: embed  -> src: a YouTube/Vimeo embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID
-# Any slide: title, caption, link (/page or https://...), position (center | top | bottom)
+# type: video  -> src (mp4/webm, plays muted; the slider moves on when it ends), poster,
+#                 sound: true to add a button that turns the sound on
+# type: embed  -> src: a YouTube or Vimeo link (watch page, youtu.be or embed URL).
+#                 Shows a poster with a play button; the player loads only when pressed.
+#                 poster is optional for YouTube (its thumbnail is used).
+# Any slide: title, caption, link (/page or https://...; the whole slide becomes
+# clickable), position (center | top | bottom), duration (ms, instead of home.slider.interval)
 
 slides:
   - type: image
