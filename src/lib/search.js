@@ -1,7 +1,19 @@
 // Site-wide search over the content already loaded in the page. Small labs have a few
 // hundred items at most, so a simple scan is fast enough and needs no index file.
 import site, { navPages, pageEnabled, pagePath } from '../config/index.js'
-import { events, people, research, resources, sortedNews, sortedPublications } from './data.js'
+import {
+  awards,
+  collaborators,
+  events,
+  people,
+  peopleNames,
+  press,
+  research,
+  resources,
+  sortedNews,
+  sortedPublications,
+  talks,
+} from './data.js'
 
 function strip(html = '') {
   return html.replace(/<[^>]+>/g, ' ')
@@ -30,6 +42,7 @@ function buildIndex() {
         `${p.authors.join(', ')} · ${p.year}`,
         p.venue,
         p.tags,
+        p.summary,
         p.abstract,
       )
     }
@@ -48,6 +61,41 @@ function buildIndex() {
         e.speaker,
         e.affiliation,
         e.summary,
+      )
+    }
+  }
+  if (pageEnabled('talks')) {
+    for (const t of talks) {
+      add(
+        'Talk',
+        t.title,
+        '/talks',
+        [peopleNames(t.speakers).join(', '), t.event].filter(Boolean).join(' · '),
+        t.location,
+        site.talks.types?.[t.type],
+        t.abstract,
+      )
+    }
+  }
+  if (pageEnabled('press')) {
+    for (const a of awards)
+      add(
+        'Award',
+        a.title,
+        '/press',
+        [a.by, peopleNames(a.recipients).join(', ')].filter(Boolean).join(' · '),
+        a.description,
+      )
+    for (const p of press) add('Press', p.title, '/press', p.outlet, peopleNames(p.people), p.summary)
+  }
+  if (pageEnabled('collaborators')) {
+    for (const c of collaborators) {
+      add(
+        'Collaborator',
+        c.institution || c.name,
+        '/collaborators',
+        [c.name, c.city, c.country].filter(Boolean).join(', '),
+        c.department,
       )
     }
   }

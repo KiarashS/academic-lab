@@ -2,12 +2,14 @@ import EventList from '../components/EventList.jsx'
 import Img from '../components/Img.jsx'
 import Markdown from '../components/Markdown.jsx'
 import NewsList from '../components/NewsList.jsx'
+import Newsletter, { newsletterForm } from '../components/Newsletter.jsx'
 import Notice, { useNotices } from '../components/Notice.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationItem from '../components/PublicationItem.jsx'
 import Section from '../components/Section.jsx'
 import Slider from '../components/Slider.jsx'
 import SmartLink from '../components/SmartLink.jsx'
+import TalkList from '../components/TalkList.jsx'
 import site, { pageEnabled } from '../config/index.js'
 import {
   funders,
@@ -16,6 +18,7 @@ import {
   research,
   slides,
   sortedNews,
+  talks,
   sortedPublications,
   splitEvents,
 } from '../lib/data.js'
@@ -208,6 +211,21 @@ const SECTIONS = {
       </Section>
     ),
 
+  // The most recent talks (newest first).
+  talks: (first) =>
+    talks.length > 0 && (
+      <Section key="talks" flush={first} title={home.talks.title} more={more('talks', home.talks.moreLink)}>
+        <TalkList talks={take(talks, home.talks.count)} />
+      </Section>
+    ),
+
+  newsletter: (first) =>
+    newsletterForm() && (
+      <div key="newsletter" className={first ? '' : 'mt-16'}>
+        <Newsletter placement="home" />
+      </div>
+    ),
+
   funders: (first) =>
     funders.length > 0 && (
       <Section key="funders" flush={first} title={home.funders.title}>
@@ -278,7 +296,7 @@ const SECTIONS = {
         >
           <div className="space-y-7">
             {featured.map((pub) => (
-              <PublicationItem key={pub.id} pub={pub} />
+              <PublicationItem key={pub.id} pub={pub} showSummary />
             ))}
           </div>
         </Section>

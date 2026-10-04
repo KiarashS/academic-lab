@@ -188,6 +188,7 @@ collections:
               - { name: award, label: Award, widget: string, required: false }
               - { name: tags, label: Tags, widget: list, required: false }
               - { name: projects, label: Research projects, widget: relation, collection: research, value_field: '{{slug}}', search_fields: [title], display_fields: [title], multiple: true, required: false }
+              - { name: summary, label: Plain-language summary, widget: text, required: false, hint: 'Two or three sentences for readers outside the field. Shown above the abstract and on the home page.' }
               - { name: abstract, label: Abstract, widget: text, required: false }
               - name: links
                 label: Links
@@ -344,3 +345,83 @@ collections:
               - { name: name, label: Name, widget: string }
               - { name: logo, label: Logo, widget: image, required: false }
               - { name: url, label: Website, widget: string, required: false }
+
+      - name: talks
+        label: Talks
+        file: content/talks.yml
+        fields:
+          - name: talks
+            label: Talks
+            label_singular: Talk
+            widget: list
+            summary: '{{fields.date}} · {{fields.title}}'
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: speakers, label: Speakers, widget: list, hint: 'Lab members by their file name (e.g. alex-rivera), guests by name' }
+              - { name: date, label: Date, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD }
+              - { name: event, label: Event, widget: string, required: false, hint: 'Conference, seminar series or department' }
+              - { name: location, label: Location, widget: string, required: false }
+              - { name: type, label: Type, widget: select, options: [keynote, invited, contributed, tutorial, lecture, panel, poster, other], required: false }
+              - { name: abstract, label: Abstract, widget: text, required: false }
+              - name: links
+                label: Links
+                widget: object
+                required: false
+                collapsed: true
+                fields:
+                  - { name: slides, label: Slides, widget: string, required: false }
+                  - { name: video, label: Video, widget: string, required: false }
+                  - { name: event, label: Event page, widget: string, required: false }
+                  - { name: code, label: Code, widget: string, required: false }
+
+      - name: press
+        label: Awards & press
+        file: content/press.yml
+        fields:
+          - name: awards
+            label: Awards
+            label_singular: Award
+            widget: list
+            required: false
+            summary: '{{fields.date}} · {{fields.title}}'
+            fields:
+              - { name: title, label: Award, widget: string }
+              - { name: recipients, label: Recipients, widget: list, hint: 'Lab members by their file name (e.g. alex-rivera), others by name' }
+              - { name: by, label: Given by, widget: string, required: false }
+              - { name: date, label: Date, widget: string, hint: 'A year (2026), a month (2026-05) or a day (2026-05-01)' }
+              - { name: link, label: Link, widget: string, required: false }
+              - { name: description, label: Description, widget: text, required: false }
+          - name: press
+            label: In the media
+            label_singular: Media item
+            widget: list
+            required: false
+            summary: '{{fields.date}} · {{fields.outlet}} · {{fields.title}}'
+            fields:
+              - { name: title, label: Headline, widget: string }
+              - { name: outlet, label: Outlet, widget: string, required: false }
+              - { name: date, label: Date, widget: string, hint: 'A year (2026), a month (2026-05) or a day (2026-05-01)' }
+              - { name: url, label: Link, widget: string, required: false }
+              - { name: people, label: Lab members featured, widget: list, required: false, hint: 'File names, e.g. alex-rivera' }
+              - { name: summary, label: Summary, widget: text, required: false }
+
+      - name: collaborators
+        label: Collaborators
+        file: content/collaborators.yml
+        fields:
+          - name: collaborators
+            label: Collaborators
+            label_singular: Collaborator
+            widget: list
+            summary: '{{fields.institution}} · {{fields.name}}'
+            fields:
+              - { name: institution, label: Institution, widget: string }
+              - { name: name, label: Person or group, widget: string, required: false }
+              - { name: department, label: Department, widget: string, required: false }
+              - { name: city, label: City, widget: string, required: false }
+              - { name: country, label: Country, widget: string, required: false }
+              - { name: url, label: Website, widget: string, required: false }
+              - { name: logo, label: Logo, widget: image, required: false }
+              - { name: lat, label: Latitude, widget: number, value_type: float, required: false, hint: 'For the map. Right-click the place in Google Maps to copy its coordinates.' }
+              - { name: lng, label: Longitude, widget: number, value_type: float, required: false }
+              - { name: projects, label: Research projects, widget: relation, collection: research, value_field: '{{slug}}', search_fields: [title], display_fields: [title], multiple: true, required: false }

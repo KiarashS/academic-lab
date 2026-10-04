@@ -230,7 +230,7 @@ export function pageList(content) {
       list.push({
         path: `/publications/${pub.id}`,
         title: pub.title,
-        description: truncate(pub.abstract || `${pub.authors.join(', ')}. ${pub.venue}, ${pub.year}.`),
+        description: truncate(pub.summary || pub.abstract || `${pub.authors.join(', ')}. ${pub.venue}, ${pub.year}.`),
         og: { title: pub.title, subtitle: [pub.authors.join(', '), pub.venue, pub.year].filter(Boolean).join(' · ') },
         type: 'article',
         meta: scholarTags(pub),

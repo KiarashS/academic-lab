@@ -117,6 +117,38 @@ const TYPES = {
 
 const LINK_FIELDS = ['pdf', 'code', 'data', 'slides', 'video', 'poster', 'project']
 
+const SITE_FIELDS = ['featured', 'award', 'projects', 'summary', ...LINK_FIELDS.filter((f) => f !== 'pdf')]
+
+// Drops fields from a raw entry, including values in braces or quotes that span lines.
+function removeFields(raw, names) {
+  const start = new RegExp(`(^|[,\\s])(${names.join('|')})\\s*=\\s*`, 'gi')
+  let out = raw
+  let match
+  while ((match = start.exec(out))) {
+    const from = match.index + match[1].length
+    let i = match.index + match[0].length
+    if (out[i] === '{') {
+      for (let depth = 0; i < out.length; i++) {
+        if (out[i] === '{') depth++
+        else if (out[i] === '}' && --depth === 0) break
+      }
+      i++
+    } else if (out[i] === '"') {
+      i = out.indexOf('"', i + 1) + 1
+    } else {
+      while (i < out.length && !/[,}\n]/.test(out[i])) i++
+    }
+    // Take the comma after the value and the rest of that line with it.
+    const rest = out.slice(i).match(/^\s*,?[ \t]*\n?/)[0]
+    // Also drop the indentation before the field.
+    const lineStart = out.lastIndexOf('\n', from - 1) + 1
+    const cut = /^\s*$/.test(out.slice(lineStart, from)) ? lineStart : from
+    out = out.slice(0, cut) + out.slice(i + rest.length)
+    start.lastIndex = cut
+  }
+  return out
+}
+
 function toPublication({ type, raw }, { key, fields: f }) {
   const doi = f.doi && cleanLatex(f.doi).replace(/^https?:\/\/(dx\.)?doi\.org\//, '')
   const arxivId = (f.archiveprefix || f.eprinttype || '').toLowerCase() === 'arxiv' ? f.eprint : null
@@ -162,17 +194,14 @@ function toPublication({ type, raw }, { key, fields: f }) {
         ? f.type
         : pubType,
     abstract: f.abstract && cleanLatex(f.abstract),
+    summary: f.summary && cleanLatex(f.summary),
     tags: list(f.keywords),
     projects: list(f.projects),
     featured: /^(true|yes|1)$/i.test(f.featured || '') || undefined,
     award: f.award && cleanLatex(f.award),
     links,
     // Keep the entry as written, minus the site-only fields, for BibTeX export.
-    bibtex: raw
-      .split('\n')
-      .filter((line) => !/^\s*(featured|award|projects|code|data|slides|video|poster|project)\s*=/i.test(line))
-      .join('\n')
-      .replace(/,(\s*\n?\s*})$/, '$1'),
+    bibtex: removeFields(raw, SITE_FIELDS).replace(/,(\s*\n?\s*})$/, '$1'),
   }
 }
 

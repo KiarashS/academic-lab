@@ -4,7 +4,8 @@
 # Fields: id (unique, also the BibTeX key), title, authors, venue, year, type
 # (journal | conference | workshop | preprint | book | thesis | other), month (1-12),
 # volume, pages, publisher, featured (show on the home page), award, tags, projects
-# (research ids), abstract, bibtex (replaces the generated entry),
+# (research ids), summary (a plain-language version of the abstract, for readers outside
+# the field), abstract, bibtex (replaces the generated entry),
 # links: pdf, doi, arxiv, code, project, slides, video, poster, data
 publications:
   - id: nair2026metaprot
@@ -24,6 +25,7 @@ publications:
       - biology
     projects:
       - few-shot-science
+    summary: Testing how well a protein works takes days per variant. This model learns from earlier experiments on related proteins, so it can make useful predictions for a new protein after only 20 tests.
     abstract: We present a meta-learning approach that predicts protein fitness from as few as 20 labeled variants by transferring structure across related assays.
     links:
       pdf: https://arxiv.org/

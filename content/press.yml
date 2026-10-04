@@ -1,0 +1,33 @@
+# Awards and media coverage for the Awards & press page. Awards also show on each
+# recipient's page.
+#
+# awards:  title, recipients (people ids or names), by (who gives it), date (2026 or
+#          2026-05-01), link, description
+# press:   title (the headline), outlet, date, url, people (ids, optional), summary
+awards:
+  - title: Outstanding Paper Award
+    recipients: [priya-nair, sam-chen, alex-rivera]
+    by: International Conference on Machine Learning (ICML)
+    date: 2026-07-18
+    description: For "Meta-learning protein fitness landscapes from few measurements".
+  - title: Early Career Award
+    recipients: [alex-rivera]
+    by: Example Science Foundation
+    date: 2025
+    link: https://example.com
+  - title: Graduate Research Fellowship
+    recipients: [jordan-lee]
+    by: National Science Foundation
+    date: 2025-04-01
+press:
+  - title: Teaching computers to learn from a handful of experiments
+    outlet: Example University News
+    date: 2026-08-02
+    url: https://example.com/news/few-shot
+    people: [alex-rivera, priya-nair]
+    summary: A profile of the lab's work on predicting protein behavior from very small datasets.
+  - title: The scientists making AI work with less data
+    outlet: Example Science Podcast
+    date: 2026-02-14
+    url: https://example.com/podcast/episode-12
+    people: [alex-rivera]

@@ -39,6 +39,7 @@ const defaults = {
     funders: { title: 'Funding', count: 8 },
     notices: { count: 3 },
     hiring: { text: null, linkLabel: 'See open positions' },
+    talks: { title: 'Recent talks', count: 3, moreLink: 'All talks' },
   },
   research: {
     title: 'Research',
@@ -63,11 +64,13 @@ const defaults = {
     showPhotos: true,
     highlightInAuthorLists: true,
     profile: {
-      sections: ['links', 'bio', 'interests', 'education', 'projects', 'publications'],
+      sections: ['links', 'bio', 'interests', 'education', 'projects', 'publications', 'talks', 'awards'],
       interestsTitle: 'Interests',
       educationTitle: 'Education',
       projectsTitle: 'Projects',
       publicationsTitle: 'Publications',
+      talksTitle: 'Talks',
+      awardsTitle: 'Awards',
     },
   },
   publications: {
@@ -84,6 +87,8 @@ const defaults = {
     import: { bibtex: 'publications.bib', orcid: [] },
     pages: true,
     citations: { show: true, label: 'Cited by' },
+    chart: { show: true, minYears: 3, title: 'Publications per year' },
+    summaryTitle: 'In brief',
     types: {
       journal: 'Journal',
       conference: 'Conference',
@@ -95,6 +100,44 @@ const defaults = {
     },
   },
   news: { title: 'News', intro: null, groupByYear: true, rss: true, readMore: 'Read more' },
+  newsletter: {
+    provider: null,
+    buttondown: '',
+    action: '',
+    emailField: 'email',
+    title: 'Get our news by email',
+    text: 'New posts from the lab in your inbox. Unsubscribe any time.',
+    button: 'Subscribe',
+    placement: ['news', 'post'],
+  },
+  talks: {
+    title: 'Talks',
+    intro: null,
+    groupByYear: true,
+    types: {
+      keynote: 'Keynote',
+      invited: 'Invited talk',
+      contributed: 'Contributed talk',
+      tutorial: 'Tutorial',
+      lecture: 'Lecture',
+      panel: 'Panel',
+      poster: 'Poster',
+      other: 'Talk',
+    },
+  },
+  press: {
+    title: 'Awards & press',
+    intro: null,
+    sections: ['awards', 'press'],
+    awardsTitle: 'Awards',
+    pressTitle: 'In the media',
+  },
+  collaborators: {
+    title: 'Collaborators',
+    intro: null,
+    sections: ['map', 'list'],
+    showLab: true,
+  },
   events: {
     title: 'Events',
     intro: null,
@@ -136,6 +179,7 @@ const defaults = {
       success: 'Thanks, your message was sent. We will get back to you soon.',
     },
   },
+  linkCheck: { ignore: [] },
   footer: { show: true, sections: ['copyright', 'institution', 'social'], text: '', social: [] },
 }
 

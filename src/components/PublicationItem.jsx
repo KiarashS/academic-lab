@@ -38,7 +38,8 @@ export function publicationPage(pub) {
 
 const buttonClass = 'cursor-pointer text-neutral-500 hover:text-accent dark:text-neutral-400 aria-expanded:text-accent'
 
-export default function PublicationItem({ pub, showYear = true }) {
+// showSummary adds the paper's plain-language summary (used on the home page).
+export default function PublicationItem({ pub, showYear = true, showSummary = false }) {
   const [open, setOpen] = useState(null) // 'abstract' | 'bibtex' | null
   const [copied, setCopied] = useState(false)
   const bibtex = site.publications.showBibtex ? toBibtex(pub) : null
@@ -80,6 +81,9 @@ export default function PublicationItem({ pub, showYear = true }) {
         {pub.pages && `, pp. ${pub.pages}`}
         {showYear && `, ${pub.year}`}
       </p>
+      {showSummary && pub.summary && (
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{pub.summary}</p>
+      )}
 
       <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm pointer-coarse:gap-x-4 pointer-coarse:gap-y-2 pointer-coarse:[&>*]:py-0.5">
         {links.map(([key, url]) => (

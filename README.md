@@ -4,12 +4,15 @@ A minimal website for a research group, built with React, React Router, Vite and
 
 ## Pages
 
-- Home: image/video slider, intro, notices, a hiring notice while positions are open, latest news, upcoming events, current projects, featured publications, funders, and text blocks of your own
+- Home: image/video slider, intro, notices, a hiring notice while positions are open, latest news, upcoming events, recent talks, current projects, featured publications (with their plain-language summaries), funders, a newsletter sign-up, and text blocks of your own
 - Research: current and past projects, each with its own page listing its people and papers
-- People: members grouped by role, an optional management team, alumni, and a profile page per person
-- Publications: search and filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX per paper and for the whole or filtered list, and citation counts from Semantic Scholar. Each paper has its own page with a citation to copy and the tags Google Scholar uses to index it. Papers can be imported from BibTeX files and ORCID.
-- News: one-line items, or full posts with their own page, and an RSS feed
+- People: members grouped by role, an optional management team, alumni, and a profile page per person with their papers (and a papers-per-year chart), talks and awards
+- Publications: search and filters by type, year, author and tag (kept in the URL so a filtered view can be shared), abstracts, BibTeX per paper and for the whole or filtered list, citation counts from Semantic Scholar, and a papers-per-year chart that follows the filters (click a bar to filter by that year). Each paper has its own page, with an optional plain-language summary above the abstract, with a citation to copy and the tags Google Scholar uses to index it. Papers can be imported from BibTeX files and ORCID.
+- News: one-line items, or full posts with their own page, an RSS feed, and an optional email sign-up
 - Events: upcoming and past events, event pages, "Add to calendar" files and a calendar feed people can subscribe to
+- Talks: invited talks, keynotes and lectures by lab members, with slides and video links
+- Awards & press: awards to the lab and its members, and media coverage
+- Collaborators: partner groups on a world map and in a list
 - Software & Data, Teaching, Gallery (albums of photos and videos with a full-screen viewer), Join and Contact (with a map and an optional contact form)
 
 The header has a Home link, dropdown groups for less-used pages, site-wide search (Ctrl+K, Cmd+K or `/`) and a light/dark/system switch. Lab members' names are bolded and linked in every author list.
@@ -39,6 +42,9 @@ Everything visitors read is in `content/`:
 | `content/publications.bib` | Papers in BibTeX, e.g. exported from Zotero or Google Scholar. |
 | `content/slides.yml` | Home page slider: images, videos, or YouTube/Vimeo videos that load only when a visitor presses play. |
 | `content/gallery.yml` | Albums of photos and videos (files, direct links, YouTube or Vimeo). |
+| `content/talks.yml` | Talks by lab members. |
+| `content/press.yml` | Awards (`awards:`) and media coverage (`press:`). |
+| `content/collaborators.yml` | Collaborating groups, with coordinates for the map. |
 | `content/resources.yml` | Software and datasets. |
 | `content/teaching.yml`, `content/join.yml`, `content/funders.yml` | Courses, open positions, funder logos. |
 | `content/home/*.md` | Text blocks for the home page (see below). |
@@ -89,7 +95,7 @@ Put photos in `public/uploads/` (the editor at `/admin` does this for you) at wh
 Papers come from three places, combined into one list. If a paper appears twice (same DOI or same title), the first source wins:
 
 1. `content/publications.yml`, entered by hand
-2. BibTeX files in `content/`, listed in `publications.import.bibtex`. Standard fields are read as usual; a few extra ones are understood too: `code`, `data`, `slides`, `video`, `poster`, `project` and `pdf` become links, `featured = {true}` shows the paper on the home page, `award` adds a label, and `projects` links it to research projects.
+2. BibTeX files in `content/`, listed in `publications.import.bibtex`. Standard fields are read as usual; a few extra ones are understood too: `code`, `data`, `slides`, `video`, `poster`, `project` and `pdf` become links, `featured = {true}` shows the paper on the home page, `award` adds a label, `summary` adds a plain-language summary, and `projects` links it to research projects.
 3. ORCID: put ORCID iDs in `publications.import.orcid`, e.g. `['0000-0002-1825-0097']`. Public works are fetched at build time; no API key is needed. If ORCID can't be reached, the build continues without those papers and prints a warning. Pushes to `main` rebuild the site, so new ORCID works show up with the next push, or with a manual run of the deploy workflow.
 
 ### Paper pages, Google Scholar and citation counts
@@ -122,14 +128,17 @@ Turning things on and off:
 | Page | Settings | Sections |
 | --- | --- | --- |
 | Header | `header` (logo, name, search, theme toggle) | |
-| Home | `home` (slider timing, intro, hiring notice, section titles, item counts, "All …" link text) | `slider`, `intro`, `notices`, `hiring`, `news`, `events`, `research`, `publications`, `funders`, `block:<name>` |
+| Home | `home` (slider timing, intro, hiring notice, section titles, item counts, "All …" link text) | `slider`, `intro`, `notices`, `hiring`, `news`, `events`, `research`, `publications`, `funders`, `talks`, `newsletter`, `block:<name>` |
 | Research | `research` (title, intro, headings, tags) | `current`, `past` |
 | Project page | `research.project` | `description`, `funding`, `links`, `people`, `publications` |
 | People | `people` (groups, management team, alumni heading, photos, author highlighting) | `members`, `alumni` |
-| Person page | `people.profile` | `links`, `bio`, `interests`, `education`, `projects`, `publications` |
-| Publications | `publications` (Scholar link, import, paper pages, citation counts, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
+| Person page | `people.profile` | `links`, `bio`, `interests`, `education`, `projects`, `publications`, `talks`, `awards` |
+| Publications | `publications` (Scholar link, import, paper pages, citation counts, chart, summary heading, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
 | News | `news` (title, intro, group by year, RSS, "Read more" text) | |
 | Events | `events` (title, intro, headings, time zone, subscribe link) | `upcoming`, `past` |
+| Talks | `talks` (title, intro, group by year, type labels) | |
+| Awards & press | `press` (title, intro, headings) | `awards`, `press` |
+| Collaborators | `collaborators` (title, intro, mark the lab on the map) | `map`, `list` |
 | Software & Data | `resources` (title, intro, headings) | `software`, `dataset`, `other` |
 | Teaching | `teaching` (instructor and description on or off) | |
 | Gallery | `gallery` (title, intro) | |
@@ -143,6 +152,16 @@ Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap, RSS 
 
 - News RSS is at `/news.xml` when `news.rss` is on and `url` is set. The News page links to it.
 - `/events.ics` is a calendar feed with every event; the Events page offers a "Subscribe" link, so calendar apps pick up new events automatically. Each event also has its own `.ics` file behind "Add to calendar". Set `events.timezone` to the time zone your event times are written in.
+
+### News by email
+
+A static site can't send email, so a mailing service keeps the subscriber list and sends the emails. The simplest is [Buttondown](https://buttondown.com) (free for small lists): create an account, set `newsletter.provider: 'buttondown'` and `newsletter.buttondown` to your username, and turn on its RSS-to-email feature with your `/news.xml` address so every new post goes out by itself. For Mailchimp, MailerLite or similar, set `provider: 'form'`, `action` to the form address from the service's embed code, and `emailField` to its email field's name (Mailchimp uses `EMAIL`).
+
+`newsletter.placement` sets where the sign-up box appears: `news` (News page), `post` (end of each news post), `footer` (every page). Add `newsletter` to `home.sections` to show it on the home page.
+
+### Broken links
+
+Links to other websites break as people move and pages disappear. `.github/workflows/links.yml` builds the site every night, checks every outside link, and keeps one GitHub issue labelled `broken-links` up to date with the ones that fail and the pages they're on. The issue closes itself once they're fixed. Run it from the Actions tab any time, or locally with `npm run build && npm run links`. Some sites (LinkedIn, Google Scholar, some publishers) refuse automated checks; those are listed separately as "could not be checked", and you can skip them with `linkCheck.ignore` in `site.js`.
 
 ### Analytics and cookie consent
 

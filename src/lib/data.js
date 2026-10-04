@@ -14,6 +14,10 @@ export const {
   gallery,
   resources,
   funders,
+  talks,
+  awards,
+  press,
+  collaborators,
   homeBlocks,
   notices,
   images,
@@ -72,4 +76,22 @@ export function publicationsByProject(projectId) {
 
 export function projectsByPerson(personId) {
   return research.filter((r) => r.members?.includes(personId))
+}
+
+// Talks, awards and press items list people by id (lab members) or by name (guests).
+// Names for display, so author-style lists can link the members.
+export function peopleNames(refs = []) {
+  return refs.map((ref) => personById[ref]?.name || ref)
+}
+
+function includesPerson(refs = [], personId) {
+  return refs.some((ref) => ref === personId || memberIdForAuthor(String(ref)) === personId)
+}
+
+export function talksByPerson(personId) {
+  return talks.filter((t) => includesPerson(t.speakers, personId))
+}
+
+export function awardsByPerson(personId) {
+  return awards.filter((a) => includesPerson(a.recipients, personId))
 }

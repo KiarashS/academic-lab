@@ -1,4 +1,5 @@
 import NewsList from '../components/NewsList.jsx'
+import Newsletter from '../components/Newsletter.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import Section from '../components/Section.jsx'
 import site from '../config/index.js'
@@ -29,6 +30,7 @@ export default function News() {
       <>
         {header}
         <NewsList items={sortedNews} />
+        <Newsletter placement="news" className="mt-16" />
       </>
     )
   }
@@ -45,6 +47,7 @@ export default function News() {
           <NewsList items={byYear[y]} showYear={false} />
         </Section>
       ))}
+      <Newsletter placement="news" className="mt-16" />
     </>
   )
 }

@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import { navPages } from './config/index.js'
+import Collaborators from './pages/Collaborators.jsx'
 import Contact from './pages/Contact.jsx'
 import EventDetail from './pages/EventDetail.jsx'
 import Events from './pages/Events.jsx'
@@ -11,12 +12,14 @@ import News from './pages/News.jsx'
 import NewsPost from './pages/NewsPost.jsx'
 import NotFound from './pages/NotFound.jsx'
 import People from './pages/People.jsx'
+import Press from './pages/Press.jsx'
 import PersonDetail from './pages/PersonDetail.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import PublicationDetail from './pages/PublicationDetail.jsx'
 import Publications from './pages/Publications.jsx'
 import Research from './pages/Research.jsx'
 import Resources from './pages/Resources.jsx'
+import Talks from './pages/Talks.jsx'
 import Teaching from './pages/Teaching.jsx'
 
 // Every page the site knows about. Only pages listed in site.nav get routes
@@ -28,6 +31,9 @@ const PAGES = {
   publications: { component: Publications, detail: PublicationDetail },
   news: { component: News, detail: NewsPost },
   events: { component: Events, detail: EventDetail },
+  talks: { component: Talks },
+  press: { component: Press },
+  collaborators: { component: Collaborators },
   resources: { component: Resources },
   gallery: { component: Gallery },
   teaching: { component: Teaching },

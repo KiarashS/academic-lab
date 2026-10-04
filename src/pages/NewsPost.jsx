@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router'
 import Markdown from '../components/Markdown.jsx'
+import Newsletter from '../components/Newsletter.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
 import { newsById } from '../lib/data.js'
@@ -35,6 +36,7 @@ export default function NewsPost() {
           <SmartLink to={post.link.url}>{post.link.label || 'Link'}</SmartLink>
         </p>
       )}
+      <Newsletter placement="post" className="mt-16 max-w-2xl" />
     </article>
   )
 }

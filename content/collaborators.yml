@@ -1,0 +1,38 @@
+# Groups the lab works with, for the Collaborators page.
+#
+# Fields: institution, name (a person or group, optional), department, city, country,
+# url, logo (path in public/ or a full URL), lat and lng (for the dot on the map; right-
+# click the place in Google Maps or OpenStreetMap to copy them), projects (research ids).
+collaborators:
+  - name: Protein Design Group
+    institution: Example Institute of Technology
+    city: Zurich
+    country: Switzerland
+    url: https://example.com
+    lat: 47.376
+    lng: 8.548
+    projects: [few-shot-science]
+  - name: Clinical Data Lab
+    institution: Example Medical Center
+    city: Toronto
+    country: Canada
+    url: https://example.com
+    lat: 43.659
+    lng: -79.388
+  - name: Materials Discovery Group
+    institution: Example University of Science
+    city: Tokyo
+    country: Japan
+    lat: 35.713
+    lng: 139.762
+  - name: Statistics Department
+    institution: Example University
+    city: Cape Town
+    country: South Africa
+    lat: -33.957
+    lng: 18.461
+  - institution: Example Research Institute
+    city: São Paulo
+    country: Brazil
+    lat: -23.561
+    lng: -46.73

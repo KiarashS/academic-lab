@@ -78,8 +78,8 @@ const site = {
   // `menu: false` keeps the page reachable (e.g. from a link on the home page) but
   // hides it from the menu. The label is the menu text; the page heading is set below.
   // `{ label, items: [...] }` makes a dropdown group, for pages people visit less often.
-  // Available pages: home, research, people, publications, news, events, teaching,
-  // resources (software & data), gallery, join, contact
+  // Available pages: home, research, people, publications, news, events, talks, teaching,
+  // resources (software & data), gallery, press (awards & press), collaborators, join, contact
   nav: [
     { page: 'home', label: 'Home' },
     { page: 'research', label: 'Research' },
@@ -90,8 +90,11 @@ const site = {
     {
       label: 'More',
       items: [
+        { page: 'talks', label: 'Talks' },
         { page: 'resources', label: 'Software & Data' },
         { page: 'teaching', label: 'Teaching' },
+        { page: 'press', label: 'Awards & Press' },
+        { page: 'collaborators', label: 'Collaborators' },
         { page: 'gallery', label: 'Gallery' },
         { page: 'join', label: 'Join' },
       ],
@@ -100,7 +103,8 @@ const site = {
   ],
 
   home: {
-    // slider | intro | notices | hiring | news | events | research | publications | funders
+    // slider | intro | notices | hiring | news | events | talks | research | publications |
+    // funders | newsletter
     // notices are the placement: home notices in content/notices.yml;
     // plus your own text blocks: 'block:<name>' shows content/home/<name>.md
     sections: ['slider', 'intro', 'notices', 'hiring', 'news', 'events', 'research', 'block:approach', 'publications', 'funders'],
@@ -193,12 +197,14 @@ const site = {
     highlightInAuthorLists: true,
     // Each person's own page.
     profile: {
-      // links | bio | interests | education | projects | publications
-      sections: ['links', 'bio', 'interests', 'education', 'projects', 'publications'],
+      // links | bio | interests | education | projects | publications | talks | awards
+      sections: ['links', 'bio', 'interests', 'education', 'projects', 'publications', 'talks', 'awards'],
       interestsTitle: 'Interests',
       educationTitle: 'Education',
       projectsTitle: 'Projects',
       publicationsTitle: 'Publications',
+      talksTitle: 'Talks',
+      awardsTitle: 'Awards',
     },
   },
 
@@ -229,6 +235,11 @@ const site = {
     pages: true,
     // "Cited by N" from Semantic Scholar, looked up by DOI or arXiv link at build time.
     citations: { show: true, label: 'Cited by' },
+    // Bar chart of papers per year above the list (it follows the filters; click a bar to
+    // filter by that year) and on each person's page. Shown once papers span minYears.
+    chart: { show: true, minYears: 3, title: 'Publications per year' },
+    // Heading for a paper's plain-language `summary`, shown above the abstract.
+    summaryTitle: 'In brief',
     // Labels for the `type` field of each publication.
     types: {
       journal: 'Journal',
@@ -249,6 +260,65 @@ const site = {
     rss: true,
     // Link text for news items that have a full post.
     readMore: 'Read more',
+  },
+
+  // News by email. A static site can't send email, so a mailing service does: it keeps
+  // the subscriber list and sends the emails. Pick one:
+  //   'buttondown' -> buttondown: your Buttondown username. Buttondown can also send each
+  //                   new post automatically from the RSS feed (Settings > RSS-to-email).
+  //   'form'       -> action: the form URL from your service's embed code (Mailchimp,
+  //                   MailerLite, ...), and emailField: the name of its email field
+  //                   (Mailchimp uses 'EMAIL').
+  // provider: null turns it off.
+  newsletter: {
+    provider: null,
+    buttondown: '',
+    action: '',
+    emailField: 'email',
+    title: 'Get our news by email',
+    text: 'New posts from the lab in your inbox. Unsubscribe any time.',
+    button: 'Subscribe',
+    // Where the sign-up box appears: news (News page) | post (end of each news post) |
+    // footer (every page). Add 'newsletter' to home.sections for the home page.
+    placement: ['news', 'post'],
+  },
+
+  // Talks given by lab members, from content/talks.yml.
+  talks: {
+    title: 'Talks',
+    intro: 'Invited talks, keynotes and lectures by members of the lab.',
+    groupByYear: true,
+    // Labels for the `type` field of each talk.
+    types: {
+      keynote: 'Keynote',
+      invited: 'Invited talk',
+      contributed: 'Contributed talk',
+      tutorial: 'Tutorial',
+      lecture: 'Lecture',
+      panel: 'Panel',
+      poster: 'Poster',
+      other: 'Talk',
+    },
+  },
+
+  // Awards and media coverage, from content/press.yml.
+  press: {
+    title: 'Awards & press',
+    intro: null,
+    // awards | press
+    sections: ['awards', 'press'],
+    awardsTitle: 'Awards',
+    pressTitle: 'In the media',
+  },
+
+  // Collaborating groups, from content/collaborators.yml.
+  collaborators: {
+    title: 'Collaborators',
+    intro: 'Groups we work with.',
+    // map (world map with a dot for each collaborator that has coordinates) | list
+    sections: ['map', 'list'],
+    // Also mark the lab itself on the map, at contact.map's coordinates.
+    showLab: true,
   },
 
   events: {
@@ -332,6 +402,10 @@ const site = {
       success: 'Thanks, your message was sent. We will get back to you soon.',
     },
   },
+
+  // The nightly link check (.github/workflows/links.yml). Links containing any of these
+  // are skipped, e.g. sites that block automated checks: ['linkedin.com'].
+  linkCheck: { ignore: [] },
 
   footer: {
     show: true,

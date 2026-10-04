@@ -25,7 +25,11 @@ function CopyBlock({ label, text, mono = false }) {
     <div>
       <div className="mb-2 flex items-baseline justify-between">
         <h3 className="text-sm text-neutral-500 dark:text-neutral-400">{label}</h3>
-        <button type="button" onClick={copy} className="cursor-pointer text-sm text-link hover:underline underline-offset-2 pointer-coarse:px-2 pointer-coarse:py-1">
+        <button
+          type="button"
+          onClick={copy}
+          className="cursor-pointer text-sm text-link hover:underline underline-offset-2 pointer-coarse:px-2 pointer-coarse:py-1"
+        >
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
@@ -79,12 +83,27 @@ export default function PublicationDetail() {
       {(links.length > 0 || pub.citations) && (
         <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 pointer-coarse:[&>*]:py-0.5">
           {links.map(([key, url]) => (
-            <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="text-link hover:underline underline-offset-2">
+            <a
+              key={key}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-link hover:underline underline-offset-2"
+            >
               {LINK_LABELS[key] || key}
             </a>
           ))}
           <CitationCount pub={pub} />
         </div>
+      )}
+
+      {pub.summary && (
+        <section className="mt-10 max-w-2xl">
+          <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            {site.publications.summaryTitle}
+          </h2>
+          <p className="text-lg leading-relaxed text-neutral-800 dark:text-neutral-200">{pub.summary}</p>
+        </section>
       )}
 
       {pub.abstract && (

@@ -172,6 +172,19 @@ export async function loadContent(site, base = '/') {
     photos: (a.photos || []).map(normalizeMedia),
   }))
 
+  // Talks, awards and press items, newest first.
+  const newestFirst = (a, b) => String(b.date || '').localeCompare(String(a.date || ''))
+  const talks = (readYaml('talks.yml').talks || [])
+    .map((t, i) => ({ ...t, id: `talk-${i + 1}`, date: day(t.date), speakers: t.speakers || [] }))
+    .sort(newestFirst)
+  const pressFile = readYaml('press.yml')
+  const awards = (pressFile.awards || [])
+    .map((a, i) => ({ ...a, id: `award-${i + 1}`, date: day(a.date), recipients: a.recipients || [] }))
+    .sort(newestFirst)
+  const press = (pressFile.press || [])
+    .map((p, i) => ({ ...p, id: `press-${i + 1}`, date: day(p.date), people: p.people || [] }))
+    .sort(newestFirst)
+
   // Free text blocks for the home page, placed with 'block:<file name>' in home.sections.
   const homeBlocks = readMarkdownFolder('home', render)
 
@@ -190,6 +203,10 @@ export async function loadContent(site, base = '/') {
     gallery,
     resources: readYaml('resources.yml').items || [],
     funders: readYaml('funders.yml').funders || [],
+    talks,
+    awards,
+    press,
+    collaborators: readYaml('collaborators.yml').collaborators || [],
     homeBlocks,
     notices: (readYaml('notices.yml').notices || []).map((n, i) => ({
       ...n,
@@ -212,6 +229,7 @@ export async function loadContent(site, base = '/') {
     ...events.flatMap((e) => htmlImages(e.html)),
     ...[...content.slides, ...gallery.flatMap((a) => a.photos)].map((m) => (m.type === 'image' ? m.src : m.poster)),
     ...content.funders.map((f) => f.logo),
+    ...content.collaborators.map((c) => c.logo),
     ...homeBlocks.flatMap((b) => [b.image, ...htmlImages(b.html)]),
   ])
   for (const p of people) p.bio = enhanceHtmlImages(p.bio, content.images, base)

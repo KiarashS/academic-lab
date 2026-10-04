@@ -1,0 +1,44 @@
+# Every night, builds the site and checks its links to other websites. Broken ones are
+# listed in one GitHub issue labelled "broken-links", which is updated each night and
+# closed when every link works again. Run it any time from the Actions tab.
+name: Check links
+
+on:
+  schedule:
+    - cron: '41 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          BASE_PATH: /
+      - run: node scripts/links.js --report link-report.md --json link-result.json
+      - name: Update the broken-links issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(node -p "require('./link-result.json').broken.length")
+          gh label create broken-links --color d73a4a --description "Found by the nightly link check" --force
+          issue=$(gh issue list --label broken-links --state open --json number --jq '.[0].number')
+          if [ "$count" -gt 0 ]; then
+            if [ -n "$issue" ]; then
+              gh issue edit "$issue" --body-file link-report.md
+            else
+              gh issue create --title "Broken links on the site" --label broken-links --body-file link-report.md
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "The nightly link check found no broken links."
+          fi

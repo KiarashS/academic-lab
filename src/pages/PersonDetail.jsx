@@ -1,4 +1,5 @@
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
+import AwardList from '../components/AwardList.jsx'
 import Avatar from '../components/Avatar.jsx'
 import LinkList from '../components/LinkList.jsx'
 import Markdown from '../components/Markdown.jsx'
@@ -6,8 +7,10 @@ import { personLinks } from '../components/personLinks.js'
 import ProjectCard from '../components/ProjectCard.jsx'
 import PublicationList from '../components/PublicationList.jsx'
 import Section from '../components/Section.jsx'
+import TalkList from '../components/TalkList.jsx'
+import YearChart from '../components/YearChart.jsx'
 import site, { pageEnabled } from '../config/index.js'
-import { personById, projectsByPerson, publicationsByPerson } from '../lib/data.js'
+import { awardsByPerson, personById, projectsByPerson, publicationsByPerson, talksByPerson } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 import NotFound from './NotFound.jsx'
 
@@ -28,6 +31,7 @@ function ListBlock({ title, items }) {
 
 export default function PersonDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const person = personById[id]
   useTitle(person?.name)
   if (!person) return <NotFound />
@@ -36,11 +40,15 @@ export default function PersonDetail() {
   const show = (name) => config.sections.includes(name)
   const pubs = publicationsByPerson(person.id)
   const projects = projectsByPerson(person.id)
+  const talks = talksByPerson(person.id)
+  const awards = awardsByPerson(person.id)
   const management = site.people.management
 
   // Sections below the header, in configured order. Interests and education share a row
   // when they are next to each other.
-  const lower = config.sections.filter((s) => ['interests', 'education', 'projects', 'publications'].includes(s))
+  const lower = config.sections.filter((s) =>
+    ['interests', 'education', 'projects', 'publications', 'talks', 'awards'].includes(s),
+  )
   const SECTIONS = {
     interests: () =>
       person.interests?.length > 0 && (
@@ -67,7 +75,35 @@ export default function PersonDetail() {
           title={config.publicationsTitle}
           more={pageEnabled('publications') && { to: `/publications?author=${person.id}`, label: 'Search and filter' }}
         >
+          {site.publications.chart?.show && (
+            <YearChart
+              publications={pubs}
+              // A click shows that year's papers by this person on the Publications page.
+              onSelect={
+                pageEnabled('publications')
+                  ? (year) => navigate(`/publications?author=${person.id}${year ? `&year=${year}` : ''}`)
+                  : undefined
+              }
+              className="mb-10"
+            />
+          )}
           <PublicationList publications={pubs} />
+        </Section>
+      ),
+    talks: () =>
+      talks.length > 0 && (
+        <Section
+          key="talks"
+          title={config.talksTitle}
+          more={pageEnabled('talks') && { to: '/talks', label: 'All talks' }}
+        >
+          <TalkList talks={talks} showSpeakers={false} />
+        </Section>
+      ),
+    awards: () =>
+      awards.length > 0 && (
+        <Section key="awards" title={config.awardsTitle}>
+          <AwardList awards={awards} showRecipients={false} />
         </Section>
       ),
   }

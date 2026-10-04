@@ -5,6 +5,7 @@ import PublicationItem from '../components/PublicationItem.jsx'
 import PublicationList from '../components/PublicationList.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import Tag from '../components/Tag.jsx'
+import YearChart from '../components/YearChart.jsx'
 import site from '../config/index.js'
 import { toBibtex } from '../lib/bibtex.js'
 import { memberIdForAuthor, normalizeName, personById, sortedPublications } from '../lib/data.js'
@@ -94,14 +95,15 @@ export default function Publications() {
   const tags = useMemo(() => [...new Set(sortedPublications.flatMap((p) => p.tags || []))].sort(), [])
   const authors = useMemo(() => authorOptions(config.authorFilter), [config.authorFilter])
 
-  const filtered = sortedPublications.filter(
+  // The chart shows every year for the other filters, with the chosen year highlighted.
+  const beforeYear = sortedPublications.filter(
     (p) =>
       (!type || p.type === type) &&
-      (!year || String(p.year) === year) &&
       (!tag || p.tags?.includes(tag)) &&
       matchesAuthor(p, author) &&
       matchesQuery(p, query),
   )
+  const filtered = beforeYear.filter((p) => !year || String(p.year) === year)
   const filtering = Boolean(query || type || year || tag || author)
 
   const CONTROLS = {
@@ -211,6 +213,14 @@ export default function Publications() {
               </Tag>
             ))}
           </div>
+        )}
+        {config.chart?.show && (
+          <YearChart
+            publications={beforeYear}
+            selected={year}
+            onSelect={filters.includes('year') ? (y) => update('year', y) : undefined}
+            className="pt-2"
+          />
         )}
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm pointer-coarse:[&>*]:py-0.5 text-neutral-500 dark:text-neutral-400">
           {config.showCount && (

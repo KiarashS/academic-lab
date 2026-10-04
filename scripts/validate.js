@@ -119,6 +119,49 @@ export function validateContent(content, site) {
     if (n.placement && !['home', 'site'].includes(n.placement)) add(where, `placement "${n.placement}" should be home or site`)
   }
 
+  // People in talks, awards and press: ids of lab members, or names for anyone else. A
+  // lowercase-with-dashes value is meant as an id, so flag it when no such person exists.
+  const checkPeople = (where, field, refs) => {
+    if (refs != null && !Array.isArray(refs)) return add(where, `${field} should be a list`)
+    for (const ref of refs || []) {
+      if (/^[a-z0-9]+(-[a-z0-9]+)+$/.test(ref) && !peopleIds.has(ref)) add(where, `${field}: "${ref}" has no file in content/people/`)
+    }
+  }
+  const LOOSE_DATE = /^\d{4}(-\d{2}(-\d{2})?)?$/
+  const talkTypes = Object.keys(site.talks?.types || {})
+  content.talks.forEach((t, i) => {
+    const where = `content/talks.yml, talk ${i + 1}${t.title ? ` "${t.title}"` : ''}`
+    if (!t.title) add(where, 'title is missing')
+    checkDate(where, 'date', t.date)
+    if (t.type && !talkTypes.includes(t.type)) add(where, `type "${t.type}" should be one of ${talkTypes.join(', ')}`)
+    checkPeople(where, 'speakers', t.speakers)
+  })
+  content.awards.forEach((a, i) => {
+    const where = `content/press.yml, award ${i + 1}${a.title ? ` "${a.title}"` : ''}`
+    if (!a.title) add(where, 'title is missing')
+    if (!a.date) add(where, 'date is missing')
+    else if (!LOOSE_DATE.test(a.date)) add(where, `date "${a.date}" should look like 2026, 2026-05 or 2026-05-01`)
+    checkPeople(where, 'recipients', a.recipients)
+  })
+  content.press.forEach((p, i) => {
+    const where = `content/press.yml, press item ${i + 1}${p.title ? ` "${p.title}"` : ''}`
+    if (!p.title) add(where, 'title is missing')
+    if (!p.date) add(where, 'date is missing')
+    else if (!LOOSE_DATE.test(p.date)) add(where, `date "${p.date}" should look like 2026, 2026-05 or 2026-05-01`)
+    checkPeople(where, 'people', p.people)
+  })
+  content.collaborators.forEach((c, i) => {
+    const where = `content/collaborators.yml, item ${i + 1}${c.institution || c.name ? ` "${c.institution || c.name}"` : ''}`
+    if (!c.institution && !c.name) add(where, 'needs an institution or a name')
+    const hasLat = c.lat != null
+    const hasLng = c.lng != null
+    if (hasLat !== hasLng) add(where, 'needs both lat and lng for the map')
+    if (hasLat && !(Number.isFinite(c.lat) && Math.abs(c.lat) <= 90)) add(where, `lat "${c.lat}" should be a number from -90 to 90`)
+    if (hasLng && !(Number.isFinite(c.lng) && Math.abs(c.lng) <= 180)) add(where, `lng "${c.lng}" should be a number from -180 to 180`)
+    for (const id of c.projects || []) if (!projectIds.has(id)) add(where, `project "${id}" has no file in content/research/`)
+    checkImage(where, c.logo)
+  })
+
   const blockIds = new Set(content.homeBlocks.map((b) => b.id))
   for (const b of content.homeBlocks) checkImage(`content/home/${b.id}.md`, b.image)
   for (const key of site.home.sections) {

@@ -1,0 +1,47 @@
+# Talks given by members of the lab, shown on the Talks page and on each speaker's page.
+#
+# Fields: title, speakers (people ids from content/people/, or names for guests), date
+# (2026-10-14), event (conference, seminar series or department), location, type
+# (keynote | invited | contributed | tutorial | lecture | panel | poster | other; labels
+# in talks.types in src/config/site.js), abstract, and links: slides, video, event (the
+# event's page), or any other label: url.
+talks:
+  - title: Learning from twenty measurements
+    speakers: [alex-rivera]
+    date: 2026-09-18
+    event: Machine Learning for Science Symposium
+    location: Zurich, Switzerland
+    type: keynote
+    abstract: Why most scientific datasets are small, and what meta-learning can do about it.
+    links:
+      slides: https://example.com/slides/twenty-measurements.pdf
+      video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  - title: Meta-learning protein fitness landscapes
+    speakers: [priya-nair]
+    date: 2026-07-16
+    event: International Conference on Machine Learning (ICML), oral session
+    location: Seoul, South Korea
+    type: contributed
+    links:
+      slides: https://example.com/slides/icml-2026.pdf
+  - title: Active learning when each experiment takes a week
+    speakers: [sam-chen]
+    date: 2026-04-02
+    event: Department of Chemistry seminar, Example University
+    location: Example City
+    type: invited
+  - title: A practical introduction to few-shot learning
+    speakers: [alex-rivera, jordan-lee]
+    date: 2025-11-20
+    event: Summer School on Data-Efficient AI
+    location: Online
+    type: tutorial
+    links:
+      slides: https://example.com/slides/tutorial.pdf
+      code: https://github.com/
+  - title: Small data in the clinic
+    speakers: [alex-rivera]
+    date: 2025-03-11
+    event: Grand Rounds, Example Medical Center
+    location: Example City
+    type: invited
