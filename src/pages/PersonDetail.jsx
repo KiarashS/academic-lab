@@ -75,7 +75,7 @@ export default function PersonDetail() {
           title={config.publicationsTitle}
           more={pageEnabled('publications') && { to: `/publications?author=${person.id}`, label: 'Search and filter' }}
         >
-          {site.publications.chart?.show && (
+          {site.publications.chart?.show && site.publications.chart.profiles && (
             <YearChart
               publications={pubs}
               // A click shows that year's papers by this person on the Publications page.

@@ -34,7 +34,7 @@ const defaults = {
     intro: { heading: null, text: [], image: null, imageAlt: '', imageCaption: '', imagePosition: 'below' },
     news: { title: 'News', count: 4, moreLink: 'All news' },
     research: { title: 'Research', count: 4, moreLink: 'All projects' },
-    publications: { title: 'Selected publications', count: 3, moreLink: 'All publications' },
+    publications: { title: 'Selected publications', count: 3, moreLink: 'All publications', showSummary: true },
     events: { title: 'Upcoming events', count: 3, moreLink: 'All events' },
     funders: { title: 'Funding', count: 8 },
     notices: { count: 3 },
@@ -86,8 +86,9 @@ const defaults = {
     showAbstract: true,
     import: { bibtex: 'publications.bib', orcid: [] },
     pages: true,
+    page: { sections: ['links', 'summary', 'abstract', 'cite', 'related'] },
     citations: { show: true, label: 'Cited by' },
-    chart: { show: true, minYears: 3, title: 'Publications per year' },
+    chart: { show: true, profiles: true, minYears: 3, title: 'Publications per year' },
     summaryTitle: 'In brief',
     types: {
       journal: 'Journal',
@@ -146,6 +147,7 @@ const defaults = {
     pastTitle: 'Past events',
     timezone: 'UTC',
     showSubscribe: true,
+    calendarLinks: true,
   },
   gallery: { title: 'Gallery', intro: null },
   resources: {
@@ -179,7 +181,7 @@ const defaults = {
       success: 'Thanks, your message was sent. We will get back to you soon.',
     },
   },
-  linkCheck: { ignore: [] },
+  linkCheck: { enabled: true, ignore: [] },
   footer: { show: true, sections: ['copyright', 'institution', 'social'], text: '', social: [] },
 }
 

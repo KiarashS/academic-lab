@@ -138,7 +138,8 @@ const site = {
     // Current (not past) projects.
     research: { title: 'Research', count: 4, moreLink: 'All projects' },
     // Publications marked `featured: true`.
-    publications: { title: 'Selected publications', count: 3, moreLink: 'All publications' },
+    // showSummary: each paper's plain-language summary under it
+    publications: { title: 'Selected publications', count: 3, moreLink: 'All publications', showSummary: true },
     // Events that haven't happened yet.
     events: { title: 'Upcoming events', count: 3, moreLink: 'All events' },
     // Logos from content/funders.yml.
@@ -233,11 +234,15 @@ const site = {
     // A page for each paper at /publications/<id>, with the tags Google Scholar reads to
     // index it, a citation in text and BibTeX, and links. Titles in lists link to it.
     pages: true,
+    // What a paper's page shows, in order: links | summary | abstract | cite | related
+    // (related = its research projects and tags)
+    page: { sections: ['links', 'summary', 'abstract', 'cite', 'related'] },
     // "Cited by N" from Semantic Scholar, looked up by DOI or arXiv link at build time.
     citations: { show: true, label: 'Cited by' },
     // Bar chart of papers per year above the list (it follows the filters; click a bar to
-    // filter by that year) and on each person's page. Shown once papers span minYears.
-    chart: { show: true, minYears: 3, title: 'Publications per year' },
+    // filter by that year). profiles: the same chart on each person's page. Shown once
+    // papers span minYears.
+    chart: { show: true, profiles: true, minYears: 3, title: 'Publications per year' },
     // Heading for a paper's plain-language `summary`, shown above the abstract.
     summaryTitle: 'In brief',
     // Labels for the `type` field of each publication.
@@ -333,6 +338,8 @@ const site = {
     timezone: 'America/New_York',
     // "Subscribe" link to the calendar feed at /events.ics.
     showSubscribe: true,
+    // "Add to calendar" links on upcoming events and event pages.
+    calendarLinks: true,
   },
 
   gallery: {
@@ -405,7 +412,8 @@ const site = {
 
   // The nightly link check (.github/workflows/links.yml). Links containing any of these
   // are skipped, e.g. sites that block automated checks: ['linkedin.com'].
-  linkCheck: { ignore: [] },
+  // enabled: false stops the check (an open issue is then closed).
+  linkCheck: { enabled: true, ignore: [] },
 
   footer: {
     show: true,

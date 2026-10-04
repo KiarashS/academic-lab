@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import Authors from '../components/Authors.jsx'
 import { CitationCount, LINK_LABELS } from '../components/PublicationItem.jsx'
@@ -56,6 +56,95 @@ export default function PublicationDetail() {
   const projects = (pub.projects || []).map((p) => projectById[p]).filter(Boolean)
   const types = site.publications.types
 
+  // Parts of the page in the order set by publications.page.sections.
+  const SECTIONS = {
+    links: () => (
+      <Fragment key="links">
+        {(links.length > 0 || pub.citations) && (
+          <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 pointer-coarse:[&>*]:py-0.5">
+            {links.map(([key, url]) => (
+              <a
+                key={key}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link hover:underline underline-offset-2"
+              >
+                {LINK_LABELS[key] || key}
+              </a>
+            ))}
+            <CitationCount pub={pub} />
+          </div>
+        )}
+      </Fragment>
+    ),
+    summary: () => (
+      <Fragment key="summary">
+        {pub.summary && (
+          <section className="mt-10 max-w-2xl">
+            <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+              {site.publications.summaryTitle}
+            </h2>
+            <p className="text-lg leading-relaxed text-neutral-800 dark:text-neutral-200">{pub.summary}</p>
+          </section>
+        )}
+      </Fragment>
+    ),
+    abstract: () => (
+      <Fragment key="abstract">
+        {pub.abstract && (
+          <section className="mt-10 max-w-2xl">
+            <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+              Abstract
+            </h2>
+            <p className="leading-relaxed">{pub.abstract}</p>
+          </section>
+        )}
+      </Fragment>
+    ),
+    cite: () => (
+      <Fragment key="cite">
+        <section className="mt-10 grid max-w-3xl grid-cols-[minmax(0,1fr)] gap-6">
+          <h2 className="text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">Cite</h2>
+          <CopyBlock label="Text" text={formatCitation(pub)} />
+          {site.publications.showBibtex && <CopyBlock label="BibTeX" text={toBibtex(pub)} mono />}
+        </section>
+      </Fragment>
+    ),
+    related: () => (
+      <Fragment key="related">
+        {(projects.length > 0 || pub.tags?.length > 0) && (
+          <section className="mt-10 max-w-3xl space-y-4">
+            {projects.length > 0 && (
+              <p className="text-sm">
+                <span className="text-neutral-500 dark:text-neutral-400">Part of </span>
+                {projects.map((p, i) => (
+                  <span key={p.id}>
+                    {i > 0 && ', '}
+                    {pageEnabled('research') ? (
+                      <Link to={`/research/${p.id}`} className="prose-link">
+                        {p.title}
+                      </Link>
+                    ) : (
+                      p.title
+                    )}
+                  </span>
+                ))}
+              </p>
+            )}
+            {pub.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {pub.tags.map((t) => (
+                  <Tag key={t}>{t}</Tag>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+      </Fragment>
+    ),
+  }
+
   return (
     <article>
       <Link to="/publications" className="text-sm text-neutral-500 hover:text-accent dark:text-neutral-400">
@@ -80,75 +169,7 @@ export default function PublicationDetail() {
         </p>
       </header>
 
-      {(links.length > 0 || pub.citations) && (
-        <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 pointer-coarse:[&>*]:py-0.5">
-          {links.map(([key, url]) => (
-            <a
-              key={key}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-link hover:underline underline-offset-2"
-            >
-              {LINK_LABELS[key] || key}
-            </a>
-          ))}
-          <CitationCount pub={pub} />
-        </div>
-      )}
-
-      {pub.summary && (
-        <section className="mt-10 max-w-2xl">
-          <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-            {site.publications.summaryTitle}
-          </h2>
-          <p className="text-lg leading-relaxed text-neutral-800 dark:text-neutral-200">{pub.summary}</p>
-        </section>
-      )}
-
-      {pub.abstract && (
-        <section className="mt-10 max-w-2xl">
-          <h2 className="mb-3 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-            Abstract
-          </h2>
-          <p className="leading-relaxed">{pub.abstract}</p>
-        </section>
-      )}
-
-      <section className="mt-10 grid max-w-3xl grid-cols-[minmax(0,1fr)] gap-6">
-        <h2 className="text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">Cite</h2>
-        <CopyBlock label="Text" text={formatCitation(pub)} />
-        {site.publications.showBibtex && <CopyBlock label="BibTeX" text={toBibtex(pub)} mono />}
-      </section>
-
-      {(projects.length > 0 || pub.tags?.length > 0) && (
-        <section className="mt-10 max-w-3xl space-y-4">
-          {projects.length > 0 && (
-            <p className="text-sm">
-              <span className="text-neutral-500 dark:text-neutral-400">Part of </span>
-              {projects.map((p, i) => (
-                <span key={p.id}>
-                  {i > 0 && ', '}
-                  {pageEnabled('research') ? (
-                    <Link to={`/research/${p.id}`} className="prose-link">
-                      {p.title}
-                    </Link>
-                  ) : (
-                    p.title
-                  )}
-                </span>
-              ))}
-            </p>
-          )}
-          {pub.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {pub.tags.map((t) => (
-                <Tag key={t}>{t}</Tag>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
+      {(site.publications.page?.sections || Object.keys(SECTIONS)).map((key) => SECTIONS[key]?.())}
     </article>
   )
 }

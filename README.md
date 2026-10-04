@@ -128,14 +128,15 @@ Turning things on and off:
 | Page | Settings | Sections |
 | --- | --- | --- |
 | Header | `header` (logo, name, search, theme toggle) | |
-| Home | `home` (slider timing, intro, hiring notice, section titles, item counts, "All …" link text) | `slider`, `intro`, `notices`, `hiring`, `news`, `events`, `research`, `publications`, `funders`, `talks`, `newsletter`, `block:<name>` |
+| Home | `home` (slider timing, intro, hiring notice, section titles, item counts, "All …" link text, paper summaries) | `slider`, `intro`, `notices`, `hiring`, `news`, `events`, `research`, `publications`, `funders`, `talks`, `newsletter`, `block:<name>` |
 | Research | `research` (title, intro, headings, tags) | `current`, `past` |
 | Project page | `research.project` | `description`, `funding`, `links`, `people`, `publications` |
 | People | `people` (groups, management team, alumni heading, photos, author highlighting) | `members`, `alumni` |
 | Person page | `people.profile` | `links`, `bio`, `interests`, `education`, `projects`, `publications`, `talks`, `awards` |
-| Publications | `publications` (Scholar link, import, paper pages, citation counts, chart, summary heading, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
+| Publications | `publications` (Scholar link, import, paper pages, citation counts, chart on the page and on profiles, summary heading, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
+| Paper page | `publications.pages` (on or off), `publications.page` | `links`, `summary`, `abstract`, `cite`, `related` |
 | News | `news` (title, intro, group by year, RSS, "Read more" text) | |
-| Events | `events` (title, intro, headings, time zone, subscribe link) | `upcoming`, `past` |
+| Events | `events` (title, intro, headings, time zone, subscribe link, "Add to calendar" links) | `upcoming`, `past` |
 | Talks | `talks` (title, intro, group by year, type labels) | |
 | Awards & press | `press` (title, intro, headings) | `awards`, `press` |
 | Collaborators | `collaborators` (title, intro, mark the lab on the map) | `map`, `list` |
@@ -146,7 +147,7 @@ Turning things on and off:
 | Contact | `contact` (details, map, form) | `email`, `phone`, `address`, `directions`, `map`, `form` |
 | Footer | `footer` (on or off, text, links) | `copyright`, `institution`, `social` |
 
-Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap, RSS and canonical links), `ogImage` (social previews), `favicon`, `locale` (date format), `theme` (accent colors, font, default light/dark mode), `socialImages` and `analytics` (with `cookieConsent`).
+Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap, RSS and canonical links), `ogImage` (social previews), `favicon`, `locale` (date format), `theme` (accent colors, font, default light/dark mode), `socialImages`, `analytics` (with `cookieConsent`), `newsletter` and `linkCheck`.
 
 ### Feeds and calendars
 
@@ -161,7 +162,7 @@ A static site can't send email, so a mailing service keeps the subscriber list a
 
 ### Broken links
 
-Links to other websites break as people move and pages disappear. `.github/workflows/links.yml` builds the site every night, checks every outside link, and keeps one GitHub issue labelled `broken-links` up to date with the ones that fail and the pages they're on. The issue closes itself once they're fixed. Run it from the Actions tab any time, or locally with `npm run build && npm run links`. Some sites (LinkedIn, Google Scholar, some publishers) refuse automated checks; those are listed separately as "could not be checked", and you can skip them with `linkCheck.ignore` in `site.js`.
+Links to other websites break as people move and pages disappear. `.github/workflows/links.yml` builds the site every night, checks every outside link, and keeps one GitHub issue labelled `broken-links` up to date with the ones that fail and the pages they're on. The issue closes itself once they're fixed. Run it from the Actions tab any time, or locally with `npm run build && npm run links`. Some sites (LinkedIn, Google Scholar, some publishers) refuse automated checks; those are listed separately as "could not be checked", and you can skip them with `linkCheck.ignore` in `site.js`. `linkCheck.enabled: false` turns the check off.
 
 ### Analytics and cookie consent
 

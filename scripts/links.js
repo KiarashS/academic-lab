@@ -8,6 +8,15 @@ import { join, relative, resolve } from 'node:path'
 import site from '../src/config/index.js'
 
 const DIST = resolve(import.meta.dirname, '../dist')
+
+// Turned off in site.js: report nothing, so the workflow closes any open issue.
+if (site.linkCheck?.enabled === false) {
+  const out = (name) => process.argv.includes(name) && process.argv[process.argv.indexOf(name) + 1]
+  if (out('--json')) writeFileSync(out('--json'), JSON.stringify({ broken: [], blocked: [], total: 0 }))
+  if (out('--report')) writeFileSync(out('--report'), 'The link check is turned off in src/config/site.js.\n')
+  console.log('[links] Turned off (linkCheck.enabled is false).')
+  process.exit(0)
+}
 const args = process.argv.slice(2)
 const option = (name) => (args.includes(name) ? args[args.indexOf(name) + 1] : null)
 const ownHost = site.url ? new URL(site.url).host : null

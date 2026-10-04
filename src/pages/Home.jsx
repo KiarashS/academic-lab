@@ -296,7 +296,7 @@ const SECTIONS = {
         >
           <div className="space-y-7">
             {featured.map((pub) => (
-              <PublicationItem key={pub.id} pub={pub} showSummary />
+              <PublicationItem key={pub.id} pub={pub} showSummary={home.publications.showSummary} />
             ))}
           </div>
         </Section>

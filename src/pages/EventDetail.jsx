@@ -60,9 +60,11 @@ export default function EventDetail() {
         ))}
       </dl>
       <div className="mt-4 flex flex-wrap gap-x-4 text-sm pointer-coarse:[&>*]:py-0.5">
-        <a href={calendarFile(event)} download className="prose-link">
-          Add to calendar
-        </a>
+        {site.events.calendarLinks && (
+          <a href={calendarFile(event)} download className="prose-link">
+            Add to calendar
+          </a>
+        )}
         {event.link && <SmartLink to={event.link}>Event link</SmartLink>}
       </div>
 

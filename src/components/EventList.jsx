@@ -1,4 +1,4 @@
-import { pageEnabled } from '../config/index.js'
+import site, { pageEnabled } from '../config/index.js'
 import DateParts from './DateParts.jsx'
 import SmartLink from './SmartLink.jsx'
 
@@ -35,11 +35,7 @@ export default function EventList({ events, showCalendar = true }) {
             </div>
             <div>
               <h3 className="leading-6 font-medium text-neutral-900 dark:text-neutral-100">
-                {page ? (
-                  <SmartLink to={page}>{event.title}</SmartLink>
-                ) : (
-                  event.title
-                )}
+                {page ? <SmartLink to={page}>{event.title}</SmartLink> : event.title}
               </h3>
               {event.speaker && (
                 <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400">
@@ -57,7 +53,7 @@ export default function EventList({ events, showCalendar = true }) {
               )}
               <div className="mt-2 flex flex-wrap gap-x-4 text-sm pointer-coarse:[&>*]:py-0.5">
                 {event.link && event.hasPage && <SmartLink to={event.link}>Event link</SmartLink>}
-                {showCalendar && pageEnabled('events') && (
+                {showCalendar && site.events.calendarLinks && pageEnabled('events') && (
                   <a href={calendarFile(event)} download className="prose-link">
                     Add to calendar
                   </a>
