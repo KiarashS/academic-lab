@@ -95,7 +95,7 @@ Put photos in `public/uploads/` (the editor at `/admin` does this for you) at wh
 Papers come from three places, combined into one list. If a paper appears twice (same DOI or same title), the first source wins:
 
 1. `content/publications.yml`, entered by hand
-2. BibTeX files in `content/`, listed in `publications.import.bibtex`. Standard fields are read as usual; a few extra ones are understood too: `code`, `data`, `slides`, `video`, `poster`, `project` and `pdf` become links, `featured = {true}` shows the paper on the home page, `award` adds a label, `summary` adds a plain-language summary, and `projects` links it to research projects.
+2. BibTeX files in `content/`, listed in `publications.import.bibtex`. Standard fields are read as usual; a few extra ones are understood too: `code`, `data`, `slides`, `video`, `poster`, `project` and `pdf` become links, `featured = {true}` shows the paper on the home page, `award` adds a label, `summary` adds a plain-language summary, `media` adds an image or video beside it, and `projects` links it to research projects.
 3. ORCID: put ORCID iDs in `publications.import.orcid`, e.g. `['0000-0002-1825-0097']`. Public works are fetched at build time; no API key is needed. If ORCID can't be reached, the build continues without those papers and prints a warning. Pushes to `main` rebuild the site, so new ORCID works show up with the next push, or with a manual run of the deploy workflow.
 
 ### Paper pages, Google Scholar and citation counts
@@ -134,7 +134,7 @@ Turning things on and off:
 | People | `people` (groups, management team, alumni heading, photos, author highlighting) | `members`, `alumni` |
 | Person page | `people.profile` | `links`, `bio`, `interests`, `education`, `projects`, `publications`, `talks`, `awards` |
 | Publications | `publications` (Scholar link, import, paper pages, citation counts, chart on the page and on profiles, summary heading, type labels, grouping, count, BibTeX, abstracts, download) | `filters`: `search`, `type`, `year`, `author`, `tag` |
-| Paper page | `publications.pages` (on or off), `publications.page` | `links`, `summary`, `abstract`, `cite`, `related` |
+| Paper page | `publications.pages` (on or off), `publications.page` | `media`, `links`, `summary`, `abstract`, `cite`, `related` |
 | News | `news` (title, intro, group by year, RSS, "Read more" text) | |
 | Events | `events` (title, intro, headings, time zone, subscribe link, "Add to calendar" links) | `upcoming`, `past` |
 | Talks | `talks` (title, intro, group by year, type labels) | |
@@ -145,7 +145,7 @@ Turning things on and off:
 | Gallery | `gallery` (title, intro) | |
 | Join | `join` (title, headings, closed positions) | `intro`, `positions`, `apply` |
 | Contact | `contact` (details, map, form) | `email`, `phone`, `address`, `directions`, `map`, `form` |
-| Footer | `footer` (on or off, text, links) | `copyright`, `institution`, `social` |
+| Footer | `footer` (on or off, text, links, "Built with" credit) | `copyright`, `institution`, `social`, `credit` |
 
 Site-wide: `name`, `tagline`, `description`, `institution`, `url` (sitemap, RSS and canonical links), `ogImage` (social previews), `favicon`, `locale` (date format), `theme` (accent colors, font, default light/dark mode), `socialImages`, `analytics` (with `cookieConsent`), `newsletter` and `linkCheck`.
 
@@ -173,6 +173,16 @@ Google Analytics sets cookies, so by default (`analytics.cookieConsent: true`) v
 ### Contact form
 
 A static site can't send email, so the optional form on the Contact page goes through a free form service that emails each message to you. Sign up with [Formspree](https://formspree.io) or [Web3Forms](https://web3forms.com), then set `contact.form.provider` to `'formspree'` or `'web3forms'` and fill in `formspreeId` or `web3formsKey`. The form has name, email and message fields and a hidden field that catches most spam bots.
+
+### Images and videos beside papers and events
+
+Give a publication or an event a `media` field and it shows beside it in lists and at the top of its page, as on many HCI lab sites. It can be an image or GIF (`/uploads/teaser.gif`), an MP4 or WebM video, which plays silently on a loop while on screen like a GIF, or a YouTube or Vimeo link, which shows a thumbnail and plays when pressed. Write `media: { src: ..., alt: ..., poster: ... }` when you need a description or a poster frame. Visitors who have asked their system for reduced motion see videos paused, with controls.
+
+`publications.media` and `events.media` set where it goes (`position: 'right'` or `'left'`; on phones it goes below or above the text), how wide it is, and `aspect`, which crops every item to the same shape (`'16 / 10'`, `'1 / 1'`) or, with `null`, keeps each one's own. Right is the default: titles stay lined up whether or not an item has media.
+
+### Site icon
+
+Set `favicon` to one image in `public/`: an SVG, or a square PNG at least 512×512 pixels. The build makes everything else from it: `favicon.ico` (16, 32 and 48 px), the 180 px iPhone home-screen icon, 192 and 512 px icons and a maskable icon for Android, and `site.webmanifest`, and adds the right tags to every page. Replace the file and rebuild to change the icon everywhere. iPhone and Android need a solid square behind the icon; its color is `faviconBackground`.
 
 ### Social preview images
 

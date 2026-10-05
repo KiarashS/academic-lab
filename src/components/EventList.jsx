@@ -1,6 +1,7 @@
 import site, { pageEnabled } from '../config/index.js'
 import DateParts from './DateParts.jsx'
 import SmartLink from './SmartLink.jsx'
+import { WithMedia } from './TeaserMedia.jsx'
 
 export function calendarFile(event) {
   return `${import.meta.env.BASE_URL}events/${event.id}.ics`
@@ -33,33 +34,35 @@ export default function EventList({ events, showCalendar = true }) {
               )}
               {event.time && <span className="block tabular-nums">{eventTime(event)}</span>}
             </div>
-            <div>
-              <h3 className="leading-6 font-medium text-neutral-900 dark:text-neutral-100">
-                {page ? <SmartLink to={page}>{event.title}</SmartLink> : event.title}
-              </h3>
-              {event.speaker && (
-                <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400">
-                  {event.speaker}
-                  {event.affiliation && `, ${event.affiliation}`}
-                </p>
-              )}
-              {event.location && (
-                <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">{event.location}</p>
-              )}
-              {event.summary && (
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                  {event.summary}
-                </p>
-              )}
-              <div className="mt-2 flex flex-wrap gap-x-4 text-sm pointer-coarse:[&>*]:py-0.5">
-                {event.link && event.hasPage && <SmartLink to={event.link}>Event link</SmartLink>}
-                {showCalendar && site.events.calendarLinks && pageEnabled('events') && (
-                  <a href={calendarFile(event)} download className="prose-link">
-                    Add to calendar
-                  </a>
+            <WithMedia media={event.media} config={site.events.media} title={event.title} to={page}>
+              <div>
+                <h3 className="leading-6 font-medium text-neutral-900 dark:text-neutral-100">
+                  {page ? <SmartLink to={page}>{event.title}</SmartLink> : event.title}
+                </h3>
+                {event.speaker && (
+                  <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400">
+                    {event.speaker}
+                    {event.affiliation && `, ${event.affiliation}`}
+                  </p>
                 )}
+                {event.location && (
+                  <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">{event.location}</p>
+                )}
+                {event.summary && (
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                    {event.summary}
+                  </p>
+                )}
+                <div className="mt-2 flex flex-wrap gap-x-4 text-sm pointer-coarse:[&>*]:py-0.5">
+                  {event.link && event.hasPage && <SmartLink to={event.link}>Event link</SmartLink>}
+                  {showCalendar && site.events.calendarLinks && pageEnabled('events') && (
+                    <a href={calendarFile(event)} download className="prose-link">
+                      Add to calendar
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            </WithMedia>
           </li>
         )
       })}

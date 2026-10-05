@@ -9,6 +9,7 @@ const defaults = {
   institution: null,
   url: '',
   favicon: 'favicon.svg',
+  faviconBackground: '#ffffff',
   ogImage: null,
   socialImages: true,
   locale: 'en-US',
@@ -86,10 +87,11 @@ const defaults = {
     showAbstract: true,
     import: { bibtex: 'publications.bib', orcid: [] },
     pages: true,
-    page: { sections: ['links', 'summary', 'abstract', 'cite', 'related'] },
+    page: { sections: ['media', 'links', 'summary', 'abstract', 'cite', 'related'] },
     citations: { show: true, label: 'Cited by' },
     chart: { show: true, profiles: true, minYears: 3, title: 'Publications per year' },
     summaryTitle: 'In brief',
+    media: { show: true, position: 'right', width: '13rem', aspect: '16 / 10' },
     types: {
       journal: 'Journal',
       conference: 'Conference',
@@ -148,6 +150,7 @@ const defaults = {
     timezone: 'UTC',
     showSubscribe: true,
     calendarLinks: true,
+    media: { show: true, position: 'right', width: '11rem', aspect: '16 / 10' },
   },
   gallery: { title: 'Gallery', intro: null },
   resources: {
@@ -182,7 +185,13 @@ const defaults = {
     },
   },
   linkCheck: { enabled: true, ignore: [] },
-  footer: { show: true, sections: ['copyright', 'institution', 'social'], text: '', social: [] },
+  footer: {
+    show: true,
+    sections: ['copyright', 'institution', 'social'],
+    text: '',
+    social: [],
+    credit: { text: 'Built with', by: 'by', name: '', url: null, avatar: null },
+  },
 }
 
 export default defaults

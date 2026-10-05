@@ -8,6 +8,7 @@ affiliation: Institute for Materials Research
 location: Room 404, Example Hall
 link: https://example.edu/seminars
 summary: How to choose the next experiment when each one takes a week.
+media: /slides/slide-2.svg
 ---
 
 Dr. Kim will talk about Bayesian optimization methods their group uses to choose which alloy compositions to synthesize next, and about what went wrong when they first tried them in a real lab.

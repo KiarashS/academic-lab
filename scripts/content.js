@@ -21,6 +21,14 @@ function readYaml(name) {
 }
 
 // YAML and the CMS may write dates as full timestamps; the site only uses the day.
+// A publication's or event's `media`: a path or link (image, GIF, video file, YouTube or
+// Vimeo), or { src, alt, poster } when it needs more.
+function media(value) {
+  if (!value) return undefined
+  const item = typeof value === 'string' ? { src: value } : value
+  return item.src ? normalizeMedia(item) : undefined
+}
+
 function day(value) {
   if (!value) return value
   if (value instanceof Date) return value.toISOString().slice(0, 10)
@@ -161,6 +169,7 @@ export async function loadContent(site, base = '/') {
   }))
   const events = readMarkdownFolder('events', render).map((e) => ({
     ...e,
+    media: media(e.media),
     date: day(e.date),
     endDate: day(e.endDate),
     hasPage: Boolean(e.html),
@@ -188,7 +197,7 @@ export async function loadContent(site, base = '/') {
   // Free text blocks for the home page, placed with 'block:<file name>' in home.sections.
   const homeBlocks = readMarkdownFolder('home', render)
 
-  let publications = await loadPublications(site)
+  let publications = (await loadPublications(site)).map((p) => ({ ...p, media: media(p.media) }))
   if (site.publications.citations?.show) publications = await addCitationCounts(publications)
 
   const content = {
@@ -223,6 +232,8 @@ export async function loadContent(site, base = '/') {
     [...(html || '').matchAll(/<img [^>]*src="([^"]+)"/g)].map((m) => m[1].slice(base.length - 1))
   content.images = await processImages([
     site.home.intro.image,
+    site.footer.credit?.avatar,
+    ...[...publications, ...events].map((item) => item.media && (item.media.type === 'image' ? item.media.src : item.media.poster)),
     ...people.flatMap((p) => [p.photo, ...htmlImages(p.bio)]),
     ...research.flatMap((r) => [r.image, ...htmlImages(r.description)]),
     ...news.flatMap((n) => [n.image, ...htmlImages(n.html)]),

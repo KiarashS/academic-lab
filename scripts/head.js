@@ -1,4 +1,5 @@
 // Everything that goes into a page's <head>, and the list of pages the site has.
+import { faviconTags } from './favicons.js'
 import site, { navPages, pageEnabled } from '../src/config/index.js'
 import { plainText } from './content.js'
 
@@ -172,7 +173,7 @@ export function head({ title, description, path, base, image, jsonLd, meta = [],
     `<meta name="twitter:card" content="${ogImage ? 'summary_large_image' : 'summary'}" />`,
     `<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />`,
     `<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />`,
-    `<link rel="icon" href="${base}${escape(site.favicon || 'favicon.svg')}" />`,
+    ...faviconTags(base, escape),
     rss && `<link rel="alternate" type="application/rss+xml" title="${escape(site.name)}" href="${base}news.xml" />`,
     ...meta,
     jsonLdTag(jsonLd),

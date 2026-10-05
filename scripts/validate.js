@@ -102,6 +102,8 @@ export function validateContent(content, site) {
     checkMedia(where, s)
     if (s.duration != null && !(Number(s.duration) > 0)) add(where, `duration "${s.duration}" should be a number of milliseconds, e.g. 8000`)
   })
+  for (const pub of content.publications) if (pub.media) checkMedia(`publication "${pub.id}", media`, pub.media)
+  for (const e of content.events) if (e.media) checkMedia(`content/events/${e.id}.md, media`, e.media)
   for (const album of content.gallery) {
     album.photos.forEach((photo, i) => checkMedia(`content/gallery.yml, album "${album.title}", item ${i + 1}`, photo))
   }
@@ -161,6 +163,9 @@ export function validateContent(content, site) {
     for (const id of c.projects || []) if (!projectIds.has(id)) add(where, `project "${id}" has no file in content/research/`)
     checkImage(where, c.logo)
   })
+
+  if (site.favicon) checkImage('favicon in src/config/site.js', site.favicon)
+  checkImage('footer.credit.avatar in src/config/site.js', site.footer?.credit?.avatar)
 
   const blockIds = new Set(content.homeBlocks.map((b) => b.id))
   for (const b of content.homeBlocks) checkImage(`content/home/${b.id}.md`, b.image)

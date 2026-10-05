@@ -70,6 +70,7 @@ collections:
       - { name: location, label: Location, widget: string, required: false }
       - { name: link, label: Link, widget: string, required: false, hint: 'Registration, stream or event website.' }
       - { name: summary, label: Summary, widget: text, required: false }
+      - { name: media, label: 'Image, GIF or video', widget: file, required: false, hint: 'Shown beside the event and at the top of its page. Upload a file, or use Enter URL for a video file or a YouTube/Vimeo link.' }
       - { name: body, label: Details, widget: markdown, required: false, hint: 'With text, the event gets its own page.' }
 
   - name: people
@@ -188,6 +189,7 @@ collections:
               - { name: award, label: Award, widget: string, required: false }
               - { name: tags, label: Tags, widget: list, required: false }
               - { name: projects, label: Research projects, widget: relation, collection: research, value_field: '{{slug}}', search_fields: [title], display_fields: [title], multiple: true, required: false }
+              - { name: media, label: 'Image, GIF or video', widget: file, required: false, hint: 'Shown beside the paper and at the top of its page. Upload a file, or use Enter URL for a video file or a YouTube/Vimeo link.' }
               - { name: summary, label: Plain-language summary, widget: text, required: false, hint: 'Two or three sentences for readers outside the field. Shown above the abstract and on the home page.' }
               - { name: abstract, label: Abstract, widget: text, required: false }
               - name: links

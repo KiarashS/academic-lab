@@ -22,8 +22,13 @@ const site = {
   // Public address of the site, used for the sitemap, canonical links and social previews.
   // Leave empty if you don't know it yet.
   url: 'https://lab.kiarashs.ir',
-  // Browser tab icon, relative to public/.
+  // Site icon, relative to public/: an SVG, or a square PNG at least 512x512. The build
+  // makes favicon.ico, the home-screen icons for iPhone and Android, and a web app
+  // manifest from it, so replacing this one file updates the icon everywhere.
   favicon: 'favicon.svg',
+  // Background behind the icon where a platform needs a solid square (iPhone home screen,
+  // Android's shaped icons).
+  faviconBackground: '#ffffff',
   // Image shown when a page is shared on social media (about 1200x630), relative to public/.
   // Pages without their own image get a generated one (see socialImages).
   ogImage: null,
@@ -234,9 +239,9 @@ const site = {
     // A page for each paper at /publications/<id>, with the tags Google Scholar reads to
     // index it, a citation in text and BibTeX, and links. Titles in lists link to it.
     pages: true,
-    // What a paper's page shows, in order: links | summary | abstract | cite | related
+    // What a paper's page shows, in order: media | links | summary | abstract | cite | related
     // (related = its research projects and tags)
-    page: { sections: ['links', 'summary', 'abstract', 'cite', 'related'] },
+    page: { sections: ['media', 'links', 'summary', 'abstract', 'cite', 'related'] },
     // "Cited by N" from Semantic Scholar, looked up by DOI or arXiv link at build time.
     citations: { show: true, label: 'Cited by' },
     // Bar chart of papers per year above the list (it follows the filters; click a bar to
@@ -245,6 +250,11 @@ const site = {
     chart: { show: true, profiles: true, minYears: 3, title: 'Publications per year' },
     // Heading for a paper's plain-language `summary`, shown above the abstract.
     summaryTitle: 'In brief',
+    // A paper's `media` (image, GIF, video or YouTube/Vimeo link) beside it in lists and
+    // at the top of its page. position: 'right' | 'left' (on phones it goes below or
+    // above the text). aspect crops every one to the same shape, e.g. '16 / 10' or '1 / 1';
+    // null keeps each one's own shape.
+    media: { show: true, position: 'right', width: '13rem', aspect: '16 / 10' },
     // Labels for the `type` field of each publication.
     types: {
       journal: 'Journal',
@@ -340,6 +350,9 @@ const site = {
     showSubscribe: true,
     // "Add to calendar" links on upcoming events and event pages.
     calendarLinks: true,
+    // An event's `media` beside it in lists and on its page; same options as
+    // publications.media.
+    media: { show: true, position: 'right', width: '11rem', aspect: '16 / 10' },
   },
 
   gallery: {
@@ -417,8 +430,17 @@ const site = {
 
   footer: {
     show: true,
-    // copyright | institution | social
-    sections: ['copyright', 'institution', 'social'],
+    // copyright | institution | social | credit
+    sections: ['copyright', 'institution', 'social', 'credit'],
+    // "Built with ♥ by <photo> <name>", centered below the rest of the footer.
+    credit: {
+      text: 'Built with',
+      by: 'by',
+      name: 'KiarashS',
+      url: 'https://github.com/KiarashS',
+      // A small round photo, relative to public/. null for none.
+      avatar: '/uploads/credit-avatar.png',
+    },
     // Leave empty to use "© <year> <name>".
     text: '',
     social: [

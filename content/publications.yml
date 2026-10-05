@@ -5,7 +5,8 @@
 # (journal | conference | workshop | preprint | book | thesis | other), month (1-12),
 # volume, pages, publisher, featured (show on the home page), award, tags, projects
 # (research ids), summary (a plain-language version of the abstract, for readers outside
-# the field), abstract, bibtex (replaces the generated entry),
+# the field), abstract, media (an image, GIF, MP4/WebM video or YouTube/Vimeo link shown
+# beside the paper; or { src, alt, poster }), bibtex (replaces the generated entry),
 # links: pdf, doi, arxiv, code, project, slides, video, poster, data
 publications:
   - id: nair2026metaprot
@@ -20,6 +21,7 @@ publications:
     type: conference
     featured: true
     award: Oral presentation
+    media: /slides/slide-1.svg
     tags:
       - meta-learning
       - biology
@@ -65,6 +67,7 @@ publications:
       poster: https://example.com
   - id: okafor2025bench
     title: "SmallMed: a benchmark for low-resource medical image classification"
+    media: /slides/slide-3.svg
     authors:
       - Mia Okafor
       - Omar Haddad

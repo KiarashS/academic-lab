@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router'
 import DateParts from '../components/DateParts.jsx'
 import { calendarFile } from '../components/EventList.jsx'
+import TeaserMedia from '../components/TeaserMedia.jsx'
 import Markdown from '../components/Markdown.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
@@ -49,6 +50,16 @@ export default function EventDetail() {
       </h1>
       {event.summary && (
         <p className="mt-3 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">{event.summary}</p>
+      )}
+
+      {site.events.media?.show && event.media && (
+        <TeaserMedia
+          media={event.media}
+          title={event.title}
+          large
+          sizes="(min-width: 768px) 42rem, 100vw"
+          className="mt-8 max-w-2xl"
+        />
       )}
 
       <dl className="mt-8 grid max-w-2xl gap-x-6 gap-y-2 sm:grid-cols-[6rem_1fr] sm:items-baseline">

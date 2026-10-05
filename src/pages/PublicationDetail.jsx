@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import Authors from '../components/Authors.jsx'
 import { CitationCount, LINK_LABELS } from '../components/PublicationItem.jsx'
+import TeaserMedia from '../components/TeaserMedia.jsx'
 import Tag from '../components/Tag.jsx'
 import site, { pageEnabled } from '../config/index.js'
 import { toBibtex } from '../lib/bibtex.js'
@@ -58,6 +59,18 @@ export default function PublicationDetail() {
 
   // Parts of the page in the order set by publications.page.sections.
   const SECTIONS = {
+    media: () =>
+      site.publications.media?.show &&
+      pub.media && (
+        <TeaserMedia
+          key="media"
+          media={pub.media}
+          title={pub.title}
+          large
+          sizes="(min-width: 768px) 48rem, 100vw"
+          className="mt-8 max-w-3xl"
+        />
+      ),
     links: () => (
       <Fragment key="links">
         {(links.length > 0 || pub.citations) && (

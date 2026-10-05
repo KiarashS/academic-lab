@@ -117,7 +117,7 @@ const TYPES = {
 
 const LINK_FIELDS = ['pdf', 'code', 'data', 'slides', 'video', 'poster', 'project']
 
-const SITE_FIELDS = ['featured', 'award', 'projects', 'summary', ...LINK_FIELDS.filter((f) => f !== 'pdf')]
+const SITE_FIELDS = ['featured', 'award', 'projects', 'summary', 'media', ...LINK_FIELDS.filter((f) => f !== 'pdf')]
 
 // Drops fields from a raw entry, including values in braces or quotes that span lines.
 function removeFields(raw, names) {
@@ -199,6 +199,7 @@ function toPublication({ type, raw }, { key, fields: f }) {
     projects: list(f.projects),
     featured: /^(true|yes|1)$/i.test(f.featured || '') || undefined,
     award: f.award && cleanLatex(f.award),
+    media: f.media && f.media.trim(),
     links,
     // Keep the entry as written, minus the site-only fields, for BibTeX export.
     bibtex: removeFields(raw, SITE_FIELDS).replace(/,(\s*\n?\s*})$/, '$1'),
