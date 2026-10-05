@@ -436,8 +436,8 @@ const site = {
     credit: {
       text: 'Built with',
       by: 'by',
-      name: 'KiarashS',
-      url: 'https://github.com/KiarashS',
+      name: 'Kiarash',
+      url: 'https://kiarashs.ir',
       // A small round photo, relative to public/. null for none.
       avatar: '/uploads/credit-avatar.png',
     },
