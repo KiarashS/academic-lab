@@ -79,7 +79,12 @@ export default function ProjectDetail() {
       </header>
 
       {project.image && (
-        <Img src={project.image} sizes="(min-width: 1024px) 64rem, 100vw" className="mt-8 w-full rounded-md" />
+        <Img
+          src={project.image}
+          sizes="(min-width: 1024px) 64rem, 100vw"
+          alt={project.imageAlt || ''}
+          className="mt-8 w-full rounded-md"
+        />
       )}
 
       {config.sections.map((key) => SECTIONS[key]?.())}

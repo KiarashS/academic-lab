@@ -24,6 +24,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
+          # Raises GitHub's API limit for the repository details on Software & Data.
+          GITHUB_TOKEN: ${{ github.token }}
           BASE_PATH: /
       - run: node scripts/links.js --report link-report.md --json link-result.json
       - name: Update the broken-links issue

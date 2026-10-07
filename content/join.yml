@@ -1,10 +1,17 @@
-# Text for the Join page. Set open: false to show a position as filled without deleting it.
+# Text for the Join page.
+#
+# Each opening: title, text, url (optional details link), and either or both of
+#   open      true or false. false shows the position as filled without deleting it.
+#   deadline  last day to apply (YYYY-MM-DD). The page shows "Apply by ...", and the
+#             position closes by itself the day after, on the Join page and in the home
+#             page's hiring notice. With a deadline, open can be left out.
 
 intro:
   - We are looking for students and postdocs who want to work on machine learning for scientific problems. Experience in either machine learning or a natural science is welcome; we do not expect both.
 openings:
   - title: PhD students
     open: true
+    deadline: 2026-12-15
     text: Apply to the Example University PhD program in Computer Science and mention the lab in your statement. Applications are due December 15.
     url: https://example.edu/apply
   - title: Postdoctoral researcher

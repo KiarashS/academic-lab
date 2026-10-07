@@ -44,6 +44,8 @@ jobs:
           restore-keys: images-
       - run: npm run build
         env:
+          # Raises GitHub's API limit for the repository details on Software & Data.
+          GITHUB_TOKEN: ${{ github.token }}
           # e.g. '/academic-lab/' for a project site, '/' for a custom domain
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v3

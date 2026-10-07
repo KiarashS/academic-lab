@@ -1,9 +1,10 @@
 // Site-wide search over the content already loaded in the page. Small labs have a few
 // hundred items at most, so a simple scan is fast enough and needs no index file.
-import site, { navPages, pageEnabled, pagePath } from '../config/index.js'
+import site, { BUILT_IN_PAGES, navPages, pageEnabled, pagePath } from '../config/index.js'
 import {
   awards,
   collaborators,
+  customPageById,
   events,
   people,
   peopleNames,
@@ -25,7 +26,11 @@ function buildIndex() {
   const add = (type, title, url, subtitle, ...text) =>
     items.push({ type, title, url, subtitle, text: [subtitle, ...text].flat().filter(Boolean).join(' ') })
 
-  for (const { page, label } of navPages) add('Page', site[page]?.title || label, pagePath(page), null, label)
+  for (const { page, label } of navPages) {
+    const own = customPageById[page]
+    if (own) add('Page', own.title || label, pagePath(page), own.intro, label, strip(own.html))
+    else if (BUILT_IN_PAGES.includes(page)) add('Page', site[page]?.title || label, pagePath(page), null, label)
+  }
   if (pageEnabled('people')) {
     for (const p of people)
       add('Person', p.name, `/people/${p.id}`, p.role || p.management, p.group, p.management, p.interests, p.excerpt)

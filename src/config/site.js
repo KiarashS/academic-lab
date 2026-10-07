@@ -84,7 +84,9 @@ const site = {
   // hides it from the menu. The label is the menu text; the page heading is set below.
   // `{ label, items: [...] }` makes a dropdown group, for pages people visit less often.
   // Available pages: home, research, people, publications, news, events, talks, teaching,
-  // resources (software & data), gallery, press (awards & press), collaborators, join, contact
+  // resources (software & data), gallery, press (awards & press), collaborators, join, contact.
+  // Pages of your own: write content/pages/<name>.md (title, intro, then Markdown text) and
+  // add { page: '<name>', label: '...' } here, e.g. 'facilities' below.
   nav: [
     { page: 'home', label: 'Home' },
     { page: 'research', label: 'Research' },
@@ -100,6 +102,7 @@ const site = {
         { page: 'teaching', label: 'Teaching' },
         { page: 'press', label: 'Awards & Press' },
         { page: 'collaborators', label: 'Collaborators' },
+        { page: 'facilities', label: 'Facilities' },
         { page: 'gallery', label: 'Gallery' },
         { page: 'join', label: 'Join' },
       ],
@@ -131,7 +134,7 @@ const site = {
       // Optional image (path relative to public/, e.g. /uploads/group.jpg, or a full URL).
       // Replace the placeholder below with a group photo or a figure from your work.
       image: '/slides/slide-2.svg',
-      imageAlt: '', // describe the image for screen readers
+      imageAlt: 'Abstract green illustration of scattered data points along a curve', // describe the image for screen readers
       imageCaption: '',
       // below: under the text, full width
       // right | left: beside the text on screens 1024px and wider, below it on smaller ones
@@ -229,12 +232,22 @@ const site = {
     showBibtex: true, // BibTeX button on each paper
     showAbstract: true, // Abstract button on each paper
     // Papers are read from content/publications.yml, plus these sources. If the same paper
-    // appears twice (same DOI or title), publications.yml wins, then BibTeX, then ORCID.
+    // appears twice (same DOI or title), publications.yml wins, then BibTeX, then the imports below.
     import: {
       // BibTeX file(s) in content/. null for none.
       bibtex: 'publications.bib',
       // ORCID iDs whose public works are pulled in at build time, e.g. ['0000-0002-1825-0097'].
       orcid: [],
+      // Semantic Scholar author IDs or profile links, e.g.
+      // 'https://www.semanticscholar.org/author/Jane-Doe/1741101'. Semantic Scholar also
+      // covers what DBLP lists, and is the more reliable of the two to fetch.
+      semanticScholar: [],
+      // DBLP person ids or profile links, e.g. 'https://dblp.org/pid/12/3456'. DBLP
+      // sometimes blocks automated requests; if the build warns about that, download your
+      // list from DBLP ("export bibliography" > BibTeX) and add that file to bibtex above.
+      dblp: [],
+      // Imported papers to leave out, by id or title (e.g. a talk listed as a paper).
+      exclude: [],
     },
     // A page for each paper at /publications/<id>, with the tags Google Scholar reads to
     // index it, a citation in text and BibTeX, and links. Titles in lists link to it.
@@ -366,6 +379,9 @@ const site = {
     // software | dataset | other  (the `type` of each item in content/resources.yml)
     sections: ['software', 'dataset', 'other'],
     sectionTitles: { software: 'Software', dataset: 'Datasets', other: 'Other' },
+    // For items with a GitHub repository (a GitHub link, or `repo: owner/name`): stars,
+    // latest release and license, fetched when the site builds.
+    github: true,
   },
 
   teaching: {

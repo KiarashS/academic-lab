@@ -19,6 +19,7 @@ export const {
   press,
   collaborators,
   homeBlocks,
+  pages,
   notices,
   images,
 } = content
@@ -94,4 +95,18 @@ export function talksByPerson(personId) {
 
 export function awardsByPerson(personId) {
   return awards.filter((a) => includesPerson(a.recipients, personId))
+}
+
+// Pages of your own from content/pages/, by file name.
+export const customPageById = Object.fromEntries(pages.map((p) => [p.id, p]))
+
+// A position is open while `open` is true and its `deadline` (if any) hasn't passed. With a
+// deadline and no `open`, it is open until the deadline. Use with useToday().
+export function positionOpen(position, today) {
+  const open = position.open ?? Boolean(position.deadline)
+  return Boolean(open) && (!position.deadline || position.deadline >= today)
+}
+
+export function openPositions(today) {
+  return (join.openings || []).filter((o) => positionOpen(o, today))
 }

@@ -2,13 +2,39 @@ import PageHeader from '../components/PageHeader.jsx'
 import Section from '../components/Section.jsx'
 import SmartLink from '../components/SmartLink.jsx'
 import site from '../config/index.js'
-import { join } from '../lib/data.js'
+import { join, positionOpen } from '../lib/data.js'
+import { useToday } from '../lib/hydration.js'
 import useTitle from '../lib/useTitle.js'
+
+const DAY = 24 * 60 * 60 * 1000
+
+// "Apply by 15 Dec 2026 · 5 days left", or "Closed 15 Dec 2026" once it has passed.
+function Deadline({ date, today, open }) {
+  const [y, m, d] = date.split('-').map(Number)
+  const formatted = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(site.locale || 'en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+  const days = Math.round((Date.parse(date) - Date.parse(today)) / DAY)
+  const left = days === 0 ? 'last day' : days <= 14 ? `${days} day${days === 1 ? '' : 's'} left` : null
+  return (
+    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+      {open ? 'Apply by ' : 'Closed '}
+      <time dateTime={date}>{formatted}</time>
+      {open && left && <span className="text-accent"> · {left}</span>}
+    </p>
+  )
+}
 
 export default function Join() {
   const config = site.join
   useTitle(config.title)
-  const openings = join.openings.filter((o) => o.open || config.showClosedPositions)
+  const today = useToday()
+  const openings = join.openings
+    .map((o) => ({ ...o, isOpen: positionOpen(o, today) }))
+    .filter((o) => o.isOpen || config.showClosedPositions)
   const email = site.contact.email
 
   const SECTIONS = {
@@ -22,14 +48,15 @@ export default function Join() {
                   {o.title}
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-normal ${
-                      o.open
+                      o.isOpen
                         ? 'bg-accent/10 text-accent'
                         : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
                     }`}
                   >
-                    {o.open ? 'Open' : 'Closed'}
+                    {o.isOpen ? 'Open' : 'Closed'}
                   </span>
                 </h3>
+                {o.deadline && <Deadline date={o.deadline} today={today} open={o.isOpen} />}
                 <p className="mt-1.5 max-w-2xl leading-relaxed text-neutral-600 dark:text-neutral-400">
                   {o.text}
                   {o.url && (

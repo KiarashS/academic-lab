@@ -28,7 +28,12 @@ export default function NewsPost() {
         {post.title && post.text && <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-400">{post.text}</p>}
       </header>
       {post.image && (
-        <Img src={post.image} sizes="(min-width: 768px) 42rem, 100vw" className="mb-8 w-full max-w-2xl rounded-md" />
+        <Img
+          src={post.image}
+          sizes="(min-width: 768px) 42rem, 100vw"
+          alt={post.imageAlt || ''}
+          className="mb-8 w-full max-w-2xl rounded-md"
+        />
       )}
       <Markdown html={post.html} />
       {post.link?.url && (

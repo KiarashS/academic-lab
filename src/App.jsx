@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import { navPages } from './config/index.js'
+import { customPageById } from './lib/data.js'
 import Collaborators from './pages/Collaborators.jsx'
 import Contact from './pages/Contact.jsx'
 import EventDetail from './pages/EventDetail.jsx'
@@ -8,6 +9,7 @@ import Events from './pages/Events.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Home from './pages/Home.jsx'
 import Join from './pages/Join.jsx'
+import MarkdownPage from './pages/MarkdownPage.jsx'
 import News from './pages/News.jsx'
 import NewsPost from './pages/NewsPost.jsx'
 import NotFound from './pages/NotFound.jsx'
@@ -24,7 +26,9 @@ import Teaching from './pages/Teaching.jsx'
 
 // Every page the site knows about. Only pages listed in site.nav get routes
 // (the home page always exists; its nav entry only adds a menu link).
-// To add a page: create it in src/pages/, register it here, then add it to site.nav.
+// Pages of your own need no code: write content/pages/<name>.md and add { page: '<name>' }
+// to site.nav. To add a page with its own code, create it in src/pages/, register it here,
+// then add it to site.nav.
 const PAGES = {
   research: { component: Research, detail: ProjectDetail },
   people: { component: People, detail: PersonDetail },
@@ -48,7 +52,10 @@ export default function App() {
         <Route index element={<Home />} />
         {navPages.map(({ page }) => {
           const entry = PAGES[page]
-          if (!entry) return null
+          // Not a built-in page: one of your own from content/pages/, if the file exists.
+          if (!entry) {
+            return customPageById[page] ? <Route key={page} path={page} element={<MarkdownPage id={page} />} /> : null
+          }
           const { component: Page, detail: Detail } = entry
           return (
             <Route key={page} path={page}>

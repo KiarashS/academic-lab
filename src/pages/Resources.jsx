@@ -6,6 +6,51 @@ import site from '../config/index.js'
 import { resources } from '../lib/data.js'
 import useTitle from '../lib/useTitle.js'
 
+function shortDate(iso) {
+  const [y, m] = iso.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString(site.locale || 'en-US', {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+// "★ 1.2k · v2.1.0, Mar 2026 · MIT" under a repository's title.
+function GithubInfo({ github }) {
+  const stars = new Intl.NumberFormat(site.locale || 'en-US', { notation: 'compact' }).format(github.stars || 0)
+  const parts = [
+    <a key="stars" href={github.url} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+      <span aria-hidden="true">★ </span>
+      {stars}
+      <span className="sr-only"> stars on GitHub</span>
+    </a>,
+    github.release && (
+      <a
+        key="release"
+        href={github.release.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-accent"
+      >
+        {github.release.tag}
+        {github.release.date && `, ${shortDate(github.release.date)}`}
+      </a>
+    ),
+    github.license && <span key="license">{github.license}</span>,
+    github.archived && <span key="archived">Archived</span>,
+  ].filter(Boolean)
+  return (
+    <p className="mt-1 flex flex-wrap gap-x-2 text-xs text-neutral-500 tabular-nums dark:text-neutral-400">
+      {parts.map((part, i) => (
+        <span key={i} className="flex gap-x-2">
+          {i > 0 && <span aria-hidden="true">·</span>}
+          {part}
+        </span>
+      ))}
+    </p>
+  )
+}
+
 export default function Resources() {
   const config = site.resources
   useTitle(config.title)
@@ -29,6 +74,7 @@ export default function Resources() {
                       </span>
                     )}
                   </h3>
+                  {item.github && config.github !== false && <GithubInfo github={item.github} />}
                   {item.description && (
                     <p className="mt-1.5 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
                       {item.description}

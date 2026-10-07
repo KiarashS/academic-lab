@@ -3,6 +3,7 @@
 // build and `npm run check`; with STRICT_CONTENT=1 (used on pull requests) they fail it.
 import { existsSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+import { BUILT_IN_PAGES } from '../src/config/index.js'
 import { imageKey, PUBLIC_DIR } from './images.js'
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
@@ -165,6 +166,62 @@ export function validateContent(content, site) {
     checkImage(where, c.logo)
   })
 
+  for (const o of content.join.openings || []) {
+    checkDate(`content/join.yml, opening "${o.title}"`, 'deadline', o.deadline, false)
+  }
+
+  // Pages in `nav`: built in, or a file in content/pages/.
+  const ownPages = new Set(content.pages.map((p) => p.id))
+  for (const p of content.pages) {
+    const where = `content/pages/${p.id}.md`
+    if (!p.title) add(where, 'title is missing')
+    if (BUILT_IN_PAGES.includes(p.id)) add(where, `"${p.id}" is the name of a built-in page; rename the file`)
+    else if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.id)) add(where, 'file name should use lowercase letters, numbers and dashes')
+  }
+  const navNames = site.nav.flatMap((item) => (item.items ? item.items : [item])).map((item) => item.page).filter(Boolean)
+  for (const name of navNames) {
+    if (!BUILT_IN_PAGES.includes(name) && !ownPages.has(name)) {
+      add('nav in src/config/site.js', `"${name}" is not a built-in page and there is no content/pages/${name}.md`)
+    }
+  }
+
+  // Images without a description: screen readers say nothing for them. Reported as notes,
+  // which never fail the build. Images next to text that says the same thing (project
+  // thumbnails, teasers beside a title, people's photos) don't need one.
+  const note = (where, message) => add(where, `[description] ${message}`)
+  const emptyAlt = (html = '') => [...html.matchAll(/<img\b[^>]*>/g)].filter((m) => !/\balt="[^"]+"/.test(m[0])).length
+  const checkHtml = (where, html) => {
+    const n = emptyAlt(html)
+    if (n) note(where, `${n} image${n > 1 ? 's' : ''} in the text without a description: write ![what it shows](/uploads/file.jpg)`)
+  }
+  const intro = site.home?.intro || {}
+  if (intro.image && !intro.imageAlt && !intro.imageCaption) note('home.intro in src/config/site.js', 'image has no imageAlt')
+  for (const b of content.homeBlocks) {
+    if (b.image && !b.imageAlt) note(`content/home/${b.id}.md`, 'image has no imageAlt')
+    checkHtml(`content/home/${b.id}.md`, b.html)
+  }
+  content.slides.forEach((s, i) => {
+    if (s.type === 'image' && !s.alt && !s.title && !s.caption) note(`content/slides.yml, slide ${i + 1}`, 'image has no alt, title or caption')
+  })
+  for (const album of content.gallery) {
+    album.photos.forEach((p, i) => {
+      if (p.type === 'image' && !p.alt && !p.caption) {
+        note(`content/gallery.yml, album "${album.title}", item ${i + 1}`, 'photo has no alt or caption')
+      }
+    })
+  }
+  for (const n of content.news) {
+    if (n.image && n.hasPage && !n.imageAlt) note(`content/news/${n.id}.md`, 'image has no imageAlt')
+    checkHtml(`content/news/${n.id}.md`, n.html)
+  }
+  for (const r of content.research) {
+    if (r.image && !r.imageAlt) note(`content/research/${r.id}.md`, 'image has no imageAlt (shown on the project page)')
+    checkHtml(`content/research/${r.id}.md`, r.description)
+  }
+  for (const p of content.people) checkHtml(`content/people/${p.id}.md`, p.bio)
+  for (const e of content.events) checkHtml(`content/events/${e.id}.md`, e.html)
+  for (const p of content.pages) checkHtml(`content/pages/${p.id}.md`, p.html)
+
   if (site.favicon) checkImage('favicon in src/config/site.js', site.favicon)
   checkImage('footer.credit.avatar in src/config/site.js', site.footer?.credit?.avatar)
 
@@ -179,7 +236,16 @@ export function validateContent(content, site) {
   return problems
 }
 
-export function reportProblems(problems) {
+export function reportProblems(all) {
+  // Missing image descriptions are listed separately and never fail the build.
+  const notes = all.filter((p) => p.includes(': [description] ')).map((p) => p.replace('[description] ', ''))
+  const problems = all.filter((p) => !p.includes(': [description] '))
+  if (notes.length) {
+    console.warn(
+      `[content] ${notes.length} image${notes.length > 1 ? 's' : ''} without a description (screen readers skip them):\n` +
+        notes.map((p) => `  - ${p}`).join('\n'),
+    )
+  }
   if (!problems.length) return
   const strict = process.env.STRICT_CONTENT === '1'
   const header = `[content] ${problems.length} problem${problems.length > 1 ? 's' : ''} found:`

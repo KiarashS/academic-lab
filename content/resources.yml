@@ -1,6 +1,8 @@
 # Software and datasets released by the lab, for the Software & Data page.
 # type: software | dataset | other. Items are grouped by type in the order set in
 # resources.sections in src/config/site.js.
+# Software with a GitHub link (or `repo: owner/name`) also shows its stars, latest release
+# and license, fetched when the site builds.
 items:
   - title: metaprot
     type: software

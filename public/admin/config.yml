@@ -47,6 +47,7 @@ collections:
           - { name: label, label: Label, widget: string, required: false }
           - { name: url, label: URL, widget: string, required: false, hint: 'https://... or a page on this site, e.g. /publications#paper-id' }
       - { name: image, label: Image, widget: image, required: false }
+      - { name: imageAlt, label: Image description, widget: string, required: false, hint: 'What the image shows, for screen readers.' }
       - { name: body, label: Full post, widget: markdown, required: false, hint: 'Leave empty for a one-line item. With text, the item gets its own page.' }
 
   - name: events
@@ -123,6 +124,7 @@ collections:
       - { name: summary, label: Summary, widget: text, hint: 'One or two sentences for project cards.' }
       - { name: status, label: Status, widget: select, options: [active, past], default: active }
       - { name: image, label: Image, widget: image, required: false }
+      - { name: imageAlt, label: Image description, widget: string, required: false, hint: 'What the image shows, for screen readers.' }
       - { name: tags, label: Tags, widget: list, required: false }
       - { name: members, label: People, widget: relation, collection: people, value_field: '{{slug}}', search_fields: [name], display_fields: [name], multiple: true, required: false }
       - name: links
@@ -162,6 +164,24 @@ collections:
           - { name: label, label: Label, widget: string, required: false }
           - { name: url, label: URL, widget: string, required: false }
       - { name: body, label: Text, widget: markdown, required: false }
+
+  - name: pages
+    label: Pages
+    label_singular: Page
+    folder: content/pages
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: '{{slug}}'
+    summary: '{{title}} (/{{slug}})'
+    description: "Pages of your own, at /<file name>. To show one, add { page: '<file name>', label: '...' } to nav in src/config/site.js."
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: intro, label: Intro, widget: text, required: false, hint: 'A line or two under the title.' }
+      - { name: description, label: Search engine description, widget: string, required: false }
+      - { name: wide, label: Use the full page width, widget: boolean, required: false, default: false }
+      - { name: body, label: Text, widget: markdown }
 
   - name: data
     label: Lists
@@ -332,6 +352,7 @@ collections:
             fields:
               - { name: title, label: Title, widget: string }
               - { name: open, label: Open, widget: boolean, default: true }
+              - { name: deadline, label: Deadline, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false, hint: 'Last day to apply. The position closes by itself the day after.' }
               - { name: text, label: Description, widget: text }
               - { name: url, label: Details link, widget: string, required: false }
           - { name: howToApply, label: How to apply, widget: text, required: false }

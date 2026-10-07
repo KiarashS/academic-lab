@@ -85,7 +85,7 @@ const defaults = {
     showDownload: true,
     showBibtex: true,
     showAbstract: true,
-    import: { bibtex: 'publications.bib', orcid: [] },
+    import: { bibtex: 'publications.bib', orcid: [], dblp: [], semanticScholar: [], exclude: [] },
     pages: true,
     page: { sections: ['media', 'links', 'summary', 'abstract', 'cite', 'related'] },
     citations: { show: true, label: 'Cited by' },
@@ -158,6 +158,7 @@ const defaults = {
     intro: null,
     sections: ['software', 'dataset', 'other'],
     sectionTitles: { software: 'Software', dataset: 'Datasets', other: 'Other' },
+    github: true,
   },
   teaching: { title: 'Teaching', intro: null, showInstructor: true, showDescription: true },
   join: {

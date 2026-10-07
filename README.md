@@ -48,9 +48,12 @@ Everything visitors read is in `content/`:
 | `content/resources.yml` | Software and datasets. |
 | `content/teaching.yml`, `content/join.yml`, `content/funders.yml` | Courses, open positions, funder logos. |
 | `content/home/*.md` | Text blocks for the home page (see below). |
+| `content/pages/*.md` | Pages of your own, such as Facilities or Privacy (see "Adding a page"). |
 | `content/notices.yml` | Notices for the home page or a bar on every page (see below). |
 
 `npm run check` reads all content and lists problems, such as a project member with no file in `content/people/`, a paper linked to a project that doesn't exist, a group name that isn't in the settings, a badly written date or time, or a missing image. The same checks run on every build (as warnings) and on every pull request (where they fail the check).
+
+`npm run check` also lists images without a description (photos with no `alt` or caption, slides with no `alt` or title, Markdown images written as `![](...)`, `imageAlt` missing on the home intro, text blocks, news posts and project pages). Screen readers can't describe those images. These are listed as notes and never fail a build.
 
 Each YAML file starts with a comment listing its fields. Some things to know:
 
@@ -84,7 +87,7 @@ Each list section on the home page shows at most `count` items: `home.news.count
 
 Write a Markdown file in `content/home/` (or use "Home page blocks" in `/admin`) and add `block:<file name>` to `home.sections` where it should appear, e.g. `'block:approach'` for `content/home/approach.md`. A block can have a `title`, a `style` (`plain` or `highlight`, a tinted box), an `image` shown beside the text (`imagePosition: left` or `right`) and a `link`.
 
-The `hiring` section shows a one-line notice with a link to the Join page while at least one position in `content/join.yml` has `open: true`, and disappears when none do. By default it lists the open positions; set `home.hiring.text` to write your own.
+The `hiring` section shows a one-line notice with a link to the Join page while at least one position in `content/join.yml` is open, and disappears when none are. A position with a `deadline` shows "Apply by …" on the Join page (with the days left in the last two weeks) and closes by itself the day after, here and on the Join page; the nightly rebuild and the visitor's own date both apply it. By default it lists the open positions; set `home.hiring.text` to write your own.
 
 ### Photos
 
@@ -92,11 +95,15 @@ Put photos in `public/uploads/` (the editor at `/admin` does this for you) at wh
 
 ### Importing publications
 
-Papers come from three places, combined into one list. If a paper appears twice (same DOI or same title), the first source wins:
+Papers come from these places, combined into one list. If a paper appears twice (same DOI or same title), the first source wins:
 
 1. `content/publications.yml`, entered by hand
 2. BibTeX files in `content/`, listed in `publications.import.bibtex`. Standard fields are read as usual; a few extra ones are understood too: `code`, `data`, `slides`, `video`, `poster`, `project` and `pdf` become links, `featured = {true}` shows the paper on the home page, `award` adds a label, `summary` adds a plain-language summary, `media` adds an image or video beside it, and `projects` links it to research projects.
 3. ORCID: put ORCID iDs in `publications.import.orcid`, e.g. `['0000-0002-1825-0097']`. Public works are fetched at build time; no API key is needed. If ORCID can't be reached, the build continues without those papers and prints a warning. Pushes to `main` rebuild the site, so new ORCID works show up with the next push, or with a manual run of the deploy workflow.
+4. Semantic Scholar: put author IDs or profile links in `publications.import.semanticScholar`, e.g. `['https://www.semanticscholar.org/author/Jane-Doe/1741101']`. No API key is needed. Semantic Scholar also lists what DBLP has, so for computer science it is usually the easiest source. Records with no venue and no DOI or arXiv ID (often front matter or talks) are skipped.
+5. DBLP: put person ids or profile links in `publications.import.dblp`, e.g. `['https://dblp.org/pid/12/3456']`. DBLP sometimes answers automated requests with a "not a bot" check instead of data; the build then prints a warning and continues. If that keeps happening, use "export bibliography" > BibTeX on your DBLP page and add the file to `publications.import.bibtex`.
+
+The imports (ORCID, Semantic Scholar, DBLP) are cached for 12 hours and refreshed by the nightly rebuild. To leave out an imported paper, add its id or title to `publications.import.exclude`.
 
 ### Paper pages, Google Scholar and citation counts
 
@@ -140,7 +147,7 @@ Turning things on and off:
 | Talks | `talks` (title, intro, group by year, type labels) | |
 | Awards & press | `press` (title, intro, headings) | `awards`, `press` |
 | Collaborators | `collaborators` (title, intro, mark the lab on the map) | `map`, `list` |
-| Software & Data | `resources` (title, intro, headings) | `software`, `dataset`, `other` |
+| Software & Data | `resources` (title, intro, headings, GitHub stars, release and license for repositories) | `software`, `dataset`, `other` |
 | Teaching | `teaching` (instructor and description on or off) | |
 | Gallery | `gallery` (title, intro) | |
 | Join | `join` (title, headings, closed positions) | `intro`, `positions`, `apply` |
@@ -196,7 +203,9 @@ When a page is shared on social media or in a chat app, it shows a 1200×630 ima
 
 ### Adding a page
 
-Create a component in `src/pages/`, register it in the `PAGES` map in `src/App.jsx`, and add it to `nav` in `site.js`. Styling uses Tailwind utility classes; the accent color is available as `text-accent`, `bg-accent` and so on, and global styles are in `src/index.css`.
+For a page of text, no code is needed: write `content/pages/<name>.md` with a `title` (and optionally an `intro`, a `description` for search engines, and `wide: true` for full-width text), write the page in Markdown below the front matter, and add `{ page: '<name>', label: 'Menu text' }` to `nav` in `site.js`. The page appears at `/<name>`, in site search and in the sitemap. The editor at `/admin` has a "Pages" collection for these. `npm run check` warns about a `nav` entry with no matching file, and about a file named like a built-in page.
+
+For a page with its own code, create a component in `src/pages/`, register it in the `PAGES` map in `src/App.jsx`, and add it to `nav` in `site.js`. Styling uses Tailwind utility classes; the accent color is available as `text-accent`, `bg-accent` and so on, and global styles are in `src/index.css`.
 
 ## Deploying
 

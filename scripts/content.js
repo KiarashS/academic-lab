@@ -11,6 +11,8 @@ import { enhanceHtmlImages, processImages } from './images.js'
 import { fetchOrcidWorks } from './orcid.js'
 import { reportProblems, validateContent } from './validate.js'
 import { normalizeMedia } from '../src/lib/embed.js'
+import { addGithubInfo } from './github.js'
+import { fetchDblp, fetchSemanticScholar } from './importers.js'
 
 export const CONTENT_DIR = resolve(import.meta.dirname, '../content')
 
@@ -136,10 +138,20 @@ async function loadPublications(site) {
     return parseBibtex(readFileSync(file, 'utf8'))
   })
 
-  const orcidIds = [config.orcid].flat().filter(Boolean)
-  const fromOrcid = (await Promise.all(orcidIds.map((id) => fetchOrcidWorks(id)))).flat()
+  const list = (value) => [value].flat().filter(Boolean)
+  const [fromOrcid, fromDblp, fromS2] = await Promise.all([
+    Promise.all(list(config.orcid).map(fetchOrcidWorks)),
+    Promise.all(list(config.dblp).map(fetchDblp)),
+    Promise.all(list(config.semanticScholar).map(fetchSemanticScholar)),
+  ])
 
-  return mergePublications(manual, fromBib, fromOrcid).map((p) => ({ ...p, year: Number(p.year) || p.year }))
+  // `exclude` drops imported papers by id or title, e.g. a talk listed as a paper.
+  const excluded = new Set(list(config.exclude).map((x) => normalizeTitle(String(x))))
+  const imported = [fromOrcid, fromDblp, fromS2]
+    .flat(2)
+    .filter((p) => !excluded.has(normalizeTitle(p.id)) && !excluded.has(normalizeTitle(p.title)))
+
+  return mergePublications(manual, fromBib, imported).map((p) => ({ ...p, year: Number(p.year) || p.year }))
 }
 
 export async function loadContent(site, base = '/') {
@@ -197,6 +209,9 @@ export async function loadContent(site, base = '/') {
   // Free text blocks for the home page, placed with 'block:<file name>' in home.sections.
   const homeBlocks = readMarkdownFolder('home', render)
 
+  // Pages of your own from content/pages/<name>.md, shown at /<name> once listed in `nav`.
+  const pages = readMarkdownFolder('pages', render)
+
   let publications = (await loadPublications(site)).map((p) => ({ ...p, media: media(p.media) }))
   if (site.publications.citations?.show) publications = await addCitationCounts(publications)
 
@@ -207,16 +222,23 @@ export async function loadContent(site, base = '/') {
     events,
     publications,
     teaching: readYaml('teaching.yml').courses || [],
-    join: readYaml('join.yml'),
+    join: (() => {
+      const file = readYaml('join.yml')
+      return { ...file, openings: (file.openings || []).map((o) => ({ ...o, deadline: day(o.deadline) })) }
+    })(),
     slides: (readYaml('slides.yml').slides || []).map(normalizeMedia),
     gallery,
-    resources: readYaml('resources.yml').items || [],
+    resources:
+      site.resources.github === false
+        ? readYaml('resources.yml').items || []
+        : await addGithubInfo(readYaml('resources.yml').items || []),
     funders: readYaml('funders.yml').funders || [],
     talks,
     awards,
     press,
     collaborators: readYaml('collaborators.yml').collaborators || [],
     homeBlocks,
+    pages,
     notices: (readYaml('notices.yml').notices || []).map((n, i) => ({
       ...n,
       id: n.id || `notice-${i + 1}`,
@@ -233,7 +255,9 @@ export async function loadContent(site, base = '/') {
   content.images = await processImages([
     site.home.intro.image,
     site.footer.credit?.avatar,
-    ...[...publications, ...events].map((item) => item.media && (item.media.type === 'image' ? item.media.src : item.media.poster)),
+    ...[...publications, ...events].map(
+      (item) => item.media && (item.media.type === 'image' ? item.media.src : item.media.poster),
+    ),
     ...people.flatMap((p) => [p.photo, ...htmlImages(p.bio)]),
     ...research.flatMap((r) => [r.image, ...htmlImages(r.description)]),
     ...news.flatMap((n) => [n.image, ...htmlImages(n.html)]),
@@ -242,12 +266,14 @@ export async function loadContent(site, base = '/') {
     ...content.funders.map((f) => f.logo),
     ...content.collaborators.map((c) => c.logo),
     ...homeBlocks.flatMap((b) => [b.image, ...htmlImages(b.html)]),
+    ...pages.flatMap((p) => htmlImages(p.html)),
   ])
   for (const p of people) p.bio = enhanceHtmlImages(p.bio, content.images, base)
   for (const r of research) r.description = enhanceHtmlImages(r.description, content.images, base)
   for (const n of news) n.html = enhanceHtmlImages(n.html, content.images, base)
   for (const e of events) e.html = enhanceHtmlImages(e.html, content.images, base)
   for (const b of homeBlocks) b.html = enhanceHtmlImages(b.html, content.images, base)
+  for (const p of pages) p.html = enhanceHtmlImages(p.html, content.images, base)
 
   return content
 }

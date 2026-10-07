@@ -14,7 +14,7 @@ import site, { pageEnabled } from '../config/index.js'
 import {
   funders,
   homeBlocks,
-  join,
+  openPositions,
   research,
   slides,
   sortedNews,
@@ -182,8 +182,8 @@ const SECTIONS = {
     ),
 
   // Shown only while the Join page has at least one open position.
-  hiring: (first, { gap }) => {
-    const open = (join.openings || []).filter((o) => o.open)
+  hiring: (first, { gap, today }) => {
+    const open = openPositions(today)
     if (!open.length || !pageEnabled('join')) return null
     const text = home.hiring.text || `We're hiring: ${open.map((o) => o.title).join(', ')}.`
     return (
@@ -307,7 +307,8 @@ const SECTIONS = {
 
 export default function Home() {
   useTitle()
-  const events = splitEvents(useToday())
+  const today = useToday()
+  const events = splitEvents(today)
   const [homeNotices, dismiss] = useNotices('home')
   // Notices right after other notices stack closely; otherwise they get section spacing.
   const isNotice = (key) => key === 'notices' || key === 'hiring'
@@ -317,7 +318,7 @@ export default function Home() {
       return block && <TextBlock key={key} block={block} first={first} />
     }
     const gap = isNotice(key) && prev && isNotice(prev) ? 'mt-3' : 'mt-12'
-    return SECTIONS[key](first, { ...events, homeNotices, dismiss, gap })
+    return SECTIONS[key](first, { ...events, homeNotices, dismiss, gap, today })
   }
   const sections = home.sections.filter((key) => SECTIONS[key] || (key.startsWith('block:') && blockById[key.slice(6)]))
 

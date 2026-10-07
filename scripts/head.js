@@ -1,6 +1,6 @@
 // Everything that goes into a page's <head>, and the list of pages the site has.
 import { faviconTags } from './favicons.js'
-import site, { navPages, pageEnabled } from '../src/config/index.js'
+import site, { BUILT_IN_PAGES, navPages, pageEnabled } from '../src/config/index.js'
 import { plainText } from './content.js'
 
 export function escape(text = '') {
@@ -198,6 +198,16 @@ export function pageList(content) {
   ]
   for (const { page, label } of navPages) {
     if (page === 'home') continue
+    if (!BUILT_IN_PAGES.includes(page)) {
+      // A page of your own from content/pages/; skipped if the file doesn't exist.
+      const own = content.pages.find((p) => p.id === page)
+      if (own) {
+        const title = own.title || label
+        const description = truncate(own.description || own.intro || plainText(own.html)) || site.description
+        list.push({ path: `/${page}`, title, description, og: { title, subtitle: site.name } })
+      }
+      continue
+    }
     const title = site[page]?.title || label
     list.push({ path: `/${page}`, title, description: site.description, og: { title, subtitle: site.name } })
   }

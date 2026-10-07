@@ -18,6 +18,25 @@ function merge(base, override) {
 const site = merge(defaults, userSite)
 export default site
 
+// Pages built into the site. Any other name in `nav` is a page of your own, from
+// content/pages/<name>.md.
+export const BUILT_IN_PAGES = [
+  'home',
+  'research',
+  'people',
+  'publications',
+  'news',
+  'events',
+  'talks',
+  'press',
+  'collaborators',
+  'resources',
+  'gallery',
+  'teaching',
+  'join',
+  'contact',
+]
+
 // Every page listed in `nav`, including those inside groups and those hidden from the menu.
 export const navPages = site.nav.flatMap((item) => (item.items ? item.items : [item])).filter((item) => item.page)
 
