@@ -118,6 +118,7 @@ export function validateContent(content, site) {
     if (n.style && !['accent', 'info', 'success', 'warning'].includes(n.style)) {
       add(where, `style "${n.style}" should be accent, info, success or warning`)
     }
+    if (n.dismissDays != null && !(Number(n.dismissDays) > 0)) add(where, `dismissDays "${n.dismissDays}" should be a number of days, e.g. 7`)
     if (n.placement && !['home', 'site'].includes(n.placement)) add(where, `placement "${n.placement}" should be home or site`)
   }
 

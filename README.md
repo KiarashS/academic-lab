@@ -78,7 +78,7 @@ Each list section on the home page shows at most `count` items: `home.news.count
 - `placement`: `home` (the default) shows it in the home page's `notices` section; `site` shows it as a slim bar above the header on every page
 - `style`: `accent` (the default), `info`, `success` or `warning`
 - `from` / `until`: dates between which it shows (both included). The nightly rebuild and the visitor's own date both respect them, so an expired notice disappears on time.
-- `dismissible: true`: adds a close button. The browser remembers the choice; give the notice a new `id` to show it again.
+- `dismissible: true`: adds a close button. A closed notice stays hidden in that browser for 7 days (`dismissDays` changes this), and comes back sooner if you edit its text or link.
 
 ### Home page text blocks and hiring notice
 

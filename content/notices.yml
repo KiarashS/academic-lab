@@ -8,9 +8,10 @@
 #   style        accent (default) | info | success | warning
 #   from, until  show only between these dates (YYYY-MM-DD, both included). Leave out to
 #                show it until you delete it.
-#   dismissible  true adds a close button; the visitor's choice is remembered
-#   id           a short name; give a notice a new id to show it again to visitors who
-#                closed an earlier version
+#   dismissible  true adds a close button. A closed notice stays hidden in that browser
+#                for dismissDays days (default 7); editing its text or link shows it again
+#   dismissDays  how long a close lasts, in days
+#   id           a short name for the notice
 notices:
   - id: lab-move
     text: The lab moves to Example Hall, 4th floor, on November 3. Our phone number stays the same.

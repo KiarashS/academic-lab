@@ -234,6 +234,7 @@ collections:
               - { name: from, label: Show from, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false }
               - { name: until, label: Show until, widget: datetime, time_format: false, date_format: YYYY-MM-DD, format: YYYY-MM-DD, required: false }
               - { name: dismissible, label: Visitors can close it, widget: boolean, default: false, required: false }
+              - { name: dismissDays, label: 'Days a closed notice stays hidden', widget: number, value_type: int, min: 1, required: false, hint: 'Default 7. Editing the text or link shows it again sooner.' }
 
       - name: slides
         label: Home page slider

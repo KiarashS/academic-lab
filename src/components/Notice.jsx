@@ -17,14 +17,30 @@ const STYLES = {
   ],
 }
 
-const KEY = 'dismissed-notices'
+// Closed notices, as { [id]: { at: time closed (ms), sig: the notice's text and link } }.
+// (The key changed from 'dismissed-notices', which kept closed notices hidden forever.)
+const KEY = 'closed-notices'
+const DAY = 24 * 60 * 60 * 1000
 
-function readDismissed() {
+function readClosed() {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || '[]')
+    const value = JSON.parse(localStorage.getItem(KEY) || '{}')
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
   } catch {
-    return []
+    return {}
   }
+}
+
+// Editing a notice's text or link shows it again to visitors who closed the old version.
+function signature(n) {
+  return [n.text, n.link?.label, n.link?.url].join('|')
+}
+
+// A close lasts `dismissDays` days (7 unless the notice says otherwise).
+function isClosed(n, closed, now) {
+  const entry = closed[n.id]
+  if (!entry || entry.sig !== signature(n)) return false
+  return now - entry.at < (Number(n.dismissDays) || 7) * DAY
 }
 
 // Notices from content/notices.yml that are within their dates and not closed by this
@@ -32,24 +48,27 @@ function readDismissed() {
 export function useNotices(placement) {
   const today = useToday()
   const hydrated = useHydrated()
-  const [dismissed, setDismissed] = useState([])
-  useEffect(() => setDismissed(readDismissed()), [])
+  const [closed, setClosed] = useState({})
+  useEffect(() => setClosed(readClosed()), [])
 
+  const now = hydrated ? Date.now() : 0
   const visible = notices.filter(
     (n) =>
       (n.placement || 'home') === placement &&
       (!n.from || n.from <= today) &&
       (!n.until || n.until >= today) &&
-      !(hydrated && dismissed.includes(n.id)),
+      !(hydrated && n.dismissible && isClosed(n, closed, now)),
   )
   const dismiss = (id) => {
-    const next = [...new Set([...readDismissed(), id])]
+    const notice = notices.find((n) => n.id === id)
+    const next = { ...readClosed(), [id]: { at: Date.now(), sig: signature(notice) } }
     try {
       localStorage.setItem(KEY, JSON.stringify(next))
+      localStorage.removeItem('dismissed-notices')
     } catch {
       // Storage blocked; the notice is hidden for this visit only.
     }
-    setDismissed(next)
+    setClosed(next)
   }
   return [visible, dismiss]
 }
