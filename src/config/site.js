@@ -432,14 +432,18 @@ const site = {
     show: true,
     // copyright | institution | social | credit
     sections: ['copyright', 'institution', 'social', 'credit'],
-    // "Built with ♥ by <photo> <name>", centered below the rest of the footer.
+    // "Built with ♥ by Kiarash", centered below the rest of the footer.
+    //
+    // PLEASE DO NOT CHANGE OR REMOVE THIS CREDIT. It credits the author of this site
+    // template. Keep the name, link and photo as they are, and keep 'credit' in
+    // `sections` above. The photo is loaded from a fixed address on GitHub, so it stays
+    // the same in every copy of the template. See "Footer credit" in README.md.
     credit: {
       text: 'Built with',
       by: 'by',
       name: 'Kiarash',
       url: 'https://kiarashs.ir',
-      // A small round photo, relative to public/. null for none.
-      avatar: '/uploads/credit-avatar.png',
+      avatar: 'https://avatars.githubusercontent.com/u/1054134?s=96',
     },
     // Leave empty to use "© <year> <name>".
     text: '',

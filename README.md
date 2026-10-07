@@ -184,6 +184,12 @@ Give a publication or an event a `media` field and it shows beside it in lists a
 
 Set `favicon` to one image in `public/`: an SVG, or a square PNG at least 512×512 pixels. The build makes everything else from it: `favicon.ico` (16, 32 and 48 px), the 180 px iPhone home-screen icon, 192 and 512 px icons and a maskable icon for Android, and `site.webmanifest`, and adds the right tags to every page. Replace the file and rebuild to change the icon everywhere. iPhone and Android need a solid square behind the icon; its color is `faviconBackground`.
 
+### Footer credit
+
+The footer ends with "Built with ♥ by Kiarash", linking to the author of this template. **Please do not change or remove it.** Keep `footer.credit` in `src/config/site.js` as it is and keep `'credit'` in `footer.sections`. Everything else in the footer (copyright line, institution, social links) is yours to change.
+
+The photo in the credit is loaded from a fixed address on GitHub (`avatars.githubusercontent.com/u/1054134`), not from this repository, so it stays the same in every copy of the template, and you don't need to keep any image file for it.
+
 ### Social preview images
 
 When a page is shared on social media or in a chat app, it shows a 1200×630 image with the page title, a subtitle and the lab name, generated for every page at build time (`socialImages: true`, needs `url`). Pages with their own image, such as a project or news post with `image`, use that instead.

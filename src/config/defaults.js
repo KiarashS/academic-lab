@@ -187,10 +187,17 @@ const defaults = {
   linkCheck: { enabled: true, ignore: [] },
   footer: {
     show: true,
-    sections: ['copyright', 'institution', 'social'],
+    sections: ['copyright', 'institution', 'social', 'credit'],
     text: '',
     social: [],
-    credit: { text: 'Built with', by: 'by', name: '', url: null, avatar: null },
+    // The template author's credit; see "Footer credit" in README.md.
+    credit: {
+      text: 'Built with',
+      by: 'by',
+      name: 'Kiarash',
+      url: 'https://kiarashs.ir',
+      avatar: 'https://avatars.githubusercontent.com/u/1054134?s=96',
+    },
   },
 }
 

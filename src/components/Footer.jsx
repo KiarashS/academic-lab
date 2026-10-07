@@ -15,6 +15,10 @@ function Credit({ credit }) {
         <Img
           src={credit.avatar}
           sizes="1.75rem"
+          width={28}
+          height={28}
+          // If the photo can't be loaded, leave just the name rather than a broken image.
+          onError={(e) => (e.currentTarget.style.display = 'none')}
           alt=""
           loading="lazy"
           className="size-7 rounded-full object-cover ring-2 ring-white dark:ring-neutral-950"
