@@ -58,6 +58,20 @@ for (const person of people) {
   }
 }
 
+// Also the short forms Google Scholar and many BibTeX files use: "A Rivera" and, with a
+// middle name, "AJ Rivera" or "A J Rivera". Written names and aliases above take
+// precedence, and a short form two members share is left out rather than guessed.
+const shortForms = new Map()
+for (const person of people) {
+  const parts = normalizeName(person.name).split(/\s+/)
+  if (parts.length < 2) continue
+  const last = parts.at(-1)
+  const initials = parts.slice(0, -1).map((p) => p[0])
+  const forms = new Set([`${initials[0]} ${last}`, `${initials.join('')} ${last}`, `${initials.join(' ')} ${last}`])
+  for (const form of forms) shortForms.set(form, shortForms.has(form) ? null : person.id)
+}
+for (const [form, id] of shortForms) if (id && !nameToId.has(form)) nameToId.set(form, id)
+
 // Compare names ignoring accents, periods and case: 'K. Müller' matches 'K Muller'.
 export function normalizeName(name) {
   return name.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/\./g, '').trim().toLowerCase()

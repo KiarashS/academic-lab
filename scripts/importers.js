@@ -205,3 +205,96 @@ export async function fetchDblp(value) {
     .trim()
   return (await cachedJson(`dblp-${pid}`, 12, () => loadDblp(pid))) || []
 }
+
+// ---- Google Scholar --------------------------------------------------------------------
+// Google Scholar has no API. Its robots.txt allows reading a profile page
+// (/citations?user=...) but not paging through it or opening each paper, so this reads one
+// page of up to 100 papers, newest first, once a day. A profile row has the title, the
+// authors (as initials, cut short with "..." on long lists), the venue and the year, but no
+// DOI or abstract. Scholar papers therefore come last: a paper that is also in another
+// source keeps that version. Google sometimes answers automated requests with a CAPTCHA;
+// the build then keeps the last list it got (see cache.js) and prints a warning.
+
+function scholarType(venue) {
+  if (/arxiv|biorxiv|medrxiv|ssrn|preprint/i.test(venue)) return 'preprint'
+  if (/workshop/i.test(venue)) return 'workshop'
+  if (
+    /conference|proceedings|symposium|\b(icml|neurips|nips|iclr|cvpr|iccv|eccv|aaai|ijcai|acl|emnlp|naacl|chi|kdd)\b/i.test(
+      venue,
+    )
+  )
+    return 'conference'
+  if (/thesis|dissertation/i.test(venue)) return 'thesis'
+  if (/patent/i.test(venue)) return 'other'
+  return venue ? 'journal' : 'other'
+}
+
+export function parseScholarProfile(html) {
+  const rows = [...html.matchAll(/<tr class="gsc_a_tr">([\s\S]*?)<\/tr>/g)].map((m) => m[1])
+  return (
+    rows
+      .map((row) => {
+        const title = decode(row.match(/class="gsc_a_at"[^>]*>([\s\S]*?)<\/a>/)?.[1] || '')
+        const [authorsLine = '', venueLine = ''] = [...row.matchAll(/<div class="gs_gray">([\s\S]*?)<\/div>/g)].map(
+          (m) => m[1],
+        )
+        const authors = decode(authorsLine)
+          .split(/\s*,\s*/)
+          .filter((a) => a && a !== '...')
+        // The venue line ends with a hidden ", <year>"; the year has its own column.
+        const venue = decode(venueLine.replace(/<span class="gs_oph">[\s\S]*?<\/span>/, ''))
+        const year = Number(decode(row.match(/class="gsc_a_h[^"]*"[^>]*>(\d{4})</)?.[1] || ''))
+        const key = row.match(/citation_for_view=[^:"&]+:([\w-]+)/)?.[1]
+        const arxiv = venue.match(/arXiv:(\d{4}\.\d{4,5})/i)?.[1]
+        return clean({
+          id: arxiv ? `arxiv-${arxiv.replace('.', '-')}` : key ? `scholar-${slug(key)}` : undefined,
+          title,
+          authors,
+          venue: arxiv ? 'arXiv preprint' : venue,
+          year: year || undefined,
+          type: scholarType(venue),
+          links: arxiv ? { arxiv: `https://arxiv.org/abs/${arxiv}` } : {},
+          source: 'googlescholar',
+        })
+      })
+      .filter((p) => p.id && p.title && p.year && p.authors?.length)
+      // Rows with no venue and no arXiv ID are mostly talks, slides or papers wrongly
+      // attached to the profile.
+      .filter((p) => p.venue || p.links.arxiv)
+  )
+}
+
+async function loadScholar(user) {
+  try {
+    const res = await fetch(
+      `https://scholar.google.com/citations?user=${encodeURIComponent(user)}&hl=en&pagesize=100&sortby=pubdate`,
+      { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; academic-lab site builder)', 'Accept-Language': 'en' } },
+    )
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
+    const html = await res.text()
+    if (!html.includes('gsc_a_tr')) {
+      throw new Error(
+        /captcha|unusual traffic/i.test(html)
+          ? 'Google asked for a CAPTCHA (it does this to some automated requests)'
+          : 'the page had no publication list (check the profile id)',
+      )
+    }
+    const pubs = parseScholarProfile(html)
+    console.log(`[googlescholar] ${user}: ${pubs.length} papers`)
+    return pubs
+  } catch (error) {
+    console.warn(`[googlescholar] Could not load profile ${user}: ${error.message}.`)
+    return undefined
+  }
+}
+
+export async function fetchGoogleScholar(value) {
+  // Accepts the profile id ("JicYPdAAAAAJ") or the profile link.
+  const text = String(value)
+  const user = text.match(/[?&]user=([\w-]+)/)?.[1] || text.trim()
+  if (!/^[\w-]{12}$/.test(user)) {
+    console.warn(`[googlescholar] "${value}" is not a profile id or link. Skipping it.`)
+    return []
+  }
+  return (await cachedJson(`scholar-${user}`, 24, () => loadScholar(user), { keepOnError: true })) || []
+}

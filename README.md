@@ -103,7 +103,11 @@ Papers come from these places, combined into one list. If a paper appears twice 
 4. Semantic Scholar: put author IDs or profile links in `publications.import.semanticScholar`, e.g. `['https://www.semanticscholar.org/author/Jane-Doe/1741101']`. No API key is needed. Semantic Scholar also lists what DBLP has, so for computer science it is usually the easiest source. Records with no venue and no DOI or arXiv ID (often front matter or talks) are skipped.
 5. DBLP: put person ids or profile links in `publications.import.dblp`, e.g. `['https://dblp.org/pid/12/3456']`. DBLP sometimes answers automated requests with a "not a bot" check instead of data; the build then prints a warning and continues. If that keeps happening, use "export bibliography" > BibTeX on your DBLP page and add the file to `publications.import.bibtex`.
 
-The imports (ORCID, Semantic Scholar, DBLP) are cached for 12 hours and refreshed by the nightly rebuild. To leave out an imported paper, add its id or title to `publications.import.exclude`.
+6. Google Scholar: put profile ids or links in `publications.import.googleScholar`, e.g. `['https://scholar.google.com/citations?user=JicYPdAAAAAJ']`. Google Scholar has no API, and its robots.txt allows reading a profile page but not paging through it or opening each paper. So the build reads the first page only, the 100 newest papers, once a day. Those records are thin: authors appear as initials ("A Rivera") and sometimes end in "...", venues are abbreviated, and there is no DOI or abstract. Scholar papers therefore come last; any paper also found in another source keeps that version. Rows with no venue and no arXiv ID are skipped. Google sometimes answers automated requests with a CAPTCHA, and GitHub's build machines are more likely to get one. When that happens the build uses the last list it fetched and prints a warning. Use Scholar to catch papers missing elsewhere, and prefer ORCID, Semantic Scholar or a BibTeX export for the full record.
+
+Lab members are recognized in author lists written with initials too ("A Rivera", "AJ Rivera"), unless two members share the same short form.
+
+The imports (ORCID, Semantic Scholar, DBLP, Google Scholar) are cached for 12 to 24 hours and refreshed by the nightly rebuild. The deploy workflow keeps the fetched data between runs, so a source that refuses a request (Google Scholar, DBLP) falls back to its last copy. To leave out an imported paper, add its id or title to `publications.import.exclude`.
 
 ### Paper pages, Google Scholar and citation counts
 

@@ -246,6 +246,12 @@ const site = {
       // sometimes blocks automated requests; if the build warns about that, download your
       // list from DBLP ("export bibliography" > BibTeX) and add that file to bibtex above.
       dblp: [],
+      // Google Scholar profile ids or links, e.g.
+      // 'https://scholar.google.com/citations?user=JicYPdAAAAAJ'. Scholar has no API, so
+      // this reads the first 100 papers of the profile (newest first) once a day, with
+      // authors as initials and no DOI or abstract. Papers also found in a source above
+      // keep that version. See "Importing publications" in README.md.
+      googleScholar: [],
       // Imported papers to leave out, by id or title (e.g. a talk listed as a paper).
       exclude: [],
     },

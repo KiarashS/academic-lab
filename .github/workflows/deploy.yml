@@ -42,6 +42,13 @@ jobs:
             node_modules/.cache/academic-lab/og
           key: images-${{ hashFiles('public/**', 'content/**') }}
           restore-keys: images-
+      # Imported papers and other fetched data, saved after every run so that if a source
+      # (Google Scholar, DBLP) refuses a request, the build can fall back to the last copy.
+      - uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/academic-lab/json
+          key: fetched-${{ github.run_id }}
+          restore-keys: fetched-
       - run: npm run build
         env:
           # Raises GitHub's API limit for the repository details on Software & Data.
