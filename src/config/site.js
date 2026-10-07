@@ -232,7 +232,7 @@ const site = {
     showBibtex: true, // BibTeX button on each paper
     showAbstract: true, // Abstract button on each paper
     // Papers are read from content/publications.yml, plus these sources. If the same paper
-    // appears twice (same DOI or title), publications.yml wins, then BibTeX, then the imports below.
+    // appears twice (same DOI, arXiv id or title), publications.yml wins, then BibTeX, then the imports below.
     import: {
       // BibTeX file(s) in content/. null for none.
       bibtex: 'publications.bib',
