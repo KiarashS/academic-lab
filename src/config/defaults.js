@@ -85,7 +85,7 @@ const defaults = {
     showDownload: true,
     showBibtex: true,
     showAbstract: true,
-    import: { bibtex: 'publications.bib', orcid: [], dblp: [], semanticScholar: [], googleScholar: [], exclude: [] },
+    import: { bibtex: 'publications.bib', orcid: [], dblp: [], semanticScholar: [], arxiv: [], googleScholar: [], exclude: [] },
     pages: true,
     page: { sections: ['media', 'links', 'summary', 'abstract', 'cite', 'related'] },
     citations: { show: true, label: 'Cited by' },

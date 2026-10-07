@@ -219,7 +219,7 @@ function scholarType(venue) {
   if (/arxiv|biorxiv|medrxiv|ssrn|preprint/i.test(venue)) return 'preprint'
   if (/workshop/i.test(venue)) return 'workshop'
   if (
-    /conference|proceedings|symposium|\b(icml|neurips|nips|iclr|cvpr|iccv|eccv|aaai|ijcai|acl|emnlp|naacl|chi|kdd)\b/i.test(
+    /conference|proceedings|symposium|neural information processing systems|\b(icml|neurips|nips|iclr|cvpr|iccv|eccv|aaai|ijcai|acl|emnlp|naacl|chi|kdd)\b/i.test(
       venue,
     )
   )
@@ -297,4 +297,74 @@ export async function fetchGoogleScholar(value) {
     return []
   }
   return (await cachedJson(`scholar-${user}`, 24, () => loadScholar(user), { keepOnError: true })) || []
+}
+
+// ---- arXiv -----------------------------------------------------------------------------
+// The papers on an arXiv author page (https://arxiv.org/a/<id>), from its Atom feed. The
+// id is the arXiv author id (e.g. lecun_y_1) or an ORCID iD linked to the arXiv account.
+// arXiv lists only papers the author has claimed there. Entries come with full author
+// lists and abstracts; a paper that also has a published version in another source (same
+// DOI, arXiv id or title) keeps that version.
+
+const tag = (xml, name) => xml.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`))?.[1]
+
+export function parseArxivFeed(xml) {
+  return [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)]
+    .map(([, entry]) => {
+      const id = tag(entry, 'id')?.match(/abs\/([^v\s<]+?)(v\d+)?$/)?.[1]
+      const published = tag(entry, 'published') || ''
+      const doi = decode(tag(entry, 'arxiv:doi') || '')
+      const journalRef = decode(tag(entry, 'arxiv:journal_ref') || '')
+        .replace(/\s+https?:\/\/\S+$/, '') // a trailing link, e.g. to OpenReview
+        .trim()
+      const links = { arxiv: `https://arxiv.org/abs/${id}`, pdf: `https://arxiv.org/pdf/${id}` }
+      if (doi) links.doi = `https://doi.org/${doi}`
+      return clean({
+        id: doi ? idFor(doi) : `arxiv-${slug(id || '')}`,
+        title: decode(tag(entry, 'title') || '').replace(/\s+/g, ' '),
+        authors: [...entry.matchAll(/<author>\s*<name>([\s\S]*?)<\/name>/g)].map((m) => decode(m[1])),
+        // With a journal reference the paper has been published there; otherwise it is a preprint.
+        venue: journalRef || 'arXiv preprint',
+        year: Number(published.slice(0, 4)) || undefined,
+        month: Number(published.slice(5, 7)) || undefined,
+        type: journalRef ? scholarType(journalRef) : 'preprint',
+        abstract: decode(tag(entry, 'summary') || '').replace(/\s+/g, ' ') || undefined,
+        links,
+        source: 'arxiv',
+      })
+    })
+    .filter((p) => p.title && p.year && p.authors?.length && p.links.arxiv !== 'https://arxiv.org/abs/')
+}
+
+async function loadArxiv(author) {
+  try {
+    const res = await fetch(`https://arxiv.org/a/${encodeURIComponent(author)}.atom`, {
+      headers: { 'User-Agent': 'academic-lab site builder', Accept: 'application/atom+xml' },
+    })
+    if (res.status === 404) throw new Error('no such arXiv author page (check the id)')
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
+    const xml = await res.text()
+    if (!xml.includes('<feed')) throw new Error('arXiv answered with a web page instead of a feed')
+    const pubs = parseArxivFeed(xml)
+    console.log(`[arxiv] ${author}: ${pubs.length} papers`)
+    return pubs
+  } catch (error) {
+    console.warn(`[arxiv] Could not load papers for ${author}: ${error.message}.`)
+    return undefined
+  }
+}
+
+export async function fetchArxiv(value) {
+  // Accepts the author id, an ORCID iD, or the author page link (https://arxiv.org/a/<id>).
+  const author = String(value)
+    .replace(/^https?:\/\/(export\.)?arxiv\.org\/a\//, '')
+    .replace(/^https?:\/\/orcid\.org\//, '')
+    .replace(/\.(html|atom2?)$/, '')
+    .replace(/\/$/, '')
+    .trim()
+  if (!/^[\w.-]+$/.test(author)) {
+    console.warn(`[arxiv] "${value}" is not an arXiv author id, ORCID iD or author page link. Skipping it.`)
+    return []
+  }
+  return (await cachedJson(`arxiv-${author}`, 24, () => loadArxiv(author), { keepOnError: true })) || []
 }

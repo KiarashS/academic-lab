@@ -12,7 +12,7 @@ import { fetchOrcidWorks } from './orcid.js'
 import { reportProblems, validateContent } from './validate.js'
 import { normalizeMedia } from '../src/lib/embed.js'
 import { addGithubInfo } from './github.js'
-import { fetchDblp, fetchGoogleScholar, fetchSemanticScholar } from './importers.js'
+import { fetchArxiv, fetchDblp, fetchGoogleScholar, fetchSemanticScholar } from './importers.js'
 
 export const CONTENT_DIR = resolve(import.meta.dirname, '../content')
 
@@ -107,16 +107,21 @@ function normalizeTitle(title = '') {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, '')
 }
 
+function arxivOf(pub) {
+  const id = pub.links?.arxiv?.match(/abs\/([^v\s?#]+?)(v\d+)?(?:[?#]|$)/)?.[1]
+  return id && `arxiv:${id.toLowerCase()}`
+}
+
 function doiOf(pub) {
   return pub.links?.doi?.match(/10\.\d{4,}\/\S+/)?.[0]?.toLowerCase()
 }
 
-// Keep the first copy of each paper, matching on DOI or title. Earlier sources win.
+// Keep the first copy of each paper, matching on DOI, arXiv id or title. Earlier sources win.
 function mergePublications(...sources) {
   const seen = new Set()
   const out = []
   for (const pub of sources.flat()) {
-    const keys = [doiOf(pub), normalizeTitle(pub.title)].filter(Boolean)
+    const keys = [doiOf(pub), arxivOf(pub), normalizeTitle(pub.title)].filter(Boolean)
     if (keys.some((k) => seen.has(k))) continue
     keys.forEach((k) => seen.add(k))
     out.push(pub)
@@ -139,17 +144,25 @@ async function loadPublications(site) {
   })
 
   const list = (value) => [value].flat().filter(Boolean)
-  const [fromOrcid, fromDblp, fromS2, fromScholar] = await Promise.all([
+  // arXiv asks automated clients to go slowly, so its author pages are read one at a time.
+  const fromArxivSequential = async () => {
+    const all = []
+    for (const id of list(config.arxiv)) all.push(await fetchArxiv(id))
+    return all
+  }
+  const [fromOrcid, fromDblp, fromS2, fromArxiv, fromScholar] = await Promise.all([
     Promise.all(list(config.orcid).map(fetchOrcidWorks)),
     Promise.all(list(config.dblp).map(fetchDblp)),
     Promise.all(list(config.semanticScholar).map(fetchSemanticScholar)),
+    fromArxivSequential(),
     Promise.all(list(config.googleScholar).map(fetchGoogleScholar)),
   ])
 
   // `exclude` drops imported papers by id or title, e.g. a talk listed as a paper.
   const excluded = new Set(list(config.exclude).map((x) => normalizeTitle(String(x))))
-  // Google Scholar last: its records are the thinnest (see importers.js).
-  const imported = [fromOrcid, fromDblp, fromS2, fromScholar]
+  // arXiv after the sources that know published versions; Google Scholar last, its records
+  // are the thinnest (see importers.js).
+  const imported = [fromOrcid, fromDblp, fromS2, fromArxiv, fromScholar]
     .flat(2)
     .filter((p) => !excluded.has(normalizeTitle(p.id)) && !excluded.has(normalizeTitle(p.title)))
 

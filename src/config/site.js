@@ -246,6 +246,10 @@ const site = {
       // sometimes blocks automated requests; if the build warns about that, download your
       // list from DBLP ("export bibliography" > BibTeX) and add that file to bibtex above.
       dblp: [],
+      // arXiv author pages: the arXiv author id, the page link, or an ORCID iD linked to the
+      // arXiv account, e.g. 'https://arxiv.org/a/lecun_y_1'. Lists the papers the author has
+      // claimed on arXiv, with abstracts; published versions from the sources above win.
+      arxiv: [],
       // Google Scholar profile ids or links, e.g.
       // 'https://scholar.google.com/citations?user=JicYPdAAAAAJ'. Scholar has no API, so
       // this reads the first 100 papers of the profile (newest first) once a day, with
